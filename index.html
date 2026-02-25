@@ -1,86 +1,146 @@
 <!DOCTYPE html>
 <html lang="en">
-
   <head>
-    <!-- Meta info — NOT visible on the page, but important -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="John's personal portfolio website" />
-
-    <!-- The title shown on the browser tab -->
-    <title>John | Portfolio</title>
-
-    <!-- Link to your CSS file (we create this later) -->
+    <meta
+      name="description"
+      content="Yujia Max Liu portfolio featuring 3D art, technical art, and creative coding work."
+    />
+    <title>Yujia Max Liu | Portfolio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="style.css" />
   </head>
-
   <body>
+    <header class="site-header" id="top">
+      <a class="brand" href="#top">
+        <img
+          src="Resources/Wix/HOME _ Yujia Max Liu_files/Liu_WP_Logo_4x.png"
+          alt="Yujia Max Liu logo"
+        />
+        <span>Yujia Max Liu</span>
+      </a>
 
-    <!-- ============ NAVIGATION BAR ============ -->
-    <nav>
-      <ul>
-        <li><a href="#about">About</a></li>
-        <li><a href="#projects">Projects</a></li>
-        <li><a href="#contact">Contact</a></li>
-      </ul>
-    </nav>
+      <nav class="main-nav" aria-label="Primary">
+        <a href="#about">About</a>
+        <a href="#works">Works</a>
+        <a href="#video">Video</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </header>
 
-    <!-- ============ HERO SECTION ============ -->
-    <!-- This is the big banner people see first -->
-    <section id="hero">
-      <img src="./images/YujiaMaxLiu_Web.jpg" alt="Yujia Max Liu" class="hero-photo" />
-      <h1>Hi, I'm John 👋</h1>
-      <p>Welcome to my personal portfolio.</p>
-    </section>
+    <main>
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">3D Artist · Technical Artist · Developer</p>
+          <h1>Designing immersive visual stories with code and craft.</h1>
+          <p>
+            I create portfolio-ready worlds, cinematic look-dev, and technical
+            workflows that connect art direction with production efficiency.
+          </p>
+          <div class="hero-actions">
+            <a class="btn primary" href="#works">View Projects</a>
+            <a class="btn ghost" href="#video">Watch Reel</a>
+          </div>
+        </div>
 
-    <!-- ============ ABOUT SECTION ============ -->
-    <section id="about">
-      <h2>About Me</h2>
-      <img src="./images/profile.jpg" alt="My profile photo" />
-      <p>Write a short paragraph about yourself here.</p>
-    </section>
+        <div class="hero-media">
+          <img
+            src="Resources/Wix/HOME _ Yujia Max Liu_files/6275d4_dedc3d0f1b80454eb3e0818931d1a4f1~mv2.jpg"
+            alt="Featured artwork by Yujia Max Liu"
+          />
+        </div>
+      </section>
 
-    <!-- ============ PROJECTS SECTION ============ -->
-    <section id="projects">
-      <h2>My Projects</h2>
+      <section class="about" id="about">
+        <h2>About</h2>
+        <p>
+          I am Yujia Max Liu, a visual creator focused on stylized and cinematic
+          3D production. My work spans environment art, lighting, shaders, and
+          production scripting for real-time pipelines.
+        </p>
+      </section>
 
-      <!-- One card per project -->
-      <div class="project-card">
-        <h3>Project Name</h3>
-        <p>Short description of what this project does.</p>
-        <a href="https://github.com/yourusername" target="_blank">View on GitHub</a>
+      <section class="works" id="works">
+        <h2>Selected Works</h2>
+        <div class="gallery">
+          <article class="card">
+            <img
+              src="Resources/Wix/HOME _ Yujia Max Liu_files/6275d4_0acb6eb0a34d41fc8f08f3c4eae91ecbf000.jpg"
+              alt="Cinematic environment scene"
+            />
+            <h3>Cinematic Environment</h3>
+          </article>
+          <article class="card">
+            <img
+              src="Resources/Wix/HOME _ Yujia Max Liu_files/6275d4_a7082ee4aa4f4a4790658c0bfb7d6c0af000.jpg"
+              alt="Character and look development"
+            />
+            <h3>Character Look Development</h3>
+          </article>
+          <article class="card">
+            <img
+              src="Resources/Wix/HOME _ Yujia Max Liu_files/6275d4_79561fe54d1d4c429bf66be91875a65af000.jpg"
+              alt="Lighting and composition study"
+            />
+            <h3>Lighting Studies</h3>
+          </article>
+          <article class="card">
+            <img
+              src="Resources/Wix/HOME _ Yujia Max Liu_files/6275d4_3a7cfeefce354f47a3798ec24745223e~mv2.jpg"
+              alt="Material and shader test"
+            />
+            <h3>Shader & Material Tests</h3>
+          </article>
+        </div>
+      </section>
+
+      <section class="video" id="video">
+        <h2>Showreel</h2>
+        <div class="video-grid">
+          <iframe
+            src="https://www.youtube.com/embed/iWwiLjxCKfI"
+            title="Yujia Max Liu showreel"
+            loading="lazy"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen
+          ></iframe>
+          <iframe
+            src="https://www.youtube.com/embed/Go_2zuEATvg"
+            title="Yujia Max Liu featured breakdown"
+            loading="lazy"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen
+          ></iframe>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer" id="contact">
+      <h2>Connect</h2>
+      <p>Let’s collaborate on visual development, technical art, and interactive storytelling.</p>
+      <div class="social-links" aria-label="Social media links">
+        <a href="https://www.linkedin.com/in/maxlyj/" target="_blank" rel="noreferrer noopener" aria-label="LinkedIn">
+          <svg viewBox="0 0 24 24" role="img" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4zM8 8h3.8v2.05h.05c.53-1 1.84-2.05 3.79-2.05C19.9 8 24 10.47 24 16.04V23h-4v-6.14c0-2.93-1.05-4.93-3.68-4.93-2 0-3.18 1.35-3.7 2.65-.2.46-.24 1.1-.24 1.74V23h-4z"/></svg>
+        </a>
+        <a href="https://twitter.com/MaXLYJ" target="_blank" rel="noreferrer noopener" aria-label="X / Twitter">
+          <svg viewBox="0 0 24 24" role="img" aria-hidden="true"><path d="M18.9 2H22l-6.77 7.74L23.2 22h-6.26l-4.9-6.67L6.2 22H3.1l7.25-8.3L.8 2h6.42l4.43 6.08zm-1.1 18h1.73L6.35 3.9H4.5z"/></svg>
+        </a>
+        <a href="https://www.facebook.com/profile.php?id=100037110704452" target="_blank" rel="noreferrer noopener" aria-label="Facebook">
+          <svg viewBox="0 0 24 24" role="img" aria-hidden="true"><path d="M13.5 22v-8h2.7l.4-3H13.5V9.1c0-.86.28-1.44 1.52-1.44h1.65V5.02c-.29-.04-1.27-.12-2.42-.12-2.4 0-4.05 1.47-4.05 4.17V11H8v3h2.25v8z"/></svg>
+        </a>
+        <a href="https://www.youtube.com/channel/UCsTJWUWtjZ3G5McRhqMrmkw" target="_blank" rel="noreferrer noopener" aria-label="YouTube channel">
+          <svg viewBox="0 0 24 24" role="img" aria-hidden="true"><path d="M23.5 7.2a3 3 0 0 0-2.1-2.13C19.5 4.5 12 4.5 12 4.5s-7.5 0-9.4.57A3 3 0 0 0 .5 7.2 31.4 31.4 0 0 0 0 12a31.4 31.4 0 0 0 .5 4.8 3 3 0 0 0 2.1 2.13c1.9.57 9.4.57 9.4.57s7.5 0 9.4-.57a3 3 0 0 0 2.1-2.13A31.4 31.4 0 0 0 24 12a31.4 31.4 0 0 0-.5-4.8zM9.6 15.2V8.8l6.2 3.2z"/></svg>
+        </a>
       </div>
-
-    </section>
-
-    <!-- ============ VIDEO SECTION ============ -->
-    <section id="video">
-      <h2>Featured Video</h2>
-      <iframe
-        width="560"
-        height="315"
-        src="https://www.youtube.com/embed/YOUR_VIDEO_ID"
-        title="YouTube video player"
-        frameborder="0"
-        allowfullscreen>
-      </iframe>
-    </section>
-
-    <!-- ============ CONTACT SECTION ============ -->
-    <section id="contact">
-      <h2>Contact Me</h2>
-      <p>Email: <a href="mailto:you@email.com">you@email.com</a></p>
-      <p>GitHub: <a href="https://github.com/yourusername" target="_blank">github.com/yourusername</a></p>
-    </section>
-
-    <!-- ============ FOOTER ============ -->
-    <footer>
-      <p>© 2025 John. All rights reserved.</p>
+      <p class="copyright">© <span id="year"></span> Yujia Max Liu. All rights reserved.</p>
     </footer>
 
-    <!-- Link to your JavaScript file (we create this later) -->
     <script src="script.js"></script>
-
   </body>
-
 </html>
