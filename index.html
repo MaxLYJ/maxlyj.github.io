@@ -15,9 +15,10 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="style.css" />
+    <!-- Retry deployment after transient GitHub Pages 502 annotation -->
   </head>
   <body>
-    <header class="site-header" id="top">
+    <header class="top-bar" id="top">
       <a class="brand" href="#top">
         <img
           src="Resources/Wix/HOME _ Yujia Max Liu_files/Liu_WP_Logo_4x.png"
@@ -26,13 +27,57 @@
         <span>Yujia Max Liu</span>
       </a>
 
-      <nav class="main-nav" aria-label="Primary">
-        <a href="#about">About</a>
-        <a href="#works">Works</a>
-        <a href="#video">Video</a>
-        <a href="#contact">Contact</a>
-      </nav>
+      <button
+        class="menu-toggle"
+        type="button"
+        aria-label="Open navigation menu"
+        aria-controls="sidebarNav"
+        aria-expanded="false"
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
     </header>
+
+    <div class="sidebar-overlay" data-close-sidebar></div>
+
+    <nav class="sidebar" id="sidebarNav" aria-label="Primary">
+      <a href="#about">
+        <span class="nav-icon" aria-hidden="true">A</span>
+        <span class="nav-label">About</span>
+      </a>
+      <a href="#works">
+        <span class="nav-icon" aria-hidden="true">W</span>
+        <span class="nav-label">Works</span>
+      </a>
+      <a href="#video">
+        <span class="nav-icon" aria-hidden="true">V</span>
+        <span class="nav-label">Video</span>
+      </a>
+      <a href="#contact">
+        <span class="nav-icon" aria-hidden="true">C</span>
+        <span class="nav-label">Contact</span>
+      </a>
+
+      <div class="sidebar-share" aria-label="Share links">
+        <span class="share-icon" aria-hidden="true">↗</span>
+        <div class="share-links">
+          <a href="https://www.linkedin.com/in/maxlyj/" target="_blank" rel="noreferrer noopener" aria-label="LinkedIn">
+            <svg viewBox="0 0 24 24" role="img" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4zM8 8h3.8v2.05h.05c.53-1 1.84-2.05 3.79-2.05C19.9 8 24 10.47 24 16.04V23h-4v-6.14c0-2.93-1.05-4.93-3.68-4.93-2 0-3.18 1.35-3.7 2.65-.2.46-.24 1.1-.24 1.74V23h-4z"/></svg>
+          </a>
+          <a href="https://twitter.com/MaXLYJ" target="_blank" rel="noreferrer noopener" aria-label="X / Twitter">
+            <svg viewBox="0 0 24 24" role="img" aria-hidden="true"><path d="M18.9 2H22l-6.77 7.74L23.2 22h-6.26l-4.9-6.67L6.2 22H3.1l7.25-8.3L.8 2h6.42l4.43 6.08zm-1.1 18h1.73L6.35 3.9H4.5z"/></svg>
+          </a>
+          <a href="https://www.facebook.com/profile.php?id=100037110704452" target="_blank" rel="noreferrer noopener" aria-label="Facebook">
+            <svg viewBox="0 0 24 24" role="img" aria-hidden="true"><path d="M13.5 22v-8h2.7l.4-3H13.5V9.1c0-.86.28-1.44 1.52-1.44h1.65V5.02c-.29-.04-1.27-.12-2.42-.12-2.4 0-4.05 1.47-4.05 4.17V11H8v3h2.25v8z"/></svg>
+          </a>
+          <a href="https://www.youtube.com/channel/UCsTJWUWtjZ3G5McRhqMrmkw" target="_blank" rel="noreferrer noopener" aria-label="YouTube channel">
+            <svg viewBox="0 0 24 24" role="img" aria-hidden="true"><path d="M23.5 7.2a3 3 0 0 0-2.1-2.13C19.5 4.5 12 4.5 12 4.5s-7.5 0-9.4.57A3 3 0 0 0 .5 7.2 31.4 31.4 0 0 0 0 12a31.4 31.4 0 0 0 .5 4.8 3 3 0 0 0 2.1 2.13c1.9.57 9.4.57 9.4.57s7.5 0 9.4-.57a3 3 0 0 0 2.1-2.13A31.4 31.4 0 0 0 24 12a31.4 31.4 0 0 0-.5-4.8zM9.6 15.2V8.8l6.2 3.2z"/></svg>
+          </a>
+        </div>
+      </div>
+    </nav>
 
     <main>
       <section class="hero">
@@ -123,22 +168,47 @@
 
     <footer class="site-footer" id="contact">
       <h2>Connect</h2>
-      <p>Let’s collaborate on visual development, technical art, and interactive storytelling.</p>
+      <p>
+        Let’s collaborate on visual development, technical art, and interactive
+        storytelling.
+      </p>
       <div class="social-links" aria-label="Social media links">
-        <a href="https://www.linkedin.com/in/maxlyj/" target="_blank" rel="noreferrer noopener" aria-label="LinkedIn">
+        <a
+          href="https://www.linkedin.com/in/maxlyj/"
+          target="_blank"
+          rel="noreferrer noopener"
+          aria-label="LinkedIn"
+        >
           <svg viewBox="0 0 24 24" role="img" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4zM8 8h3.8v2.05h.05c.53-1 1.84-2.05 3.79-2.05C19.9 8 24 10.47 24 16.04V23h-4v-6.14c0-2.93-1.05-4.93-3.68-4.93-2 0-3.18 1.35-3.7 2.65-.2.46-.24 1.1-.24 1.74V23h-4z"/></svg>
         </a>
-        <a href="https://twitter.com/MaXLYJ" target="_blank" rel="noreferrer noopener" aria-label="X / Twitter">
+        <a
+          href="https://twitter.com/MaXLYJ"
+          target="_blank"
+          rel="noreferrer noopener"
+          aria-label="X / Twitter"
+        >
           <svg viewBox="0 0 24 24" role="img" aria-hidden="true"><path d="M18.9 2H22l-6.77 7.74L23.2 22h-6.26l-4.9-6.67L6.2 22H3.1l7.25-8.3L.8 2h6.42l4.43 6.08zm-1.1 18h1.73L6.35 3.9H4.5z"/></svg>
         </a>
-        <a href="https://www.facebook.com/profile.php?id=100037110704452" target="_blank" rel="noreferrer noopener" aria-label="Facebook">
+        <a
+          href="https://www.facebook.com/profile.php?id=100037110704452"
+          target="_blank"
+          rel="noreferrer noopener"
+          aria-label="Facebook"
+        >
           <svg viewBox="0 0 24 24" role="img" aria-hidden="true"><path d="M13.5 22v-8h2.7l.4-3H13.5V9.1c0-.86.28-1.44 1.52-1.44h1.65V5.02c-.29-.04-1.27-.12-2.42-.12-2.4 0-4.05 1.47-4.05 4.17V11H8v3h2.25v8z"/></svg>
         </a>
-        <a href="https://www.youtube.com/channel/UCsTJWUWtjZ3G5McRhqMrmkw" target="_blank" rel="noreferrer noopener" aria-label="YouTube channel">
+        <a
+          href="https://www.youtube.com/channel/UCsTJWUWtjZ3G5McRhqMrmkw"
+          target="_blank"
+          rel="noreferrer noopener"
+          aria-label="YouTube channel"
+        >
           <svg viewBox="0 0 24 24" role="img" aria-hidden="true"><path d="M23.5 7.2a3 3 0 0 0-2.1-2.13C19.5 4.5 12 4.5 12 4.5s-7.5 0-9.4.57A3 3 0 0 0 .5 7.2 31.4 31.4 0 0 0 0 12a31.4 31.4 0 0 0 .5 4.8 3 3 0 0 0 2.1 2.13c1.9.57 9.4.57 9.4.57s7.5 0 9.4-.57a3 3 0 0 0 2.1-2.13A31.4 31.4 0 0 0 24 12a31.4 31.4 0 0 0-.5-4.8zM9.6 15.2V8.8l6.2 3.2z"/></svg>
         </a>
       </div>
-      <p class="copyright">© <span id="year"></span> Yujia Max Liu. All rights reserved.</p>
+      <p class="copyright">
+        © <span id="year"></span> Yujia Max Liu. All rights reserved.
+      </p>
     </footer>
 
     <script src="script.js"></script>
