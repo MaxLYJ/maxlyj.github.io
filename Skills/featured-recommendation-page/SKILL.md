@@ -1,16 +1,17 @@
 ---
 name: featured-recommendation-page
-description: Create or update Featured & Recommendation pages for this portfolio repo using the required folder structure, file naming convention, metadata schema, and validation-friendly authoring rules.
+description: Create or update Recommendation pages for this portfolio repo using the required folder structure, file naming convention, metadata schema, and validation-friendly authoring rules.
 ---
 
-# Featured & Recommendation Page Authoring
+# Recommendation Page Authoring
 
-Use this skill when a request asks to add, update, or validate Featured & Recommendation page content in this repository.
+Use this skill when a request asks to add, update, or validate Recommendation page content in this repository.
 
 ## Scope
 - Content root: `Resources/Featured Recommendations/pages/`
 - Template source: `Resources/Featured Recommendations/pages/fr-template-page/`
 - Conventions reference: `FEATURED_RECOMMENDATIONS_PLAN.md`
+- UI naming: use one JS variable for section naming (`Recommendation`) and apply it everywhere in UI labels/aria where this section appears.
 
 ## Required folder naming
 Create one folder per page using:
@@ -59,3 +60,23 @@ For each page folder, verify:
 If authoring intentionally includes malformed names for testing warning UI:
 - Keep images present so fallback rendering can still display content.
 - Document expected warning text for each malformed file in PR notes.
+
+
+## Interaction expectations for this repo
+When implementing or updating the homepage Recommendation section:
+- Keep left/right navigation controls stretched vertically to the full section height on desktop layouts.
+- Mobile layout must place left/right buttons on the same row above the page indicator.
+- Include a bottom page indicator made of dots; highlight the active page dot.
+- Sidebar must keep `Recommendation` as the top navigation item for this section anchor.
+- Main image frame and all 4 thumbnail frames must be fixed to 16:9.
+- Images must fill frames with cover behavior (no stretching).
+- Thumbnail hover/focus should preview in the main image.
+- Thumbnail click should navigate to the current page target URL.
+- Arrow button clicks must not trigger content link navigation.
+
+
+## Image loading priority rule
+When more than one matching format exists for a role (`main` or `thumb_01..04`), load in this order:
+1. `png`
+2. `jpg`
+3. `svg`

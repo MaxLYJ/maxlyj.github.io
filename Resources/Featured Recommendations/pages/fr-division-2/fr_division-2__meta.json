@@ -1,0 +1,12 @@
+{
+  "title": "Division 2",
+  "description": "Tom Clancy's The Division 2 featured recommendation set.",
+  "targetUrl": "division-2.html",
+  "altMain": "Division 2 main featured image",
+  "altThumbs": [
+    "Division 2 thumbnail 1",
+    "Division 2 thumbnail 2",
+    "Division 2 thumbnail 3",
+    "Division 2 thumbnail 4"
+  ]
+}

@@ -1,7 +1,7 @@
-# Featured & Recommendation Section Implementation Plan
+# Recommendation Section Implementation Plan
 
 ## Goal
-Add a new **Featured & Recommendation** section near the top of the homepage that:
+Add a new **Recommendation** section near the top of the homepage that:
 - supports multiple pages with the same layout,
 - can be navigated using left/right side buttons,
 - swaps the large preview image when users hover small thumbnails,
@@ -18,6 +18,7 @@ This plan follows the visual references in:
 - Add a dedicated anchor id, e.g. `id="featured-recommendations"`, for future sidebar navigation.
 
 ### Data model (driven by folder + filename conventions)
+- Section display name must be sourced from a single JS variable (e.g. `RECOMMENDATION_SECTION_NAME`) and reused for sidebar label, section aria-label, and indicator aria-label.
 Use a JavaScript loader that builds section pages from the file system naming pattern (or from a pre-generated manifest that follows the same pattern):
 - `pageSlug` (derived from folder name)
 - `title`
@@ -26,6 +27,7 @@ Use a JavaScript loader that builds section pages from the file system naming pa
 - `images` (resolved from strict naming rules below)
   - one `main` image
   - four `thumb` images in fixed order `01` → `04`
+- If multiple files match a role, load by extension priority: `png` → `jpg` → `svg`.
 
 This makes layout reusable while keeping authoring consistent.
 
@@ -79,11 +81,14 @@ If metadata file is missing, use fallback title/description from slug.
 
 ### Container structure
 - Outer clickable container (`<a>` wrapping the content) to satisfy "click anywhere goes to another page".
-- Left and right nav buttons fixed at side edges of the section.
+- Left and right nav buttons fixed at side edges of the section and stretched from top to bottom of the card area.
 - Content area split into two columns:
   - **Left:** one large image preview.
   - **Right:** 2x2 grid of four small images.
 - Description block under the four small images.
+- Page indicator row at the bottom using dots; active page dot is highlighted.
+- Main image frame and all 4 thumbnail frames use a fixed 16:9 ratio.
+- Images must fill the frame using cover behavior (no stretching).
 
 ### Visual parity with references
 - Match spacing, border radius, and card treatment with existing site style.
@@ -91,6 +96,8 @@ If metadata file is missing, use fallback title/description from slug.
 - Keep section responsive:
   - Desktop: two-column layout (big image + four thumbnails)
   - Mobile/tablet: stack columns, keep arrows accessible, preserve interactions.
+  - Mobile rule: left/right buttons are on the same row, above the page indicator.
+  - Sidebar rule: `Recommendation` link appears at the top of the sidebar navigation list.
 
 ## 4) Interaction Behavior
 
@@ -112,6 +119,7 @@ If metadata file is missing, use fallback title/description from slug.
 - Clicking anywhere in the main section content opens current page `targetUrl`.
 - Navigation arrows should not trigger link navigation:
   - use `event.stopPropagation()` / `preventDefault()` as needed.
+- Clicking a thumbnail should both preview and navigate to the current page `targetUrl`.
 
 ### D. Accessibility requirements
 - Buttons must be keyboard focusable and have aria labels.
@@ -152,7 +160,7 @@ For each page folder:
 ## 6) Files to Modify
 
 ### `index.html`
-- Add Featured & Recommendation section markup.
+- Add Recommendation section markup.
 - Add warning banner/message container.
 - Add references to content pages.
 
@@ -196,11 +204,17 @@ For each page folder:
 
 ## 8) QA Checklist
 - [ ] Section appears near top of homepage.
-- [ ] Left/right buttons switch pages correctly.
+- [ ] Left/right buttons switch pages correctly and visually span the section height.
 - [ ] Layout is exactly 1 large image left + 4 small images right + description below.
+- [ ] Main image + all thumbnails render in 16:9 frames with no stretching.
 - [ ] Hovering any small image updates large image.
+- [ ] Clicking a thumbnail opens linked content page.
 - [ ] Clicking section opens linked content page.
 - [ ] Arrow clicks do not accidentally open content link.
+- [ ] Dot indicator count matches page count and active dot updates per page.
+- [ ] Mobile shows left/right buttons on one row above the page indicator.
+- [ ] Sidebar top item links to `#featured-recommendations`.
+- [ ] If multiple image formats exist for one role, loader chooses `png`, then `jpg`, then `svg`.
 - [ ] `template-content.html` follows existing site format.
 - [ ] Works on desktop and mobile sizes.
 - [ ] Keyboard navigation/focus states are functional.
