@@ -1,0 +1,12 @@
+{
+  "title": "Template Featured Page",
+  "description": "Replace this text with a page summary shown under the four thumbnails.",
+  "targetUrl": "template-content.html",
+  "altMain": "Template main featured image",
+  "altThumbs": [
+    "Template thumbnail 1",
+    "Template thumbnail 2",
+    "Template thumbnail 3",
+    "Template thumbnail 4"
+  ]
+}
