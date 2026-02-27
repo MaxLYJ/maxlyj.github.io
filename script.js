@@ -1,6 +1,23 @@
+const RECOMMENDATION_SECTION_NAME = "Recommendation";
+const RECOMMENDATION_IMAGE_EXTENSION_PRIORITY = ["png", "jpg", "svg"];
+
 const yearElement = document.getElementById("year");
 if (yearElement) {
   yearElement.textContent = new Date().getFullYear();
+}
+
+document.querySelectorAll("[data-recommendation-label]").forEach((node) => {
+  node.textContent = RECOMMENDATION_SECTION_NAME;
+});
+
+const recommendationSectionElement = document.querySelector("[data-recommendation-section]");
+if (recommendationSectionElement) {
+  recommendationSectionElement.setAttribute("aria-label", RECOMMENDATION_SECTION_NAME);
+}
+
+const recommendationIndicatorElement = document.querySelector("[data-recommendation-indicator]");
+if (recommendationIndicatorElement) {
+  recommendationIndicatorElement.setAttribute("aria-label", `${RECOMMENDATION_SECTION_NAME} pages`);
 }
 
 const menuToggle = document.querySelector(".menu-toggle");
@@ -69,27 +86,27 @@ const featuredPages = [
     folder: "fr-division-2",
     slug: "division-2",
     title: "Division 2",
-    description: "Tom Clancy's The Division 2 featured recommendation set.",
+    description: "Tom Clancy's The Division 2 recommendation set.",
     targetUrl: "division-2.html",
-    altMain: "Division 2 main featured image",
+    altMain: "Division 2 main recommendation image",
     altThumbs: ["Division 2 thumbnail 1", "Division 2 thumbnail 2", "Division 2 thumbnail 3", "Division 2 thumbnail 4"]
   },
   {
     folder: "fr-farcry-6",
     slug: "farcry-6",
     title: "Farcry 6",
-    description: "Featured moments and recommendation snapshots for Farcry 6.",
+    description: "Recommendation snapshots for Farcry 6.",
     targetUrl: "farcry-6.html",
-    altMain: "Farcry 6 main featured image",
+    altMain: "Farcry 6 main recommendation image",
     altThumbs: ["Farcry 6 thumbnail 1", "Farcry 6 thumbnail 2", "Farcry 6 thumbnail 3", "Farcry 6 thumbnail 4"]
   },
   {
     folder: "fr-d-walker-vs-sahelanthropus",
     slug: "d-walker-vs-sahelanthropus",
     title: "D-Walker VS Sahelanthropus",
-    description: "A tactical encounter highlight: D-Walker VS Sahelanthropus.",
+    description: "A tactical encounter recommendation: D-Walker VS Sahelanthropus.",
     targetUrl: "d-walker-vs-sahelanthropus.html",
-    altMain: "D-Walker VS Sahelanthropus main featured image",
+    altMain: "D-Walker VS Sahelanthropus main recommendation image",
     altThumbs: [
       "D-Walker VS Sahelanthropus thumbnail 1",
       "D-Walker VS Sahelanthropus thumbnail 2",
@@ -101,9 +118,9 @@ const featuredPages = [
     folder: "fr-raiden-vs-gekko",
     slug: "raiden-vs-gekko",
     title: "Raiden VS Gekko",
-    description: "Metal Gear Rising sequence recommendation: Raiden VS Gekko.",
+    description: "Metal Gear Rising recommendation: Raiden VS Gekko.",
     targetUrl: "raiden-vs-gekko.html",
-    altMain: "Raiden VS Gekko main featured image",
+    altMain: "Raiden VS Gekko main recommendation image",
     altThumbs: ["Raiden VS Gekko thumbnail 1", "Raiden VS Gekko thumbnail 2", "Raiden VS Gekko thumbnail 3", "Raiden VS Gekko thumbnail 4"]
   }
 ];
@@ -122,10 +139,42 @@ if (frSection) {
   const nextBtn = frSection.querySelector(".fr-nav-next");
 
   const basePath = "Resources/Featured Recommendations/pages";
+  const pathCache = new Map();
   let currentPageIndex = 0;
+  let renderToken = 0;
 
-  function buildImagePath(page, role) {
-    return `${basePath}/${page.folder}/fr_${page.slug}__${role}.svg`;
+  function buildImagePath(page, role, extension) {
+    return `${basePath}/${page.folder}/fr_${page.slug}__${role}.${extension}`;
+  }
+
+  function canLoadImage(src) {
+    return new Promise((resolve) => {
+      const image = new Image();
+      image.onload = () => resolve(true);
+      image.onerror = () => resolve(false);
+      image.src = src;
+    });
+  }
+
+  async function resolveImagePath(page, role) {
+    const key = `${page.slug}:${role}`;
+    if (pathCache.has(key)) {
+      return pathCache.get(key);
+    }
+
+    for (const extension of RECOMMENDATION_IMAGE_EXTENSION_PRIORITY) {
+      const candidatePath = buildImagePath(page, role, extension);
+      // eslint-disable-next-line no-await-in-loop
+      const isValid = await canLoadImage(candidatePath);
+      if (isValid) {
+        pathCache.set(key, candidatePath);
+        return candidatePath;
+      }
+    }
+
+    const fallbackPath = buildImagePath(page, role, "svg");
+    pathCache.set(key, fallbackPath);
+    return fallbackPath;
   }
 
   function validatePage(page) {
@@ -156,7 +205,7 @@ if (frSection) {
     frSection.classList.add("has-warning");
     frWarning.hidden = false;
     frWarningList.innerHTML = issues.map((issue) => `<li>${issue}</li>`).join("");
-    console.warn("Featured Recommendation naming issues", {
+    console.warn(`${RECOMMENDATION_SECTION_NAME} naming issues`, {
       pageSlug: page.slug,
       issues
     });
@@ -183,9 +232,16 @@ if (frSection) {
     });
   }
 
-  function renderPage() {
+  async function renderPage() {
+    renderToken += 1;
+    const currentToken = renderToken;
     const page = featuredPages[currentPageIndex];
-    const mainImage = buildImagePath(page, "main");
+
+    const mainImage = await resolveImagePath(page, "main");
+    if (currentToken !== renderToken) {
+      return;
+    }
+
     frCardLink.href = page.targetUrl;
     frTitle.textContent = page.title;
     frDescription.textContent = page.description;
@@ -195,7 +251,12 @@ if (frSection) {
     frThumbs.innerHTML = "";
     for (let i = 1; i <= 4; i += 1) {
       const index = String(i).padStart(2, "0");
-      const thumbPath = buildImagePath(page, `thumb_${index}`);
+      // eslint-disable-next-line no-await-in-loop
+      const thumbPath = await resolveImagePath(page, `thumb_${index}`);
+      if (currentToken !== renderToken) {
+        return;
+      }
+
       const thumbButton = document.createElement("button");
       thumbButton.className = "fr-thumb";
       thumbButton.type = "button";

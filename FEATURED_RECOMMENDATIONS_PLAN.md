@@ -1,7 +1,7 @@
-# Featured & Recommendation Section Implementation Plan
+# Recommendation Section Implementation Plan
 
 ## Goal
-Add a new **Featured & Recommendation** section near the top of the homepage that:
+Add a new **Recommendation** section near the top of the homepage that:
 - supports multiple pages with the same layout,
 - can be navigated using left/right side buttons,
 - swaps the large preview image when users hover small thumbnails,
@@ -18,6 +18,7 @@ This plan follows the visual references in:
 - Add a dedicated anchor id, e.g. `id="featured-recommendations"`, for future sidebar navigation.
 
 ### Data model (driven by folder + filename conventions)
+- Section display name must be sourced from a single JS variable (e.g. `RECOMMENDATION_SECTION_NAME`) and reused for sidebar label, section aria-label, and indicator aria-label.
 Use a JavaScript loader that builds section pages from the file system naming pattern (or from a pre-generated manifest that follows the same pattern):
 - `pageSlug` (derived from folder name)
 - `title`
@@ -26,6 +27,7 @@ Use a JavaScript loader that builds section pages from the file system naming pa
 - `images` (resolved from strict naming rules below)
   - one `main` image
   - four `thumb` images in fixed order `01` → `04`
+- If multiple files match a role, load by extension priority: `png` → `jpg` → `svg`.
 
 This makes layout reusable while keeping authoring consistent.
 
@@ -92,6 +94,8 @@ If metadata file is missing, use fallback title/description from slug.
 - Keep section responsive:
   - Desktop: two-column layout (big image + four thumbnails)
   - Mobile/tablet: stack columns, keep arrows accessible, preserve interactions.
+  - Mobile rule: left/right buttons are on the same row, above the page indicator.
+  - Sidebar rule: `Recommendation` link appears at the top of the sidebar navigation list.
 
 ## 4) Interaction Behavior
 
@@ -154,7 +158,7 @@ For each page folder:
 ## 6) Files to Modify
 
 ### `index.html`
-- Add Featured & Recommendation section markup.
+- Add Recommendation section markup.
 - Add warning banner/message container.
 - Add references to content pages.
 
@@ -205,6 +209,9 @@ For each page folder:
 - [ ] Clicking section opens linked content page.
 - [ ] Arrow clicks do not accidentally open content link.
 - [ ] Dot indicator count matches page count and active dot updates per page.
+- [ ] Mobile shows left/right buttons on one row above the page indicator.
+- [ ] Sidebar top item links to `#featured-recommendations`.
+- [ ] If multiple image formats exist for one role, loader chooses `png`, then `jpg`, then `svg`.
 - [ ] `template-content.html` follows existing site format.
 - [ ] Works on desktop and mobile sizes.
 - [ ] Keyboard navigation/focus states are functional.
