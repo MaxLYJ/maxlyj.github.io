@@ -140,6 +140,8 @@ if (frSection) {
 
   const basePath = "Resources/Featured Recommendations/pages";
   const pathCache = new Map();
+  const validationCache = new Map();
+  const preloadCache = new Set();
   let currentPageIndex = 0;
   let renderToken = 0;
 
@@ -148,12 +150,48 @@ if (frSection) {
   }
 
   function canLoadImage(src) {
-    return new Promise((resolve) => {
+    if (validationCache.has(src)) {
+      return validationCache.get(src);
+    }
+
+    const validationPromise = new Promise((resolve) => {
       const image = new Image();
       image.onload = () => resolve(true);
       image.onerror = () => resolve(false);
       image.src = src;
     });
+
+    validationCache.set(src, validationPromise);
+    return validationPromise;
+  }
+
+  function preloadImage(src) {
+    const image = new Image();
+    image.decoding = "async";
+    image.src = src;
+  }
+
+  function getPageRoles() {
+    return ["main", "thumb_01", "thumb_02", "thumb_03", "thumb_04"];
+  }
+
+  async function preloadPageAssets(page) {
+    if (preloadCache.has(page.slug)) {
+      return;
+    }
+
+    preloadCache.add(page.slug);
+    const roles = getPageRoles();
+    const resolvedPaths = await Promise.all(roles.map((role) => resolveImagePath(page, role)));
+    resolvedPaths.forEach(preloadImage);
+  }
+
+  function warmNeighborPages() {
+    const prevPage = featuredPages[(currentPageIndex - 1 + featuredPages.length) % featuredPages.length];
+    const nextPage = featuredPages[(currentPageIndex + 1) % featuredPages.length];
+
+    preloadPageAssets(prevPage);
+    preloadPageAssets(nextPage);
   }
 
   async function resolveImagePath(page, role) {
@@ -237,7 +275,12 @@ if (frSection) {
     const currentToken = renderToken;
     const page = featuredPages[currentPageIndex];
 
-    const mainImage = await resolveImagePath(page, "main");
+    const thumbRoles = ["thumb_01", "thumb_02", "thumb_03", "thumb_04"];
+    const [mainImage, thumbPaths] = await Promise.all([
+      resolveImagePath(page, "main"),
+      Promise.all(thumbRoles.map((role) => resolveImagePath(page, role)))
+    ]);
+
     if (currentToken !== renderToken) {
       return;
     }
@@ -247,15 +290,11 @@ if (frSection) {
     frDescription.textContent = page.description;
     frMainImage.src = mainImage;
     frMainImage.alt = page.altMain;
+    preloadImage(mainImage);
 
     frThumbs.innerHTML = "";
-    for (let i = 1; i <= 4; i += 1) {
-      const index = String(i).padStart(2, "0");
-      // eslint-disable-next-line no-await-in-loop
-      const thumbPath = await resolveImagePath(page, `thumb_${index}`);
-      if (currentToken !== renderToken) {
-        return;
-      }
+    thumbPaths.forEach((thumbPath, thumbIndex) => {
+      const i = thumbIndex + 1;
 
       const thumbButton = document.createElement("button");
       thumbButton.className = "fr-thumb";
@@ -298,10 +337,12 @@ if (frSection) {
       });
 
       frThumbs.appendChild(thumbButton);
-    }
+      preloadImage(thumbPath);
+    });
 
     applyWarning(validatePage(page), page);
     renderIndicator();
+    warmNeighborPages();
   }
 
   function movePage(direction) {
