@@ -780,6 +780,9 @@ h2 {
 
 .project-overview-info,
 .project-overview-gallery {
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
   border: 1px solid var(--line);
   border-radius: 12px;
   padding: 0.9rem;
@@ -925,7 +928,16 @@ h2 {
 }
 
 @media (max-width: 980px) {
+  .project-template-main {
+    width: 100%;
+  }
+
+  .project-panel {
+    padding: 1rem;
+  }
+
   .project-overview-layout {
+    width: 100%;
     grid-template-columns: 1fr;
   }
 
@@ -936,6 +948,13 @@ h2 {
   .project-overview-gallery {
     order: 2;
     margin-top: 0.35rem;
+  }
+
+  .project-cover,
+  .project-gallery-main-frame,
+  .project-gallery-main {
+    width: 100%;
+    max-width: 100%;
   }
 
   .project-meta-grid-2col {
