@@ -43,25 +43,21 @@
     <div class="sidebar-overlay" data-close-sidebar></div>
 
     <nav class="sidebar" id="sidebarNav" aria-label="Primary">
-      <a href="#featured-recommendations">
-        <span class="nav-icon" aria-hidden="true">R</span>
-        <span class="nav-label" data-recommendation-label>Recommendation</span>
+      <a href="#tags">
+        <span class="nav-icon" aria-hidden="true">T</span>
+        <span class="nav-label">Tags</span>
       </a>
       <a href="#about">
         <span class="nav-icon" aria-hidden="true">A</span>
         <span class="nav-label">About</span>
       </a>
+      <a href="#featured-recommendations">
+        <span class="nav-icon" aria-hidden="true">R</span>
+        <span class="nav-label" data-recommendation-label>Recommendation</span>
+      </a>
       <a href="#works">
         <span class="nav-icon" aria-hidden="true">W</span>
         <span class="nav-label">Works</span>
-      </a>
-      <a href="#video">
-        <span class="nav-icon" aria-hidden="true">V</span>
-        <span class="nav-label">Video</span>
-      </a>
-      <a href="#contact">
-        <span class="nav-icon" aria-hidden="true">C</span>
-        <span class="nav-label">Contact</span>
       </a>
 
       <div class="sidebar-share" aria-label="Share links">
@@ -84,26 +80,19 @@
     </nav>
 
     <main>
-      <section class="hero">
-        <div class="hero-copy">
-          <p class="eyebrow">3D Artist · Technical Artist · Developer</p>
-          <h1>Designing immersive visual stories with code and craft.</h1>
-          <p>
-            I create portfolio-ready worlds, cinematic look-dev, and technical
-            workflows that connect art direction with production efficiency.
-          </p>
-          <div class="hero-actions">
-            <a class="btn primary" href="#works">View Projects</a>
-            <a class="btn ghost" href="#video">Watch Reel</a>
-          </div>
-        </div>
+      <section class="tags-system" id="tags" aria-label="Tags filter">
+        <div class="tag-bar" id="tag-bar" role="toolbar" aria-label="Filter projects by tag"></div>
+        <p class="tag-summary" id="tag-summary" aria-live="polite"></p>
+      </section>
 
-        <div class="hero-media">
-          <img
-            src="Resources/Wix/HOME _ Yujia Max Liu_files/6275d4_dedc3d0f1b80454eb3e0818931d1a4f1~mv2.jpg"
-            alt="Featured artwork by Yujia Max Liu"
-          />
-        </div>
+      <section class="about" id="about">
+        <h2>About</h2>
+        <img src="images/YujiaMaxLiu_Web.jpg" alt="Yujia Max Liu portrait" />
+        <p>
+          I am Yujia Max Liu, a visual creator focused on stylized and cinematic
+          3D production. My work spans environment art, lighting, shaders, and
+          production scripting for real-time pipelines.
+        </p>
       </section>
 
       <section class="featured-recommendations" id="featured-recommendations" aria-label="Recommendation" data-recommendation-section>
@@ -128,78 +117,14 @@
         </div>
       </section>
 
-
-      <section class="about" id="about">
-        <h2>About</h2>
-        <img src="images/YujiaMaxLiu_Web.jpg" alt="Yujia Max Liu portrait" />
-        <p>
-          I am Yujia Max Liu, a visual creator focused on stylized and cinematic
-          3D production. My work spans environment art, lighting, shaders, and
-          production scripting for real-time pipelines.
-        </p>
-      </section>
-
       <section class="works" id="works">
         <h2>Selected Works</h2>
-        <div class="gallery">
-          <article class="card">
-            <img
-              src="Resources/Wix/HOME _ Yujia Max Liu_files/6275d4_0acb6eb0a34d41fc8f08f3c4eae91ecbf000.jpg"
-              alt="Cinematic environment scene"
-            />
-            <h3>Cinematic Environment</h3>
-          </article>
-          <article class="card">
-            <img
-              src="Resources/Wix/HOME _ Yujia Max Liu_files/6275d4_a7082ee4aa4f4a4790658c0bfb7d6c0af000.jpg"
-              alt="Character and look development"
-            />
-            <h3>Character Look Development</h3>
-          </article>
-          <article class="card">
-            <img
-              src="Resources/Wix/HOME _ Yujia Max Liu_files/6275d4_79561fe54d1d4c429bf66be91875a65af000.jpg"
-              alt="Lighting and composition study"
-            />
-            <h3>Lighting Studies</h3>
-          </article>
-          <article class="card">
-            <img
-              src="Resources/Wix/HOME _ Yujia Max Liu_files/6275d4_3a7cfeefce354f47a3798ec24745223e~mv2.jpg"
-              alt="Material and shader test"
-            />
-            <h3>Shader & Material Tests</h3>
-          </article>
-        </div>
-      </section>
-
-      <section class="video" id="video">
-        <h2>Showreel</h2>
-        <div class="video-grid">
-          <iframe
-            src="https://www.youtube.com/embed/iWwiLjxCKfI"
-            title="Yujia Max Liu showreel"
-            loading="lazy"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowfullscreen
-          ></iframe>
-          <iframe
-            src="https://www.youtube.com/embed/Go_2zuEATvg"
-            title="Yujia Max Liu featured breakdown"
-            loading="lazy"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowfullscreen
-          ></iframe>
-        </div>
+        <div class="gallery" id="works-gallery"></div>
+        <p class="works-empty" id="works-empty" hidden>No projects match these tags.</p>
       </section>
     </main>
 
-    <footer class="site-footer" id="contact">
-      <h2>Connect</h2>
-      <p>
-        Let’s collaborate on visual development, technical art, and interactive
-        storytelling.
-      </p>
+    <footer class="site-footer">
       <div class="social-links" aria-label="Social media links">
         <a
           href="https://www.linkedin.com/in/maxlyj/"
