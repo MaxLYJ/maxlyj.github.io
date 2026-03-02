@@ -432,11 +432,6 @@ h2 {
   box-shadow: 0 0 0 2px rgba(120, 168, 255, 0.2);
 }
 
-.tag-summary {
-  margin: 0.7rem 0 0;
-  color: var(--muted);
-  font-size: 0.92rem;
-}
 
 .gallery {
   margin-top: 1rem;
@@ -599,6 +594,24 @@ h2 {
 }
 
 @media (max-width: 760px) {
+  .tag-bar {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    padding-bottom: 0.2rem;
+  }
+
+  .tag-chip {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+
+  .fr-thumbs {
+    display: none;
+  }
+
   .featured-recommendations {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }

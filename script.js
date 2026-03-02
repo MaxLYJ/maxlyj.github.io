@@ -59,7 +59,6 @@ if (recommendationIndicatorElement) {
 }
 
 const tagBar = document.getElementById("tag-bar");
-const tagSummary = document.getElementById("tag-summary");
 const worksGallery = document.getElementById("works-gallery");
 const worksEmptyState = document.getElementById("works-empty");
 
@@ -107,7 +106,7 @@ function createWorkCard(project) {
 }
 
 function renderTagSystem() {
-  if (!tagBar || !worksGallery || !worksEmptyState || !tagSummary) {
+  if (!tagBar || !worksGallery || !worksEmptyState) {
     return;
   }
 
@@ -127,8 +126,6 @@ function renderTagSystem() {
   });
 
   worksEmptyState.hidden = filteredProjects.length > 0;
-  const activeTagLabel = TAG_DEFINITIONS.find((tag) => tag.id === activeTagId)?.label || "All";
-  tagSummary.textContent = `${activeTagLabel} · ${filteredProjects.length} project${filteredProjects.length === 1 ? "" : "s"}`;
 }
 
 renderTagSystem();
