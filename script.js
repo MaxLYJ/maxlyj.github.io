@@ -1,5 +1,43 @@
 const RECOMMENDATION_SECTION_NAME = "Recommendation";
 const RECOMMENDATION_IMAGE_EXTENSION_PRIORITY = ["png", "jpg", "svg"];
+const TAG_DEFINITIONS = [
+  { id: "all", label: "All" },
+  { id: "farcry6", label: "Farcry6" },
+  { id: "division2", label: "Division2" },
+  { id: "short-film", label: "Short film" },
+  { id: "tool", label: "Tool" }
+];
+
+const PROJECT_INDEX = [
+  {
+    title: "Farcry 6",
+    url: "farcry-6.html",
+    image: "Resources/Wix/HOME _ Yujia Max Liu_files/6275d4_0acb6eb0a34d41fc8f08f3c4eae91ecbf000.jpg",
+    alt: "Farcry 6 project key art",
+    tags: ["farcry6"]
+  },
+  {
+    title: "Division 2",
+    url: "division-2.html",
+    image: "Resources/Wix/HOME _ Yujia Max Liu_files/6275d4_a7082ee4aa4f4a4790658c0bfb7d6c0af000.jpg",
+    alt: "Division 2 project artwork",
+    tags: ["division2"]
+  },
+  {
+    title: "D-Walker VS Sahelanthropus",
+    url: "d-walker-vs-sahelanthropus.html",
+    image: "Resources/Wix/HOME _ Yujia Max Liu_files/6275d4_79561fe54d1d4c429bf66be91875a65af000.jpg",
+    alt: "D-Walker VS Sahelanthropus scene",
+    tags: ["short-film"]
+  },
+  {
+    title: "Shader & Material Tooling",
+    url: "d-walker-vs-sahelanthropus.html",
+    image: "Resources/Wix/HOME _ Yujia Max Liu_files/6275d4_3a7cfeefce354f47a3798ec24745223e~mv2.jpg",
+    alt: "Tooling and shader experiments",
+    tags: ["tool"]
+  }
+];
 
 const yearElement = document.getElementById("year");
 if (yearElement) {
@@ -19,6 +57,81 @@ const recommendationIndicatorElement = document.querySelector("[data-recommendat
 if (recommendationIndicatorElement) {
   recommendationIndicatorElement.setAttribute("aria-label", `${RECOMMENDATION_SECTION_NAME} pages`);
 }
+
+const tagBar = document.getElementById("tag-bar");
+const tagSummary = document.getElementById("tag-summary");
+const worksGallery = document.getElementById("works-gallery");
+const worksEmptyState = document.getElementById("works-empty");
+
+let activeTagId = "all";
+
+function createTagChip(tag) {
+  const chip = document.createElement("button");
+  chip.type = "button";
+  chip.className = "tag-chip";
+  chip.textContent = tag.label;
+  chip.setAttribute("aria-pressed", String(tag.id === activeTagId));
+  chip.classList.toggle("is-active", tag.id === activeTagId);
+  chip.addEventListener("click", () => {
+    activeTagId = tag.id;
+    renderTagSystem();
+  });
+  return chip;
+}
+
+function createWorkCard(project) {
+  const card = document.createElement("article");
+  card.className = "card";
+
+  const link = document.createElement("a");
+  link.href = project.url;
+  link.className = "work-link";
+
+  const image = document.createElement("img");
+  image.src = project.image;
+  image.alt = project.alt;
+
+  const title = document.createElement("h3");
+  title.textContent = project.title;
+
+  const tags = document.createElement("p");
+  tags.className = "work-tags";
+  const labels = project.tags
+    .map((tagId) => TAG_DEFINITIONS.find((tag) => tag.id === tagId)?.label)
+    .filter(Boolean);
+  tags.textContent = labels.join(" · ");
+
+  link.append(image, title, tags);
+  card.appendChild(link);
+  return card;
+}
+
+function renderTagSystem() {
+  if (!tagBar || !worksGallery || !worksEmptyState || !tagSummary) {
+    return;
+  }
+
+  tagBar.innerHTML = "";
+  TAG_DEFINITIONS.forEach((tag) => {
+    tagBar.appendChild(createTagChip(tag));
+  });
+
+  const filteredProjects =
+    activeTagId === "all"
+      ? PROJECT_INDEX
+      : PROJECT_INDEX.filter((project) => project.tags.includes(activeTagId));
+
+  worksGallery.innerHTML = "";
+  filteredProjects.forEach((project) => {
+    worksGallery.appendChild(createWorkCard(project));
+  });
+
+  worksEmptyState.hidden = filteredProjects.length > 0;
+  const activeTagLabel = TAG_DEFINITIONS.find((tag) => tag.id === activeTagId)?.label || "All";
+  tagSummary.textContent = `${activeTagLabel} · ${filteredProjects.length} project${filteredProjects.length === 1 ? "" : "s"}`;
+}
+
+renderTagSystem();
 
 const menuToggle = document.querySelector(".menu-toggle");
 const sidebar = document.querySelector(".sidebar");
