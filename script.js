@@ -5,7 +5,8 @@ const TAG_DEFINITIONS = [
   { id: "farcry6", label: "Farcry6" },
   { id: "division2", label: "Division2" },
   { id: "short-film", label: "Short film" },
-  { id: "tool", label: "Tool" }
+  { id: "tool", label: "Tool" },
+  { id: "template", label: "Template" }
 ];
 
 const PROJECT_INDEX = [
@@ -36,6 +37,13 @@ const PROJECT_INDEX = [
     image: "Resources/Wix/HOME _ Yujia Max Liu_files/6275d4_3a7cfeefce354f47a3798ec24745223e~mv2.jpg",
     alt: "Tooling and shader experiments",
     tags: ["tool"]
+  },
+  {
+    title: "Project Instance Test",
+    url: "project-instance-test.html",
+    image: "Resources/Project Template/pages/pt-template-project/pt_template-project__cover.svg",
+    alt: "Project template placeholder cover",
+    tags: ["template"]
   }
 ];
 
