@@ -7,6 +7,9 @@ const PROJECT_INSTANCE_CONFIG_PATHS = {
   "d-walker-vs-sahelanthropus": "Resources/Project Instances/config/d-walker-vs-sahelanthropus.json",
   "farcry6-procedural-generation": "Resources/Project Instances/config/Farcry6-ProceduralGeneration.json"
 };
+const TAXONOMY_MANIFEST_PATH = "data/taxonomy.json";
+
+let taxonomyManifestPromise;
 
 async function loadProjectConfig(slug) {
   const configPath = PROJECT_INSTANCE_CONFIG_PATHS[slug];
@@ -23,6 +26,153 @@ async function loadProjectConfig(slug) {
   } catch {
     return null;
   }
+}
+
+async function loadTaxonomyManifest() {
+  if (taxonomyManifestPromise) {
+    return taxonomyManifestPromise;
+  }
+
+  taxonomyManifestPromise = (async () => {
+    try {
+      const response = await fetch(TAXONOMY_MANIFEST_PATH);
+      if (!response.ok) {
+        return { projects: [], tagLabelById: new Map() };
+      }
+
+      const manifest = await response.json();
+      const tags = Array.isArray(manifest.tags) ? manifest.tags : [];
+      const projects = Array.isArray(manifest.projects) ? manifest.projects : [];
+      const tagLabelById = new Map(
+        tags
+          .filter((tag) => tag && typeof tag.id === "string")
+          .map((tag) => [tag.id, tag.label || tag.id])
+      );
+
+      return { projects, tagLabelById };
+    } catch {
+      return { projects: [], tagLabelById: new Map() };
+    }
+  })();
+
+  return taxonomyManifestPromise;
+}
+
+function findProjectEntry(projects, projectSlug) {
+  const currentPage = window.location.pathname.split("/").pop() || "";
+  return projects.find(
+    (project) => project?.slug === projectSlug || project?.url === currentPage
+  );
+}
+
+function toTagLabels(tagIds, tagLabelById) {
+  if (!Array.isArray(tagIds)) {
+    return [];
+  }
+
+  return tagIds
+    .map((tagId) => tagLabelById.get(tagId))
+    .filter((label) => Boolean(label) && label !== "All");
+}
+
+async function resolveProjectTagLabels(projectSlug) {
+  const { projects, tagLabelById } = await loadTaxonomyManifest();
+  const projectEntry = findProjectEntry(projects, projectSlug);
+
+  if (!projectEntry) {
+    return [];
+  }
+
+  return toTagLabels(projectEntry.tagIds, tagLabelById);
+}
+
+function resolveRelatedProjects(currentProject, projects, maxItems = 4) {
+  if (!currentProject || !Array.isArray(currentProject.tagIds)) {
+    return [];
+  }
+
+  // Relatedness is defined by overlapping taxonomy tagIds.
+  const currentTagSet = new Set(currentProject.tagIds);
+  if (currentTagSet.size === 0) {
+    return [];
+  }
+
+  return projects
+    .filter((project) => {
+      if (!project) {
+        return false;
+      }
+      // Never recommend the page currently being viewed.
+      if (project.slug && currentProject.slug && project.slug === currentProject.slug) {
+        return false;
+      }
+      if (project.url && currentProject.url && project.url === currentProject.url) {
+        return false;
+      }
+      return true;
+    })
+    .map((project) => {
+      const projectTagIds = Array.isArray(project.tagIds) ? project.tagIds : [];
+      const overlapCount = projectTagIds.filter((tagId) => currentTagSet.has(tagId)).length;
+      return {
+        project,
+        overlapCount
+      };
+    })
+    .filter((entry) => entry.overlapCount > 0)
+    // Prioritize projects sharing more tags; fall back to title for stable order.
+    .sort((a, b) => {
+      if (b.overlapCount !== a.overlapCount) {
+        return b.overlapCount - a.overlapCount;
+      }
+      return String(a.project.title || "").localeCompare(String(b.project.title || ""));
+    })
+    .slice(0, maxItems)
+    .map((entry) => entry.project);
+}
+
+function renderRelatedWorks(relatedWorksGallery, relatedWorksEmpty, relatedProjects, tagLabelById) {
+  if (!relatedWorksGallery) {
+    return;
+  }
+
+  relatedWorksGallery.innerHTML = "";
+
+  // Show an explicit empty state when no projects share tags.
+  if (!Array.isArray(relatedProjects) || relatedProjects.length === 0) {
+    if (relatedWorksEmpty) {
+      relatedWorksEmpty.hidden = false;
+    }
+    return;
+  }
+
+  if (relatedWorksEmpty) {
+    relatedWorksEmpty.hidden = true;
+  }
+
+  relatedProjects.forEach((project) => {
+    const card = document.createElement("article");
+    card.className = "card";
+
+    const link = document.createElement("a");
+    link.href = project.url || "#";
+    link.className = "work-link";
+
+    const image = document.createElement("img");
+    image.src = project.image || "";
+    image.alt = project.alt || `${project.title || "Related project"} key art`;
+
+    const title = document.createElement("h3");
+    title.textContent = project.title || "Untitled Project";
+
+    const tags = document.createElement("p");
+    tags.className = "work-tags";
+    tags.textContent = toTagLabels(project.tagIds, tagLabelById).join(" · ");
+
+    link.append(image, title, tags);
+    card.appendChild(link);
+    relatedWorksGallery.appendChild(card);
+  });
 }
 
 function toEmbedVideoUrl(url) {
@@ -216,6 +366,8 @@ async function loadProjectInstanceTemplate() {
   const metaValues = main.querySelectorAll(".project-meta-grid-2col .meta-value");
   const tagList = main.querySelector(".project-tag-list");
   const detailsContainer = main.querySelector("[data-project-details-content]");
+  const relatedWorksGallery = main.querySelector("[data-related-works-gallery]");
+  const relatedWorksEmpty = main.querySelector("[data-related-works-empty]");
 
   if (kicker) kicker.textContent = config.kicker;
   if (title) title.textContent = config.title;
@@ -255,20 +407,22 @@ async function loadProjectInstanceTemplate() {
     metaValues[3].textContent = config.role;
   }
 
-  // Rebuild the tag list from manifest tags.
+  // Rebuild tag list from taxonomy manifest.
   if (tagList) {
+    const projectTagLabels = await resolveProjectTagLabels(slug);
     tagList.innerHTML = "";
-    config.tags.forEach((tag) => {
+    projectTagLabels.forEach((tag) => {
       const item = document.createElement("li");
       item.textContent = tag;
       tagList.appendChild(item);
     });
   }
 
-  // Keep related-project card art in sync with current project assets.
-  const relatedCards = main.querySelectorAll("#other-projects .card img");
-  if (relatedCards[0]) relatedCards[0].src = config.images.thumb_02;
-  if (relatedCards[1]) relatedCards[1].src = config.images.thumb_03;
+  // Render related works by overlapping tag IDs from taxonomy.
+  const { projects, tagLabelById } = await loadTaxonomyManifest();
+  const currentProject = findProjectEntry(projects, slug);
+  const relatedProjects = resolveRelatedProjects(currentProject, projects);
+  renderRelatedWorks(relatedWorksGallery, relatedWorksEmpty, relatedProjects, tagLabelById);
 
   // Expose template identity for styling/hooks/debugging.
   main.dataset.projectTemplateSlug = "template-project";

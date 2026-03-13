@@ -47,20 +47,34 @@ Use semantic attributes so script replacement is robust:
 
 ### B. Create an instance content entry
 
-Create one manifest entry per instance (in `script.js` or separate JSON):
+Create one project entry in the canonical taxonomy file (`data/taxonomy.json`):
 
 ```js
 {
   slug: "new-project-slug",
   title: "[Project Name]",
-  subtitle: "[Short Description]",
-  tags: ["Tag A", "Tag B", "Tag C"],
+  url: "new-project-slug.html",
+  image: "Resources/...",
+  alt: "Project key art",
+  tagIds: ["template"],
+}
+```
+
+Project content JSON (`Resources/Project Instances/config/*.json`) should not define free-text `tags`. Keep it focused on content blocks and media.
+
+Example project-instance config fields:
+
+```js
+{
+  title: "[Project Name]",
+  kicker: "[Short Kicker]",
+  description: "[Short Description]",
   images: {
     cover: "Resources/Project Template/pages/pt-template-project/pt_template-project__cover.svg",
-    thumb01: "Resources/Project Template/pages/pt-template-project/pt_template-project__thumb_01.svg",
-    thumb02: "Resources/Project Template/pages/pt-template-project/pt_template-project__thumb_02.svg",
-    thumb03: "Resources/Project Template/pages/pt-template-project/pt_template-project__thumb_03.svg",
-    thumb04: "Resources/Project Template/pages/pt-template-project/pt_template-project__thumb_04.svg"
+    thumb_01: "Resources/Project Template/pages/pt-template-project/pt_template-project__thumb_01.svg",
+    thumb_02: "Resources/Project Template/pages/pt-template-project/pt_template-project__thumb_02.svg",
+    thumb_03: "Resources/Project Template/pages/pt-template-project/pt_template-project__thumb_03.svg",
+    thumb_04: "Resources/Project Template/pages/pt-template-project/pt_template-project__thumb_04.svg"
   }
 }
 ```
@@ -91,7 +105,7 @@ Do **not** hard-code menu buttons individually in multiple files.
 
 Instead:
 
-1. Maintain a single `PROJECT_INDEX` list with fields:
+1. Maintain a single `projects` list inside `data/taxonomy.json` with fields:
    - `slug`
    - `title`
    - `url`
@@ -141,7 +155,7 @@ Use one of these patterns (Pattern A is preferred for this repo):
 2. Add project data in the shared manifest.
 3. Add a minimal instance shell HTML with only slug + mount point.
 4. Confirm the Selected Works/project discovery entry is generated from the shared index list.
-5. Verify rendering fallback when tags/images are still placeholders.
+5. Verify tag rendering comes from `data/taxonomy.json` and image/content placeholders still work.
 6. Validate that editing `template-content.html` changes all instance pages.
 
 ---
@@ -161,7 +175,7 @@ Use one of these patterns (Pattern A is preferred for this repo):
 - Slug format: lowercase kebab-case (`new-project-slug`).
 - Keep image naming consistent by role (`cover`, `thumb_01..04`).
 - Keep alt text meaningful even for placeholders (`"Placeholder cover image"`).
-- Keep tags normalized and reusable to support future filtering.
+- Keep `tagIds` normalized and reusable in `data/taxonomy.json` to support filtering.
 
 ---
 

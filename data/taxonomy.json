@@ -1,0 +1,51 @@
+{
+  "tags": [
+    { "id": "farcry6", "label": "Farcry6" },
+    { "id": "division2", "label": "Division2" },
+    { "id": "short-film", "label": "Short film" },
+    { "id": "tool", "label": "Tool" },
+    { "id": "template", "label": "Template" }
+  ],
+  "projects": [
+    {
+      "slug": "farcry6-procedural-generation",
+      "url": "farcry-6.html",
+      "title": "Farcry 6",
+      "image": "Resources/Wix/HOME _ Yujia Max Liu_files/6275d4_0acb6eb0a34d41fc8f08f3c4eae91ecbf000.jpg",
+      "alt": "Farcry 6 project key art",
+      "tagIds": ["farcry6"]
+    },
+    {
+      "slug": "division2-tools",
+      "url": "division-2.html",
+      "title": "Division 2",
+      "image": "Resources/Wix/HOME _ Yujia Max Liu_files/6275d4_a7082ee4aa4f4a4790658c0bfb7d6c0af000.jpg",
+      "alt": "Division 2 project artwork",
+      "tagIds": ["division2", "tool"]
+    },
+    {
+      "slug": "d-walker-vs-sahelanthropus",
+      "url": "d-walker-vs-sahelanthropus.html",
+      "title": "D-Walker VS Sahelanthropus",
+      "image": "Resources/Wix/HOME _ Yujia Max Liu_files/6275d4_79561fe54d1d4c429bf66be91875a65af000.jpg",
+      "alt": "D-Walker VS Sahelanthropus scene",
+      "tagIds": ["short-film"]
+    },
+    {
+      "slug": "raiden-vs-gekko",
+      "url": "raiden-vs-gekko.html",
+      "title": "Raiden VS Gekko",
+      "image": "Resources/Featured Recommendations/pages/fr-raiden-vs-gekko/fr_raiden-vs-gekko__main.png",
+      "alt": "Tooling and shader experiments",
+      "tagIds": ["short-film"]
+    },
+    {
+      "slug": "project-instance-test",
+      "url": "project-instance-test.html",
+      "title": "Project Instance Test",
+      "image": "Resources/Project Template/pages/pt-template-project/pt_template-project__cover.svg",
+      "alt": "Project template placeholder cover",
+      "tagIds": ["template"]
+    }
+  ]
+}

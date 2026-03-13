@@ -1,51 +1,44 @@
 const RECOMMENDATION_SECTION_NAME = "Recommendation";
 const RECOMMENDATION_IMAGE_EXTENSION_PRIORITY = ["png", "jpg", "svg"];
-const TAG_DEFINITIONS = [
-  { id: "all", label: "All" },
-  { id: "farcry6", label: "Farcry6" },
-  { id: "division2", label: "Division2" },
-  { id: "short-film", label: "Short film" },
-  { id: "tool", label: "Tool" },
-  { id: "template", label: "Template" }
-];
+const TAXONOMY_MANIFEST_PATH = "data/taxonomy.json";
 
-const PROJECT_INDEX = [
-  {
-    title: "Farcry 6",
-    url: "farcry-6.html",
-    image: "Resources/Wix/HOME _ Yujia Max Liu_files/6275d4_0acb6eb0a34d41fc8f08f3c4eae91ecbf000.jpg",
-    alt: "Farcry 6 project key art",
-    tags: ["farcry6"]
-  },
-  {
-    title: "Division 2",
-    url: "division-2.html",
-    image: "Resources/Wix/HOME _ Yujia Max Liu_files/6275d4_a7082ee4aa4f4a4790658c0bfb7d6c0af000.jpg",
-    alt: "Division 2 project artwork",
-    tags: ["division2","tool"]
-  },
-  {
-    title: "D-Walker VS Sahelanthropus",
-    url: "d-walker-vs-sahelanthropus.html",
-    image: "Resources/Wix/HOME _ Yujia Max Liu_files/6275d4_79561fe54d1d4c429bf66be91875a65af000.jpg",
-    alt: "D-Walker VS Sahelanthropus scene",
-    tags: ["short-film"]
-  },
-  {
-    title: "Raiden VS Gekko",
-    url: "raiden-vs-gekko.html",
-    image: "Resources/Featured Recommendations/pages/fr-raiden-vs-gekko/fr_raiden-vs-gekko__main.png",
-    alt: "Tooling and shader experiments",
-    tags: ["short-film"]
-  },
-  {
-    title: "Project Instance Test",
-    url: "project-instance-test.html",
-    image: "Resources/Project Template/pages/pt-template-project/pt_template-project__cover.svg",
-    alt: "Project template placeholder cover",
-    tags: ["template"]
+let TAG_DEFINITIONS = [{ id: "all", label: "All" }];
+let PROJECT_INDEX = [];
+let tagLabelById = new Map();
+
+async function loadTaxonomyManifest() {
+  try {
+    const response = await fetch(TAXONOMY_MANIFEST_PATH);
+    if (!response.ok) {
+      return;
+    }
+
+    const manifest = await response.json();
+    const manifestTags = Array.isArray(manifest.tags) ? manifest.tags : [];
+    const manifestProjects = Array.isArray(manifest.projects) ? manifest.projects : [];
+
+    TAG_DEFINITIONS = [
+      { id: "all", label: "All" },
+      ...manifestTags
+        .filter((tag) => tag && typeof tag.id === "string")
+        .map((tag) => ({ id: tag.id, label: tag.label || tag.id }))
+    ];
+
+    PROJECT_INDEX = manifestProjects
+      .filter((project) => project && typeof project.url === "string")
+      .map((project) => ({
+        title: project.title || project.slug || "Untitled Project",
+        url: project.url,
+        image: project.image || "",
+        alt: project.alt || `${project.title || project.slug || "Project"} image`,
+        tagIds: Array.isArray(project.tagIds) ? project.tagIds : []
+      }));
+  } catch {
+    // Keep empty arrays when taxonomy cannot be loaded.
   }
-];
+
+  tagLabelById = new Map(TAG_DEFINITIONS.map((tag) => [tag.id, tag.label]));
+}
 
 const yearElement = document.getElementById("year");
 if (yearElement) {
@@ -103,8 +96,8 @@ function createWorkCard(project) {
 
   const tags = document.createElement("p");
   tags.className = "work-tags";
-  const labels = project.tags
-    .map((tagId) => TAG_DEFINITIONS.find((tag) => tag.id === tagId)?.label)
+  const labels = (project.tagIds || [])
+    .map((tagId) => tagLabelById.get(tagId))
     .filter(Boolean);
   tags.textContent = labels.join(" · ");
 
@@ -126,7 +119,7 @@ function renderTagSystem() {
   const filteredProjects =
     activeTagId === "all"
       ? PROJECT_INDEX
-      : PROJECT_INDEX.filter((project) => project.tags.includes(activeTagId));
+      : PROJECT_INDEX.filter((project) => (project.tagIds || []).includes(activeTagId));
 
   worksGallery.innerHTML = "";
   filteredProjects.forEach((project) => {
@@ -136,7 +129,9 @@ function renderTagSystem() {
   worksEmptyState.hidden = filteredProjects.length > 0;
 }
 
-renderTagSystem();
+loadTaxonomyManifest().then(() => {
+  renderTagSystem();
+});
 
 const menuToggle = document.querySelector(".menu-toggle");
 const sidebar = document.querySelector(".sidebar");

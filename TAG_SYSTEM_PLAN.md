@@ -39,22 +39,21 @@ Suggested initial groups:
 
 ## 2) Data Model & Storage Strategy
 
-### Option A (recommended now): JS in-repo manifest
-Create a single manifest object in `script.js` (or split into a dedicated file later):
-- `TAG_DEFINITIONS`
-- `PROJECT_INDEX`
+### Recommended now: JSON manifest (single source of truth)
+Use one canonical file:
+- `data/taxonomy.json`
+
+Structure:
+- `tags`: tag dictionary (`id`, `label`)
+- `projects`: project index entries (`slug`, `url`, `title`, `image`, `alt`, `tagIds`)
 
 Benefits:
-- No build tooling required.
-- Fast to implement and maintain in static hosting.
+- No duplicate tag entry between `script.js` and project JSON files.
+- Cleaner content editing workflow for non-code updates.
+- Static-host friendly with no build tooling.
 
-### Option B (future): JSON manifest files
-- `data/tags.json`
-- `data/projects.json`
-
-Benefits:
-- Cleaner content editing workflows.
-- Easier migration to CMS or generator.
+### Legacy mode (deprecated)
+Hardcoded tag/project manifests in `script.js` are deprecated and should not be edited as source data.
 
 ### Canonical tag id rules
 - Lowercase + kebab-case only.
@@ -137,7 +136,7 @@ When no projects match:
 ## 6) Validation Rules
 
 ### Hard validation
-- Every referenced tag id must exist in `TAG_DEFINITIONS`.
+- Every referenced tag id must exist in `data/taxonomy.json` `tags`.
 - No duplicate tag ids.
 - No duplicate project tag ids inside one project.
 
@@ -183,7 +182,7 @@ Track post-launch signals:
 
 ## 11) Concrete Next Actions
 
-1. Add a lightweight manifest structure in `script.js`.
+1. Maintain `data/taxonomy.json` as the canonical tag/project manifest.
 2. Add tag chip styles to `style.css`.
 3. Inject tag sections into homepage cards and project page headers.
 4. Implement homepage multi-select filtering with URL sync.
