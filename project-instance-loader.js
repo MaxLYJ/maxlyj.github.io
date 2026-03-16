@@ -427,7 +427,7 @@ async function loadProjectInstanceTemplate() {
   // Expose template identity for styling/hooks/debugging.
   main.dataset.projectTemplateSlug = "template-project";
   main.dataset.projectTemplateFolder = "pt-template-project";
-  // Prevent script.js template image hydration from overriding JSON-driven image paths.
+  // Prevent home.js template image hydration from overriding JSON-driven image paths.
   main.dataset.projectTemplateAutohydrate = "false";
 
   // Replace mount content with hydrated template nodes.
@@ -435,7 +435,7 @@ async function loadProjectInstanceTemplate() {
   root.append(header, overlay, sidebar, main);
 
   // Wire the sidebar toggle now that the injected elements are in the DOM.
-  // script.js already ran before these elements existed, so its querySelector
+  // home.js already ran before these elements existed, so its querySelector
   // calls returned null and no listeners were attached. We attach them here.
   initSidebarToggle();
 }
@@ -494,5 +494,10 @@ function initSidebarToggle() {
     }
   });
 }
+/*
+after root.append(header, overlay, sidebar, main). At that point the elements are guaranteed to be in the live DOM,
+so querySelector finds them and all five event listeners(click, overlay click, nav link click, Escape key,
+breakpoint change) are correctly attached.
+*/
 
 loadProjectInstanceTemplate();
