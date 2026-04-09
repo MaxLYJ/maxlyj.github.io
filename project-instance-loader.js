@@ -324,6 +324,50 @@ function renderProjectDetails(detailsContainer, config) {
   }
 }
 
+function initMobileOverviewStack(main) {
+  const layout = main.querySelector(".project-overview-layout");
+  const info = layout?.querySelector(".project-overview-info");
+  const detailList = info?.querySelector(".project-detail-list");
+  const descriptionSection = info?.querySelector(".project-description-text")?.closest("section");
+  const metaSection = info?.querySelector(".project-meta-grid-2col")?.closest("section");
+  const tagSection = info?.querySelector(".project-tag-list")?.closest("section");
+  const gallery = layout?.querySelector(".project-overview-gallery");
+  const mobileBreakpoint = window.matchMedia("(max-width: 980px)");
+
+  if (!layout || !info || !detailList || !descriptionSection || !metaSection || !gallery) {
+    return;
+  }
+
+  function moveToMobileStack() {
+    detailList.append(descriptionSection);
+    detailList.append(metaSection);
+    detailList.append(gallery);
+    if (tagSection) {
+      detailList.append(tagSection);
+    }
+  }
+
+  function moveToDesktopLayout() {
+    detailList.append(descriptionSection);
+    detailList.append(metaSection);
+    if (tagSection) {
+      detailList.append(tagSection);
+    }
+    layout.append(gallery);
+  }
+
+  function syncOverviewOrder() {
+    if (mobileBreakpoint.matches) {
+      moveToMobileStack();
+      return;
+    }
+    moveToDesktopLayout();
+  }
+
+  syncOverviewOrder();
+  mobileBreakpoint.addEventListener("change", syncOverviewOrder);
+}
+
 async function loadProjectInstanceTemplate() {
   // The host page provides where to mount and which manifest entry to use.
   const root = document.querySelector("[data-project-instance-root]");
@@ -433,6 +477,7 @@ async function loadProjectInstanceTemplate() {
   // Replace mount content with hydrated template nodes.
   root.innerHTML = "";
   root.append(header, overlay, sidebar, main);
+  initMobileOverviewStack(main);
 
   // Wire the sidebar toggle now that the injected elements are in the DOM.
   // home.js already ran before these elements existed, so its querySelector
