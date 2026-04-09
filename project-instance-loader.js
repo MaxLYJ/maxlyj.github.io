@@ -378,6 +378,81 @@ function initMobileOverviewStack(main) {
   mobileBreakpoint.addEventListener("change", syncOverviewOrder);
 }
 
+function initProjectGallery(main) {
+  const projectGallery = main.querySelector("[data-project-gallery]");
+  if (!projectGallery) {
+    return;
+  }
+
+  const mainImage = projectGallery.querySelector("[data-project-gallery-main]");
+  const thumbs = Array.from(projectGallery.querySelectorAll(".project-thumb"));
+  if (!mainImage || thumbs.length === 0) {
+    return;
+  }
+
+  let activeIndex = Math.max(
+    0,
+    thumbs.findIndex((thumb) => thumb.classList.contains("is-active"))
+  );
+  let touchStartX = 0;
+  let touchEndX = 0;
+
+  function renderProjectGallery(index) {
+    const boundedIndex = (index + thumbs.length) % thumbs.length;
+    const activeThumb = thumbs[boundedIndex];
+    if (!activeThumb) {
+      return;
+    }
+
+    activeIndex = boundedIndex;
+    mainImage.src = activeThumb.dataset.gallerySrc || mainImage.src;
+    mainImage.alt = activeThumb.dataset.galleryAlt || mainImage.alt;
+
+    thumbs.forEach((thumb, thumbIndex) => {
+      thumb.classList.toggle("is-active", thumbIndex === activeIndex);
+    });
+
+    activeThumb.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+  }
+
+  thumbs.forEach((thumb, index) => {
+    thumb.addEventListener("click", () => renderProjectGallery(index));
+  });
+
+  function onSwipe() {
+    const distance = touchEndX - touchStartX;
+    if (Math.abs(distance) < 40) {
+      return;
+    }
+
+    if (distance < 0) {
+      renderProjectGallery(activeIndex + 1);
+      return;
+    }
+
+    renderProjectGallery(activeIndex - 1);
+  }
+
+  projectGallery.addEventListener(
+    "touchstart",
+    (event) => {
+      touchStartX = event.changedTouches[0].clientX;
+    },
+    { passive: true }
+  );
+
+  projectGallery.addEventListener(
+    "touchend",
+    (event) => {
+      touchEndX = event.changedTouches[0].clientX;
+      onSwipe();
+    },
+    { passive: true }
+  );
+
+  renderProjectGallery(activeIndex);
+}
+
 async function loadProjectInstanceTemplate() {
   // The host page provides where to mount and which manifest entry to use.
   const root = document.querySelector("[data-project-instance-root]");
@@ -488,6 +563,7 @@ async function loadProjectInstanceTemplate() {
   root.innerHTML = "";
   root.append(header, overlay, sidebar, main);
   initMobileOverviewStack(main);
+  initProjectGallery(main);
 
   // Wire the sidebar toggle now that the injected elements are in the DOM.
   // home.js already ran before these elements existed, so its querySelector
