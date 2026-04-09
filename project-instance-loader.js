@@ -324,6 +324,33 @@ function renderProjectDetails(detailsContainer, config) {
   }
 }
 
+function renderMobileGalleryStack(galleryMobileStack, config) {
+  if (!galleryMobileStack) {
+    return;
+  }
+
+  galleryMobileStack.innerHTML = "";
+
+  const imageRoles = ["thumb_01", "thumb_02", "thumb_03", "thumb_04"];
+  imageRoles.forEach((role, index) => {
+    const imageSrc = config.images?.[role];
+    if (!imageSrc) {
+      return;
+    }
+
+    const frame = document.createElement("figure");
+    frame.className = "project-mobile-gallery-frame";
+
+    const image = document.createElement("img");
+    image.src = imageSrc;
+    image.alt = `${config.title} gallery image ${index + 1}`;
+    image.className = "project-mobile-gallery-image";
+
+    frame.appendChild(image);
+    galleryMobileStack.appendChild(frame);
+  });
+}
+
 async function loadProjectInstanceTemplate() {
   // The host page provides where to mount and which manifest entry to use.
   const root = document.querySelector("[data-project-instance-root]");
@@ -366,6 +393,7 @@ async function loadProjectInstanceTemplate() {
   const metaValues = main.querySelectorAll(".project-meta-grid-2col .meta-value");
   const tagList = main.querySelector(".project-tag-list");
   const detailsContainer = main.querySelector("[data-project-details-content]");
+  const galleryMobileStack = main.querySelector("[data-project-gallery-mobile]");
   const relatedWorksGallery = main.querySelector("[data-related-works-gallery]");
   const relatedWorksEmpty = main.querySelector("[data-related-works-empty]");
 
@@ -398,6 +426,8 @@ async function loadProjectInstanceTemplate() {
     }
     button.dataset.gallerySrc = imagePath;
   });
+
+  renderMobileGalleryStack(galleryMobileStack, config);
 
   // Fill the 4-column metadata grid in template order.
   if (metaValues.length >= 4) {

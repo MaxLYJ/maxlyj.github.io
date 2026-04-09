@@ -100,7 +100,7 @@ h2 {
   object-fit: contain;
 }
 
-/* Hamburger button — hidden on desktop, shown on mobile */
+/* Hamburger button - hidden on desktop, shown on mobile */
 .menu-toggle {
   width: 44px;
   height: 44px;
@@ -914,6 +914,29 @@ main,
     margin-top: 0.35rem;
   }
 
+  /* Mobile: convert overview gallery into a long vertical image flow. */
+  .project-gallery-main-frame,
+  .project-gallery-track {
+    display: none;
+  }
+
+  .project-gallery-mobile-stack {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .project-mobile-gallery-frame {
+    margin: 0;
+  }
+
+  .project-mobile-gallery-image {
+    width: 100%;
+    display: block;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    object-fit: cover;
+  }
+
   .project-cover,
   .project-gallery-main-frame,
   .project-gallery-main {
@@ -968,6 +991,10 @@ main,
   border-radius: 12px;
   padding: 0.9rem;
   background: rgba(0, 0, 0, 0.16);
+}
+
+.project-gallery-mobile-stack {
+  display: none;
 }
 
 /* Hero cover image at the top of the gallery column */
