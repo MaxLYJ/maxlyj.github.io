@@ -451,6 +451,7 @@ main,
 .tags-system,
 .about,
 .featured-recommendations,
+.resume-section,
 .works,
 .site-footer {
   margin-top: 1.8rem;
@@ -469,6 +470,115 @@ main,
 .about img {
   border-radius: 14px;
   align-items: center;
+}
+
+.about-headline {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 0.5rem;
+}
+
+.about-details p {
+  color: var(--muted);
+  margin: 0 0 0.8rem;
+}
+
+.about-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.6rem;
+}
+
+.skill-tag {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.2rem 0.6rem;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+
+/* ============================================================
+   RESUME SECTIONS (Experience & Education)
+   Card-based timeline layout for work history and education
+   ============================================================ */
+
+.resume-item {
+  margin-bottom: 1.2rem;
+}
+
+.resume-item:last-child {
+  margin-bottom: 0;
+}
+
+.resume-item h3 {
+  font-size: 1rem;
+  margin: 0;
+  color: var(--text);
+}
+
+.resume-org {
+  color: var(--muted);
+  font-size: 0.88rem;
+  margin: 0.15rem 0 0;
+}
+
+.resume-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.resume-date {
+  color: var(--accent);
+  font-size: 0.82rem;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.resume-sub-item {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.7rem;
+  background: rgba(0, 0, 0, 0.16);
+  margin: 0.6rem 0;
+}
+
+.resume-sub-item h4 {
+  font-size: 0.92rem;
+  margin: 0 0 0.15rem;
+  color: var(--text);
+}
+
+.resume-engine {
+  color: var(--accent-2);
+  font-weight: 500;
+  font-size: 0.82rem;
+}
+
+.resume-sub-item time {
+  color: var(--accent);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.resume-sub-item ul {
+  margin: 0.4rem 0 0;
+  padding-left: 1.2rem;
+}
+
+.resume-sub-item li,
+.resume-item > ul > li {
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.55;
 }
 
 
@@ -785,6 +895,15 @@ main,
 
   .card img {
     height: 210px;
+  }
+
+  .resume-item-header {
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .about-skills {
+    gap: 0.3rem;
   }
 }
 
