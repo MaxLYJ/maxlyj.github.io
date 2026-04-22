@@ -2,6 +2,20 @@
 const RECOMMENDATION_SECTION_NAME = "Recommendation";
 const RECOMMENDATION_IMAGE_EXTENSION_PRIORITY = ["png", "jpg", "svg"];
 
+async function loadVersionTag() {
+  const el = document.querySelector(".top-bar-version");
+  if (!el) return;
+  try {
+    const res = await fetch("https://api.github.com/repos/MaxLYJ/maxlyj.github.io/commits?per_page=1&sha=main");
+    if (!res.ok) return;
+    const commits = await res.json();
+    if (commits.length > 0) {
+      el.textContent = "Ver " + commits[0].sha.substring(0, 7);
+    }
+  } catch {}
+}
+loadVersionTag();
+
 // ===== TAG SYSTEM DATA =====
 const TAXONOMY_MANIFEST_PATH = "data/taxonomy.json";
 

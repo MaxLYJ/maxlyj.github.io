@@ -1,6 +1,20 @@
 const PROJECT_INSTANCE_CONFIG_BASE = "Resources/Project Instances/config";
 const TAXONOMY_MANIFEST_PATH = "data/taxonomy.json";
 
+async function loadVersionTag() {
+  const el = document.querySelector(".top-bar-version");
+  if (!el) return;
+  try {
+    const res = await fetch("https://api.github.com/repos/MaxLYJ/maxlyj.github.io/commits?per_page=1&sha=main");
+    if (!res.ok) return;
+    const commits = await res.json();
+    if (commits.length > 0) {
+      el.textContent = "Ver " + commits[0].sha.substring(0, 7);
+    }
+  } catch {}
+}
+loadVersionTag();
+
 let taxonomyManifestPromise;
 
 async function loadProjectConfig(slug) {
