@@ -241,16 +241,11 @@ function createDetailBlockElement(block, fallbackTitle) {
     afterImg.alt = block.afterAlt || `${fallbackTitle} after`;
     afterImg.loading = "lazy";
 
-    const beforeClip = document.createElement("div");
-    beforeClip.className = "image-compare-before-clip";
-
     const beforeImg = document.createElement("img");
     beforeImg.className = "image-compare-before";
     beforeImg.src = block.before;
     beforeImg.alt = block.beforeAlt || `${fallbackTitle} before`;
     beforeImg.loading = "lazy";
-
-    beforeClip.appendChild(beforeImg);
 
     const divider = document.createElement("div");
     divider.className = "image-compare-divider";
@@ -275,7 +270,7 @@ function createDetailBlockElement(block, fallbackTitle) {
     afterLabel.textContent = block.afterLabel || "After";
 
     labelRow.append(beforeLabel, afterLabel);
-    container.append(afterImg, beforeClip, divider, labelRow);
+    container.append(afterImg, beforeImg, divider, labelRow);
     return container;
   }
 
@@ -614,15 +609,16 @@ async function loadProjectInstanceTemplate() {
 function initImageCompareSliders(root) {
   const containers = root.querySelectorAll("[data-image-compare]");
   containers.forEach((container) => {
-    const beforeClip = container.querySelector(".image-compare-before-clip");
+    const beforeImg = container.querySelector(".image-compare-before");
     const divider = container.querySelector("[data-image-compare-divider]");
-    if (!beforeClip || !divider) return;
+    if (!beforeImg || !divider) return;
 
     const INITIAL_POSITION = 50;
 
     function setPosition(percent) {
       const clamped = Math.max(0, Math.min(100, percent));
-      beforeClip.style.width = clamped + "%";
+      const clipRight = 100 - clamped;
+      beforeImg.style.clipPath = "inset(0 " + clipRight + "% 0 0)";
       divider.style.left = clamped + "%";
     }
 
