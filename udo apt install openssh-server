@@ -1,0 +1,216 @@
+[33mcommit 3e9cb5a8a054a87e78207d2531c76d6aafdfa6ed[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: MaxLYJ <bobchaoliu@gmail.com>
+Date:   Mon Apr 27 00:51:02 2026 +0800
+
+    test credential
+
+[33mcommit 7f13d9fa3d9d3670f186afc3300fe2122638e266[m
+Author: MaxLYJ <bobchaoliu@gmail.com>
+Date:   Mon Apr 27 00:34:55 2026 +0800
+
+    test: remove test file
+
+[33mcommit 663989ea2ac0579e876287850d7d6a219e44eb23[m
+Author: MaxLYJ <bobchaoliu@gmail.com>
+Date:   Mon Apr 27 00:33:38 2026 +0800
+
+    test: initial test commit
+
+[33mcommit efbfa4dd2e2cc48d44fa186af4b178126fc6ef01[m
+Author: YujiaMaxLiu <yujiamaxliu@users.noreply.github.com>
+Date:   Fri Apr 24 16:28:49 2026 +0800
+
+    feat: serve portrait image from Cloudflare R2 CDN
+
+[33mcommit 9fe1a44f14460ef2bc2abe1e6240123cf6cb9802[m
+Author: YujiaMaxLiu <yujiamaxliu@users.noreply.github.com>
+Date:   Wed Apr 22 11:46:42 2026 +0800
+
+    feat: overlay before/after labels on top of image compare
+
+[33mcommit 19c5bb8c69638ec639ec9ebc73bba1065aadc1f1[m
+Author: YujiaMaxLiu <yujiamaxliu@users.noreply.github.com>
+Date:   Wed Apr 22 11:29:56 2026 +0800
+
+    feat: add Ver {commit} version tag to top bar
+
+[33mcommit 64f715d04b4f5c548392b133fa86dbb5632e1e3b[m
+Author: YujiaMaxLiu <yujiamaxliu@users.noreply.github.com>
+Date:   Wed Apr 22 11:17:10 2026 +0800
+
+    fix: use clip-path for image-compare to ensure before/after alignment on mobile
+
+[33mcommit 20a443b9a4c7d98ca6d37bc7f4baac5ebd3ce9c6[m
+Author: YujiaMaxLiu <yujiamaxliu@users.noreply.github.com>
+Date:   Wed Apr 22 10:47:42 2026 +0800
+
+    feat: add Before/After labels below image compare slider
+
+[33mcommit eff71bf2aa4585e05e99ae0192fe75164dd43fb5[m
+Author: YujiaMaxLiu <yujiamaxliu@users.noreply.github.com>
+Date:   Tue Apr 21 23:39:43 2026 +0800
+
+    feat: add image-compare block type with draggable before/after slider
+
+[33mcommit 016e1b14f833564902153028d3612ff9559818cb[m
+Author: YujiaMaxLiu <yujiamaxliu@users.noreply.github.com>
+Date:   Tue Apr 21 18:40:30 2026 +0800
+
+    feat: add experience, education sections and expand about with LinkedIn profile data
+
+[33mcommit 57ca93896e7b70ae1ffb9076c6082a2f5a305b56[m
+Author: YujiaMaxLiu <yujiamaxliu@users.noreply.github.com>
+Date:   Tue Apr 21 18:24:16 2026 +0800
+
+    feat: add SEO and AI agent discoverability — robots.txt, sitemap.xml, Open Graph, JSON-LD, h1, canonical
+
+[33mcommit 091fc6127b8ed280322c3cb802d6c526c3c8f83d[m
+Author: YujiaMaxLiu <yujiamaxliu@users.noreply.github.com>
+Date:   Tue Apr 21 18:05:48 2026 +0800
+
+    docs: add portfolio link to README
+
+[33mcommit 1e1304cf8158e11c88d322d4a289144a11a6f85c[m[33m ([m[1;31morigin/docs/add-site-sections-summary[m[33m)[m
+Author: YujiaMaxLiu <yujiamaxliu@users.noreply.github.com>
+Date:   Tue Apr 21 13:47:03 2026 +0800
+
+    docs: add comprehensive site sections summary
+
+[33mcommit 5950dee8c2eac78a730942c8737403795705c630[m
+Author: Liu Yu Jia (Max) <yu-jia.liu@ubisoft.com>
+Date:   Mon Apr 20 21:54:10 2026 +0800
+
+    Update the loader to read config.json to create project instance page.
+    
+    change it to read Resources/Project Instances/config/${slug}.json to load instance project.
+
+[33mcommit 72faee1b1d4e51e7a7da8a37d0e88bc31a91f57e[m
+Merge: 4e9ee5c f454559
+Author: MaXLYJ <37925444+MaxLYJ@users.noreply.github.com>
+Date:   Mon Apr 20 12:17:11 2026 +0800
+
+    Merge pull request #16 from MaxLYJ/codex/update-best-practices-for-newcomers
+    
+    docs: rewrite project instance best practices for newcomers
+
+[33mcommit f45455972a00016d2a6dda86fc72112546a0b28e[m[33m ([m[1;31morigin/codex/update-best-practices-for-newcomers[m[33m)[m
+Author: MaXLYJ <37925444+MaxLYJ@users.noreply.github.com>
+Date:   Mon Apr 20 12:16:58 2026 +0800
+
+    docs: rewrite project instance best practices for newcomers
+
+[33mcommit 4e9ee5ca9ff0d7e89dd15ce46a431387cd245fe7[m
+Merge: 7261826 7556b7a
+Author: MaXLYJ <37925444+MaxLYJ@users.noreply.github.com>
+Date:   Thu Apr 9 17:22:53 2026 +0800
+
+    Merge pull request #15 from MaxLYJ/codex/adjust-mobile-layout-for-project-instance
+    
+    Adjust mobile project overview stacking order
+
+[33mcommit 7556b7a574831fd16c457b4f2d65b1d965f5ceff[m[33m ([m[1;31morigin/codex/adjust-mobile-layout-for-project-instance[m[33m)[m
+Author: MaXLYJ <37925444+MaxLYJ@users.noreply.github.com>
+Date:   Thu Apr 9 17:16:47 2026 +0800
+
+    Restore project gallery thumbnail interactions after template injection
+
+[33mcommit b7c00d942d9ab3cb29dd1bdd2ad7ffdb80b9cd5d[m
+Author: MaXLYJ <37925444+MaxLYJ@users.noreply.github.com>
+Date:   Thu Apr 9 17:05:32 2026 +0800
+
+    Fix mobile overview width autofit in stacked layout
+
+[33mcommit 3405a6b64b8757c1c22ef1cfab073a296126657f[m
+Author: MaXLYJ <37925444+MaxLYJ@users.noreply.github.com>
+Date:   Thu Apr 9 16:11:44 2026 +0800
+
+    Adjust mobile project overview stacking order
+
+[33mcommit 72618260401da1627f13427488a561ffdafa2443[m
+Author: Liu Yu Jia (Max) <yu-jia.liu@ubisoft.com>
+Date:   Wed Mar 18 16:08:39 2026 +0800
+
+    Update style.css
+
+[33mcommit 87021e166b7a0989acacc25de66713fe7dbad8be[m
+Author: Liu Yu Jia (Max) <yu-jia.liu@ubisoft.com>
+Date:   Mon Mar 16 16:30:29 2026 +0800
+
+    Rename script.js to home.js since there are multiple .js files.
+
+[33mcommit e683ae6c0d80a41c996eef87072d66f15599ad8c[m
+Author: Liu Yu Jia (Max) <yu-jia.liu@ubisoft.com>
+Date:   Mon Mar 16 15:07:44 2026 +0800
+
+    Fix the Side bar button logic in instance page. Fix the bug social button not shows in sidebar of the instance page.
+
+[33mcommit cb852e54475b3ff82b0dd7177b726af610624e42[m
+Author: Liu Yu Jia (Max) <yu-jia.liu@ubisoft.com>
+Date:   Fri Mar 13 18:30:51 2026 +0800
+
+    Update code block for more visibility. Add scroll to behavior to tag click.
+
+[33mcommit b4b9f10d8bd32e04aca52a44fabfca45b7bdac72[m
+Author: Liu Yu Jia (Max) <yu-jia.liu@ubisoft.com>
+Date:   Fri Mar 13 17:21:14 2026 +0800
+
+    Update page recommendation section.
+
+[33mcommit 01b71091bc53c6d9d40ec7041dcf7b350a585316[m
+Author: Liu Yu Jia (Max) <yu-jia.liu@ubisoft.com>
+Date:   Fri Mar 13 11:54:29 2026 +0800
+
+    Update social links
+
+[33mcommit 6f45419c66863919b5e8f8ad55477d0cd32aa801[m
+Author: Liu Yu Jia (Max) <yu-jia.liu@ubisoft.com>
+Date:   Thu Mar 12 22:24:17 2026 +0800
+
+    Update pages to page instance and use json to manage pages
+    
+    Update pages to page instance and use json to manage pages
+
+[33mcommit f3d5420b16fdbe7e90d00e00c4ffbc5a306da5f9[m
+Merge: 808b874 13c5f31
+Author: MaXLYJ <37925444+MaxLYJ@users.noreply.github.com>
+Date:   Wed Mar 11 12:25:13 2026 +0800
+
+    Merge pull request #12 from MaxLYJ/codex/create-best-practice-for-project-instance-page
+    
+    Add project instance loader, test page, manifest entry, and best-practices guide
+
+[33mcommit 13c5f31d157cf0eeaf05b451b2e25f821819b274[m[33m ([m[1;31morigin/codex/create-best-practice-for-project-instance-page[m[33m)[m
+Author: MaXLYJ <37925444+MaxLYJ@users.noreply.github.com>
+Date:   Wed Mar 11 12:23:30 2026 +0800
+
+    Remove instance page from sidebar and document sidebar policy
+
+[33mcommit 808b874f1d626b29b7c1253c02f87d654bad3f4a[m
+Merge: ed100d9 55bb79d
+Author: MaXLYJ <37925444+MaxLYJ@users.noreply.github.com>
+Date:   Mon Mar 2 18:43:23 2026 +0800
+
+    Merge pull request #11 from MaxLYJ/codex/create-project-page-template
+    
+    Add project page template with gallery, styles, and touch-enabled JS
+
+[33mcommit 55bb79ddc908d0455a559647dd11aad4187b86d5[m[33m ([m[1;31morigin/codex/create-project-page-template[m[33m)[m
+Author: MaXLYJ <37925444+MaxLYJ@users.noreply.github.com>
+Date:   Mon Mar 2 18:36:47 2026 +0800
+
+    Load project template images by naming convention with svg placeholders
+
+[33mcommit 5c751ca18c5866c76c73f2534aa61272aca4276d[m
+Author: MaXLYJ <37925444+MaxLYJ@users.noreply.github.com>
+Date:   Mon Mar 2 18:36:41 2026 +0800
+
+    Fix mobile project media sizing to fill viewport
+
+[33mcommit 62ceabac9a9b840acde5eac34275d5cb6e318e90[m
+Author: MaXLYJ <37925444+MaxLYJ@users.noreply.github.com>
+Date:   Mon Mar 2 18:27:38 2026 +0800
+
+    Move intro gallery below info on mobile layout
+
+[33mcommit ed100d9fa1b5994f6a11933d435a57c802a76ad9[m
+Merge: 3b4952f c
