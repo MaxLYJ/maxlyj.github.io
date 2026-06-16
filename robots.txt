@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://maxlyj.github.io/sitemap.xml
+Sitemap: https://maxlyj.com/sitemap.xml
