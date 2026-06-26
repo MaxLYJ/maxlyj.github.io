@@ -2,6 +2,17 @@
 const RECOMMENDATION_SECTION_NAME = "Recommendation";
 const RECOMMENDATION_IMAGE_EXTENSION_PRIORITY = ["png", "jpg", "svg"];
 
+// CDN base for project images served from Cloudflare R2.
+// Logical paths in data/taxonomy.json (e.g. "projects/<slug>/cover.png") are
+// prefixed with this at runtime; absolute URLs (http...) pass through unchanged.
+const CDN_BASE = "https://pub-dc4e1f00955f4568a77da06925201843.r2.dev";
+
+function toCdnUrl(path) {
+  if (!path) return path;
+  if (/^https?:\/\//i.test(path)) return path;
+  return CDN_BASE + "/" + path.replace(/^\/+/, "");
+}
+
 async function loadVersionTag() {
   const el = document.querySelector(".top-bar-version");
   if (!el) return;
@@ -34,11 +45,20 @@ async function loadTaxonomyManifest() {
     const manifestTags = Array.isArray(manifest.tags) ? manifest.tags : [];
     const manifestProjects = Array.isArray(manifest.projects) ? manifest.projects : [];
 
+    // Priority sort: P1 (core demand) first, then P2, then P3.
+    // "All" stays pinned at position 0 with priority 0.
+    const prioritizedTags = manifestTags
+      .filter((tag) => tag && typeof tag.id === "string")
+      .map((tag) => ({
+        id: tag.id,
+        label: tag.label || tag.id,
+        priority: typeof tag.priority === "number" ? tag.priority : 3
+      }))
+      .sort((a, b) => a.priority - b.priority);
+
     TAG_DEFINITIONS = [
-      { id: "all", label: "All" },
-      ...manifestTags
-        .filter((tag) => tag && typeof tag.id === "string")
-        .map((tag) => ({ id: tag.id, label: tag.label || tag.id }))
+      { id: "all", label: "All", priority: 0 },
+      ...prioritizedTags
     ];
 
     PROJECT_INDEX = manifestProjects
@@ -66,24 +86,36 @@ if (yearElement) {
 // ===== TAG SYSTEM UI =====
 const tagBar = document.getElementById("tag-bar");
 const worksGallery = document.getElementById("works-gallery");
+const worksSection = document.getElementById("works");
 const worksEmptyState = document.getElementById("works-empty");
 
 let activeTagId = "all";
+// Collapsed (one-line) by default. Expand to reveal every tag; selecting any
+// tag collapses the bar back to the original single line.
+let tagBarExpanded = false;
 
 function createTagChip(tag) {
   const chip = document.createElement("button");
   chip.type = "button";
-  chip.className = "tag-chip";
+  // Priority tier drives visual weight: P1 prominent, P2 normal, P3 subdued.
+  const priority = typeof tag.priority === "number" ? tag.priority : 3;
+  chip.className = `tag-chip tag-priority-${priority}`;
+  chip.dataset.priority = String(priority);
   chip.textContent = tag.label;
   chip.setAttribute("aria-pressed", String(tag.id === activeTagId));
   chip.classList.toggle("is-active", tag.id === activeTagId);
   chip.addEventListener("click", () => {
     activeTagId = tag.id;
+    // Selecting a tag returns the bar to the original one-line state.
+    tagBarExpanded = false;
     renderTagSystem();
 
-    //Scroll to selected works section on both desktop and mobile after clicking a tag
-    if (worksGallery) {
-      worksGallery.scrollIntoView({ behavior: "smooth", block: "start" });
+    //Scroll to selected works section on both desktop and mobile after clicking a tag.
+    //Target the works section so the heading stays visible under the sticky tag bar;
+    //scroll-margin-top on #works handles the sticky offset.
+    const scrollTarget = worksSection || worksGallery;
+    if (scrollTarget) {
+      scrollTarget.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   });
   return chip;
@@ -99,7 +131,7 @@ function createWorkCard(project) {
   link.className = "work-link";
 
   const image = document.createElement("img");
-  image.src = project.image;
+  image.src = toCdnUrl(project.image);
   image.alt = project.alt;
 
   const title = document.createElement("h3");
@@ -117,15 +149,42 @@ function createWorkCard(project) {
   return card;
 }
 
+function createExpandToggle() {
+  // Tags concealed by the collapsed state: P2/P3 chips that are not active.
+  const hiddenCount = TAG_DEFINITIONS.filter((tag) => {
+    const priority = typeof tag.priority === "number" ? tag.priority : 3;
+    return priority >= 2 && tag.id !== activeTagId;
+  }).length;
+
+  const toggle = document.createElement("button");
+  toggle.type = "button";
+  toggle.className = "tag-chip tag-expand-toggle";
+  toggle.setAttribute("aria-expanded", String(tagBarExpanded));
+  toggle.setAttribute("aria-controls", "tag-bar");
+  toggle.setAttribute(
+    "aria-label",
+    tagBarExpanded ? "Collapse tag filter" : `Expand tag filter, ${hiddenCount} more tags`
+  );
+  toggle.textContent = tagBarExpanded ? "Less" : `More +${hiddenCount}`;
+  toggle.addEventListener("click", () => {
+    tagBarExpanded = !tagBarExpanded;
+    renderTagSystem();
+  });
+  return toggle;
+}
+
 function renderTagSystem() {
   if (!tagBar || !worksGallery || !worksEmptyState) {
     return;
   }
 
   tagBar.innerHTML = "";
+  // is-collapsed forces a single line and hides non-active P2/P3 chips.
+  tagBar.classList.toggle("is-collapsed", !tagBarExpanded);
   TAG_DEFINITIONS.forEach((tag) => {
     tagBar.appendChild(createTagChip(tag));
   });
+  tagBar.appendChild(createExpandToggle());
 
   const filteredProjects =
     activeTagId === "all"

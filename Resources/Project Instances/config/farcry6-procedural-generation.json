@@ -10,45 +10,110 @@
     "blocks": [
       {
         "type": "h2",
-        "text": "Farcry 6 Procedural Generation Breakdown"
+        "text": "Far Cry 6 — Procedural Generation Breakdown"
       },
       {
         "type": "p",
-        "text": "This project highlights the tools and techniques I used as a technical artist during the development of Farcry 6, showcasing how I leveraged Dunia Engine and Houdini capabilities to improve environment and gameplay production." 
+        "text": "Placeholder copy — replace with final. As a Technical Artist on Far Cry 6, I built procedural generation systems in Houdini and integrated them with the Dunia engine to author large-scale open-world environments: terrain, foliage, rivers, waterfalls, roads, and volcanic terrain materials. The breakdowns below show the procedural systems and the in-engine results they produced."
       },
+
       {
         "type": "h3",
-        "text": "Research Pipeline"
+        "text": "World Overview & Map Generation"
       },
       {
         "type": "p",
-        "text": "I used Snowdrop's node-based visual scripting for rapid gameplay prototyping and wrote Python automation scripts to streamline asset management and reduce repetitive team tasks."
+        "text": "Placeholder copy — replace with final. Top-down overview of the generated world. Houdini graphs distributed biomes, landmarks, and points of interest across the map while respecting terrain constraints and gameplay zones."
       },
-      {
-        "type": "image",
-        "src": "https://placehold.co/1280x720?text=Division+2+Tools+Project+Details+Image",
-        "alt": "Division 2 tools project details placeholder image"
-      },
+      { "type": "image", "src": "projects/farcry6-procedural-generation/blocks/MapOverview1.png", "alt": "Far Cry 6 generated world map overview" },
+      { "type": "image", "src": "projects/farcry6-procedural-generation/blocks/MapOverview2.png", "alt": "Far Cry 6 procedural map detail" },
+      { "type": "image", "src": "projects/farcry6-procedural-generation/blocks/MapOverview3.png", "alt": "Far Cry 6 biome distribution overview" },
+      { "type": "image", "src": "projects/farcry6-procedural-generation/blocks/MapOverview4.png", "alt": "Far Cry 6 full world map generation" },
+
       {
         "type": "h3",
-        "text": "Feedback"
+        "text": "Coastal & Beach Environments"
       },
       {
         "type": "p",
-        "text": "Team feedback emphasized faster handoff quality and easier debugging during feature iteration, which helped increase consistency across content drops."
+        "text": "Placeholder copy — replace with final. Procedural beach generation: sand distribution, shoreline foam lines, and asset scattering (rocks, driftwood, vegetation) driven by slope and elevation masks exported from Houdini."
+      },
+      { "type": "image", "src": "projects/farcry6-procedural-generation/blocks/Beach1.png", "alt": "Procedurally generated Far Cry 6 beach" },
+      { "type": "image", "src": "projects/farcry6-procedural-generation/blocks/Beach2.png", "alt": "Far Cry 6 coastline scattering detail" },
+      { "type": "image", "src": "projects/farcry6-procedural-generation/blocks/Beach3.png", "alt": "Far Cry 6 beach shoreline generation" },
+
+      {
+        "type": "h3",
+        "text": "Cliff & Rock Formations"
+      },
+      {
+        "type": "p",
+        "text": "Placeholder copy — replace with final. Cliff and rock generation from heightfield-based erosion. Houdini emitted cliff geometry and decimated rock assets onto steep slopes, with material blending driven by angle and altitude."
+      },
+      { "type": "image", "src": "projects/farcry6-procedural-generation/blocks/Cliff1.png", "alt": "Procedural cliff generation in Far Cry 6" },
+      { "type": "image", "src": "projects/farcry6-procedural-generation/blocks/Cliff2.png", "alt": "Far Cry 6 rock formation scattering" },
+      { "type": "image", "src": "projects/farcry6-procedural-generation/blocks/Cliff3.png", "alt": "Far Cry 6 cliff material blending" },
+
+      {
+        "type": "h3",
+        "text": "Volcanic Lava Lake Terrain"
+      },
+      {
+        "type": "p",
+        "text": "Placeholder copy — replace with final. Volcanic terrain surrounding the lava lake. Procedural systems layered cracked-rock, ash, and ember materials and scattered heat-resistant assets to sell a believable volcanic biome."
+      },
+      { "type": "image", "src": "projects/farcry6-procedural-generation/blocks/LavaLake1.png", "alt": "Volcanic lava lake terrain in Far Cry 6" },
+      { "type": "image", "src": "projects/farcry6-procedural-generation/blocks/LavaLake2.png", "alt": "Far Cry 6 lava lake material layering" },
+      { "type": "image", "src": "projects/farcry6-procedural-generation/blocks/LavaLake3.png", "alt": "Far Cry 6 volcanic rock scattering" },
+      { "type": "image", "src": "projects/farcry6-procedural-generation/blocks/LavaLake4.png", "alt": "Far Cry 6 lava lake overview" },
+
+      {
+        "type": "h3",
+        "text": "Material Transition — Before & After"
+      },
+      {
+        "type": "p",
+        "text": "Placeholder copy — replace with final. Drag the slider to compare the raw procedural output with the polished, artist-directed result. The transition shows how procedural terrain materials were refined into the final in-engine look."
       },
       {
         "type": "image-compare",
-        "before": "https://placehold.co/1280x720/1a1a2e/eff2ff?text=Before+-+Raw+Procedural+Output",
-        "after": "https://placehold.co/1280x720/1a1a2e/eff2ff?text=After+-+Polished+Environment",
-        "beforeAlt": "Before procedural refinement",
-        "afterAlt": "After procedural refinement"
+        "before": "projects/farcry6-procedural-generation/blocks/LavaTransitionBefore.png",
+        "after": "projects/farcry6-procedural-generation/blocks/LavaTransitionAfter.png",
+        "beforeAlt": "Lava terrain before material refinement",
+        "afterAlt": "Lava terrain after material refinement",
+        "beforeLabel": "Before",
+        "afterLabel": "After"
+      },
+
+      {
+        "type": "h3",
+        "text": "Road & Path Network"
       },
       {
-        "type": "video",
-        "url": "https://www.youtube.com/watch?v=VIDEO_ID_PLACEHOLDER",
-        "title": "Division 2 tools workflow placeholder video"
-      }
+        "type": "p",
+        "text": "Placeholder copy — replace with final. Procedural road generation that follows the terrain contour, cuts/fills embankments, and lays down road material with blended shoulders connecting gameplay points of interest."
+      },
+      { "type": "image", "src": "projects/farcry6-procedural-generation/blocks/Road.png", "alt": "Procedural road generation in Far Cry 6" },
+
+      {
+        "type": "h3",
+        "text": "Waterfall & River Integration"
+      },
+      {
+        "type": "p",
+        "text": "Placeholder copy — replace with final. River and waterfall placement driven by flow simulations in Houdini, with FX, foam, and mist integrated into the engine to sit naturally within the generated terrain."
+      },
+      { "type": "image", "src": "projects/farcry6-procedural-generation/blocks/Waterfall.png", "alt": "Procedural waterfall integration in Far Cry 6" },
+
+      {
+        "type": "h3",
+        "text": "Performance Optimization"
+      },
+      {
+        "type": "p",
+        "text": "Placeholder copy — replace with final. Profiling and optimization of the procedural pipeline to keep generation, streaming, and draw-call budgets within target frame time across the open world."
+      },
+      { "type": "image", "src": "projects/farcry6-procedural-generation/blocks/Performance.png", "alt": "Far Cry 6 procedural pipeline performance profiling" }
     ]
   },
   "images": {

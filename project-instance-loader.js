@@ -1,6 +1,17 @@
 const PROJECT_INSTANCE_CONFIG_BASE = "Resources/Project Instances/config";
 const TAXONOMY_MANIFEST_PATH = "data/taxonomy.json";
 
+// CDN base for images served from Cloudflare R2. Logical paths in project
+// config (e.g. "projects/<slug>/blocks/x.png") are prefixed at runtime;
+// absolute URLs (http...) pass through unchanged.
+const CDN_BASE = "https://pub-dc4e1f00955f4568a77da06925201843.r2.dev";
+
+function toCdnUrl(path) {
+  if (!path) return path;
+  if (/^https?:\/\//i.test(path)) return path;
+  return CDN_BASE + "/" + path.replace(/^\/+/, "");
+}
+
 async function loadVersionTag() {
   const el = document.querySelector(".top-bar-version");
   if (!el) return;
@@ -221,7 +232,7 @@ function createDetailBlockElement(block, fallbackTitle) {
   if (type === "image") {
     if (!block.src) return null;
     const image = document.createElement("img");
-    image.src = block.src;
+    image.src = toCdnUrl(block.src);
     image.alt = block.alt || `${fallbackTitle} project detail image`;
     image.className = "project-details-image";
     return image;
@@ -251,13 +262,13 @@ function createDetailBlockElement(block, fallbackTitle) {
 
     const afterImg = document.createElement("img");
     afterImg.className = "image-compare-after";
-    afterImg.src = block.after;
+    afterImg.src = toCdnUrl(block.after);
     afterImg.alt = block.afterAlt || `${fallbackTitle} after`;
     afterImg.loading = "lazy";
 
     const beforeImg = document.createElement("img");
     beforeImg.className = "image-compare-before";
-    beforeImg.src = block.before;
+    beforeImg.src = toCdnUrl(block.before);
     beforeImg.alt = block.beforeAlt || `${fallbackTitle} before`;
     beforeImg.loading = "lazy";
 

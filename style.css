@@ -629,6 +629,116 @@ main,
 }
 
 
+/* ------------------------------------------------------------
+   TAG SYSTEM UPDATE REMINDER BANNER
+   Sits at the top of the sticky tag panel
+   ------------------------------------------------------------ */
+
+.tag-system-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.5rem;
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin-bottom: 0.9rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.tag-meta-icon {
+  color: var(--accent);
+  font-size: 0.92rem;
+  line-height: 1;
+}
+
+.tag-meta-text {
+  color: var(--text);
+}
+
+.tag-meta-text strong {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.tag-meta-sep {
+  opacity: 0.45;
+}
+
+.tag-meta-date {
+  color: var(--accent-2);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+
+/* ------------------------------------------------------------
+   PRIORITY TIERS — visual weight maps to job-market demand.
+   P1 (core demand) is prominent; P2 inherits the default chip
+   look; P3 (specialized) is subdued until hovered/focused.
+   The active state always overrides via higher specificity
+   (.tag-chip.is-active).
+   ------------------------------------------------------------ */
+
+.tag-chip.tag-priority-1 {
+  background: linear-gradient(140deg, rgba(120, 168, 255, 0.22), rgba(162, 139, 255, 0.18));
+  border-color: rgba(120, 168, 255, 0.55);
+  color: var(--text);
+  font-weight: 700;
+}
+
+.tag-chip.tag-priority-3 {
+  background: transparent;
+  color: var(--muted);
+  opacity: 0.7;
+  font-weight: 500;
+}
+
+.tag-chip.tag-priority-3:hover,
+.tag-chip.tag-priority-3:focus-visible {
+  opacity: 1;
+}
+
+/* Offset scroll target so the Selected Works heading clears the
+   sticky tag bar when arriving from a tag click. */
+#works {
+  scroll-margin-top: 150px;
+}
+
+
+/* ------------------------------------------------------------
+   COLLAPSIBLE TAG BAR
+   Default = single line (collapsed): shows All + P1 chips + the
+   active P2/P3 chip (if any) + the "More" toggle. Expanding
+   reveals every tag; selecting a tag collapses back to one line.
+   ------------------------------------------------------------ */
+
+.tag-bar.is-collapsed {
+  flex-wrap: nowrap;
+}
+
+.tag-bar.is-collapsed .tag-priority-2:not(.is-active),
+.tag-bar.is-collapsed .tag-priority-3:not(.is-active) {
+  display: none;
+}
+
+/* Expand/collapse toggle pill — visually distinct from filter chips */
+.tag-chip.tag-expand-toggle {
+  flex: 0 0 auto;
+  white-space: nowrap;
+  border-style: dashed;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.tag-chip.tag-expand-toggle:hover,
+.tag-chip.tag-expand-toggle:focus-visible {
+  background: rgba(120, 168, 255, 0.14);
+  color: var(--accent);
+}
+
+
 /* ============================================================
    WORKS GALLERY
    2-column grid of project cards on the home page

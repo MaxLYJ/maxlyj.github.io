@@ -1,2 +1,5 @@
 # Visual Studio local files
 .vs/
+
+# Cloudflare wrangler local state (not for the repo)
+.wrangler/

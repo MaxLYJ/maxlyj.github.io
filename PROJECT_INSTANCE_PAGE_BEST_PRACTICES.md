@@ -8,12 +8,13 @@ Goal: you should be able to create a new page without breaking tags, related wor
 
 ## Quick Mental Model (What lives where)
 
-When you create a project page, you usually touch **two places** (plus an HTML shell):
+When you create a project page, you edit **two files**, write **one HTML shell**, and run **one script**:
 
 1. `Resources/Project Instances/config/<your-slug>.json`  
    Your page content (title, text, images, details, metadata).
 2. `data/taxonomy.json`  
    Global tag system + project discovery entry (used for tags and related works).
+3. **Cloudflare R2 image folders** — created by running `scripts/provision-r2-folders.sh` once your slug is in `taxonomy.json`. See **Step 3** below. *(Required — the project's images have nowhere to live without it.)*
 
 The loader discovers configs automatically by naming convention — no registration step needed.
 
@@ -163,7 +164,33 @@ If `tagIds` is wrong or missing, tags/related works will be poor or empty.
 
 ---
 
-## Step 3) Create (or verify) the instance HTML shell
+## Step 3) Provision image folders on Cloudflare R2 (required)
+
+Every project's images live in the **`portfolio-images`** Cloudflare R2 bucket, under `projects/<your-slug>/`. A new project needs its own folder tree there — created by running **one script**.
+
+> **Prerequisite:** your slug must already be in `data/taxonomy.json` (Step 2). The script reads `projects[].slug` from there, so it never needs editing when you add a project.
+
+```bash
+# one-time auth (interactive, opens a browser):
+npx wrangler login
+
+# create this project's folders (plus any others in taxonomy.json):
+R2_BUCKET=portfolio-images bash scripts/provision-r2-folders.sh
+```
+
+This creates the project's folder tree as zero-byte `.keep` placeholders:
+
+- `projects/<your-slug>/` — cover + thumbnails
+- `projects/<your-slug>/featured/` — featured-recommendation imagery
+- `projects/<your-slug>/blocks/` — inline detail/block images
+
+Then upload your images into those folders following the naming conventions in [`IMAGE_STORAGE_PLAN.md`](./IMAGE_STORAGE_PLAN.md) (`cover.png`, `thumb_01..04`, `featured/main.png`, raster `_low` variants, etc.). That doc also covers the `CDN_BASE` runtime wiring and the full migration mapping.
+
+> **Don't skip this step.** Without these folders, uploaded images have no destination and the project's images will not resolve on the CDN. The script is the only supported way to create them — never hand-create folders in the R2 dashboard, or the structure will drift from `taxonomy.json`.
+
+---
+
+## Step 4) Create (or verify) the instance HTML shell
 
 Your instance HTML should be minimal and include:
 
@@ -175,7 +202,7 @@ Avoid copying full template markup into each page. The loader fetches `template-
 
 ---
 
-## Step 4) Fill content safely (newbie tips)
+## Step 5) Fill content safely (newbie tips)
 
 - Start with placeholders first; publish structure, then refine copy/media.
 - Keep alt text descriptive for accessibility.
@@ -185,10 +212,11 @@ Avoid copying full template markup into each page. The loader fetches `template-
 
 ---
 
-## Step 5) Validate your page
+## Step 6) Validate your page
 
 Checklist:
 
+- [ ] R2 image folders created for this slug (`scripts/provision-r2-folders.sh`) and images uploaded
 - [ ] Page title, kicker, description render correctly
 - [ ] Cover image + 4 thumbnails load
 - [ ] Thumbnail click/swipe changes main image
@@ -216,6 +244,8 @@ Checklist:
 
 5. **Details section empty**  
    `projectDetails.blocks` malformed or unsupported block `type`.
+6. **Images don't load / nowhere to upload them**  
+   You skipped Step 3. After adding the slug to `taxonomy.json`, run `R2_BUCKET=portfolio-images bash scripts/provision-r2-folders.sh`. Without it the project's `projects/<slug>/` folders don't exist in R2, so there is no destination for its images.
 
 ---
 
@@ -224,8 +254,10 @@ Checklist:
 1. Copy an existing config JSON as baseline.
 2. Rename file to `<your-slug>.json` and update slug paths inside.
 3. Add taxonomy project entry and needed tags.
-4. Verify HTML shell slug value.
-5. Test locally and fix missing assets/typos.
-6. Replace placeholders with final copy + media.
+4. Run `R2_BUCKET=portfolio-images bash scripts/provision-r2-folders.sh` to create the project's R2 image folders (Step 3 above) — the script reads the slug you just added.
+5. Upload images into those R2 folders per [`IMAGE_STORAGE_PLAN.md`](./IMAGE_STORAGE_PLAN.md).
+6. Verify HTML shell slug value.
+7. Test locally and fix missing assets/typos.
+8. Replace placeholders with final copy + media.
 
 This order prevents most integration issues and is the fastest path for newcomers.
