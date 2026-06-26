@@ -3,3 +3,7 @@
 
 # Cloudflare wrangler local state (not for the repo)
 .wrangler/
+
+# Cloudflare R2 secrets + local env (scripts/r2.sh sources scripts/r2.env)
+scripts/r2.env
+.dev.vars

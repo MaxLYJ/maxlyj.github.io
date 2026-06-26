@@ -580,11 +580,15 @@ async function loadProjectInstanceTemplate() {
     const role = `thumb_0${index + 1}`;
     const imageNode = button.querySelector("img");
     const imagePath = config.images[role];
+    // Optional high-res variant for the big preview shown when the thumbnail is clicked;
+    // falls back to the thumbnail path when not provided (backwards compatible).
+    const fullRole = `full_0${index + 1}`;
+    const galleryPath = config.images[fullRole] || imagePath;
     if (imageNode) {
       imageNode.src = imagePath;
       imageNode.alt = `${config.title} gallery thumbnail ${index + 1}`;
     }
-    button.dataset.gallerySrc = imagePath;
+    button.dataset.gallerySrc = galleryPath;
   });
 
   // Fill the 4-column metadata grid in template order.
