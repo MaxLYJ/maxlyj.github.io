@@ -279,49 +279,11 @@ if (recommendationIndicatorElement) {
   recommendationIndicatorElement.setAttribute("aria-label", `${RECOMMENDATION_SECTION_NAME} pages`);
 }
 
-const featuredPages = [
-  {
-    folder: "fr-division-2",
-    slug: "division-2",
-    title: "Division 2",
-    description: "Tom Clancy's The Division 2 recommendation set.",
-    targetUrl: "division-2.html",
-    altMain: "Division 2 main recommendation image",
-    altThumbs: ["Division 2 thumbnail 1", "Division 2 thumbnail 2", "Division 2 thumbnail 3", "Division 2 thumbnail 4"]
-  },
-  {
-    folder: "fr-farcry-6",
-    slug: "farcry-6",
-    title: "Farcry 6",
-    description: "Recommendation snapshots for Farcry 6.",
-    targetUrl: "farcry-6.html",
-    altMain: "Farcry 6 main recommendation image",
-    altThumbs: ["Farcry 6 thumbnail 1", "Farcry 6 thumbnail 2", "Farcry 6 thumbnail 3", "Farcry 6 thumbnail 4"]
-  },
-  {
-    folder: "fr-d-walker-vs-sahelanthropus",
-    slug: "d-walker-vs-sahelanthropus",
-    title: "D-Walker VS Sahelanthropus",
-    description: "A tactical encounter recommendation: D-Walker VS Sahelanthropus.",
-    targetUrl: "d-walker-vs-sahelanthropus.html",
-    altMain: "D-Walker VS Sahelanthropus main recommendation image",
-    altThumbs: [
-      "D-Walker VS Sahelanthropus thumbnail 1",
-      "D-Walker VS Sahelanthropus thumbnail 2",
-      "D-Walker VS Sahelanthropus thumbnail 3",
-      "D-Walker VS Sahelanthropus thumbnail 4"
-    ]
-  },
-  {
-    folder: "fr-raiden-vs-gekko",
-    slug: "raiden-vs-gekko",
-    title: "Raiden VS Gekko",
-    description: "Metal Gear Rising recommendation: Raiden VS Gekko.",
-    targetUrl: "raiden-vs-gekko.html",
-    altMain: "Raiden VS Gekko main recommendation image",
-    altThumbs: ["Raiden VS Gekko thumbnail 1", "Raiden VS Gekko thumbnail 2", "Raiden VS Gekko thumbnail 3", "Raiden VS Gekko thumbnail 4"]
-  }
-];
+// Projects shown in the front-page carousel. These are the project slugs that
+// have R2 featured/ art (LowRes thumbnails + HighRes previews). Add a slug here
+// once its projects/<slug>/featured/ folder is populated.
+const FEATURED_PROJECT_SLUGS = ["farcry6-procedural-generation", "division2-tools"];
+const FEATURED_THUMB_MAX = 4;
 
 const frSection = document.getElementById("featured-recommendations");
 if (frSection) {
@@ -330,38 +292,14 @@ if (frSection) {
   const frThumbs = document.getElementById("fr-thumbs");
   const frTitle = document.getElementById("fr-title");
   const frDescription = document.getElementById("fr-description");
-  const frWarning = document.getElementById("fr-warning");
-  const frWarningList = document.getElementById("fr-warning-list");
   const pageIndicator = document.getElementById("fr-page-indicator");
   const prevBtn = frSection.querySelector(".fr-nav-prev");
   const nextBtn = frSection.querySelector(".fr-nav-next");
 
-  const basePath = "Resources/Featured Recommendations/pages";
-  const pathCache = new Map();
-  const validationCache = new Map();
   const preloadCache = new Set();
+  let featuredPages = [];
   let currentPageIndex = 0;
   let renderToken = 0;
-
-  function buildImagePath(page, role, extension) {
-    return `${basePath}/${page.folder}/fr_${page.slug}__${role}.${extension}`;
-  }
-
-  function canLoadImage(src) {
-    if (validationCache.has(src)) {
-      return validationCache.get(src);
-    }
-
-    const validationPromise = new Promise((resolve) => {
-      const image = new Image();
-      image.onload = () => resolve(true);
-      image.onerror = () => resolve(false);
-      image.src = src;
-    });
-
-    validationCache.set(src, validationPromise);
-    return validationPromise;
-  }
 
   function preloadImage(src) {
     const image = new Image();
@@ -369,82 +307,102 @@ if (frSection) {
     image.src = src;
   }
 
-  function getPageRoles() {
-    return ["main", "thumb_01", "thumb_02", "thumb_03", "thumb_04"];
+  // Build carousel entries from taxonomy + each project's config images.
+  // Cover = project default image; thumbs = LowRes (cap at FEATURED_THUMB_MAX);
+  // fulls = HighRes (shown on hover). Mirrors the project-page data model so the
+  // two can never drift.
+  async function loadFeaturedTaxonomy() {
+    try {
+      const response = await fetch(TAXONOMY_MANIFEST_PATH);
+      if (!response.ok) {
+        return { projects: [] };
+      }
+      return await response.json();
+    } catch {
+      return { projects: [] };
+    }
   }
 
-  async function preloadPageAssets(page) {
+  async function buildFeaturedPages(taxonomy) {
+    const projects = Array.isArray(taxonomy.projects) ? taxonomy.projects : [];
+    const bySlug = new Map(projects.map((p) => [p.slug, p]));
+
+    const entries = [];
+    for (const slug of FEATURED_PROJECT_SLUGS) {
+      const taxon = bySlug.get(slug);
+      if (!taxon) {
+        continue;
+      }
+      // eslint-disable-next-line no-await-in-loop
+      const config = await loadFeaturedProjectConfig(slug);
+      if (!config || !config.images) {
+        continue;
+      }
+      const images = config.images;
+      if (!images.cover || !images.thumb_01) {
+        continue;
+      }
+
+      const thumbs = [];
+      const fulls = [];
+      for (let i = 1; i <= FEATURED_THUMB_MAX; i += 1) {
+        const thumb = images[`thumb_0${i}`];
+        if (!thumb) {
+          break;
+        }
+        thumbs.push(thumb);
+        // HighRes shown on hover; fall back to the LowRes thumb if not defined.
+        fulls.push(images[`full_0${i}`] || thumb);
+      }
+      if (!thumbs.length) {
+        continue;
+      }
+
+      entries.push({
+        slug,
+        title: taxon.title || config.title || slug,
+        description: config.kicker || config.description || "",
+        targetUrl: taxon.url || `${slug}.html`,
+        cover: toCdnUrl(images.cover),
+        altMain: taxon.alt || `${taxon.title || slug} cover image`,
+        thumbs: thumbs.map(toCdnUrl),
+        fulls: fulls.map(toCdnUrl)
+      });
+    }
+    return entries;
+  }
+
+  async function loadFeaturedProjectConfig(slug) {
+    try {
+      const response = await fetch(`Resources/Project Instances/config/${slug}.json`);
+      if (!response.ok) {
+        return null;
+      }
+      return await response.json();
+    } catch (error) {
+      console.warn(`Failed to load featured project config for ${slug}`, error);
+      return null;
+    }
+  }
+
+  function preloadPageAssets(page) {
     if (preloadCache.has(page.slug)) {
       return;
     }
-
     preloadCache.add(page.slug);
-    const roles = getPageRoles();
-    const resolvedPaths = await Promise.all(roles.map((role) => resolveImagePath(page, role)));
-    resolvedPaths.forEach(preloadImage);
+    preloadImage(page.cover);
+    page.thumbs.forEach(preloadImage);
+    page.fulls.forEach(preloadImage);
   }
 
   function warmNeighborPages() {
-    const prevPage = featuredPages[(currentPageIndex - 1 + featuredPages.length) % featuredPages.length];
-    const nextPage = featuredPages[(currentPageIndex + 1) % featuredPages.length];
-
-    preloadPageAssets(prevPage);
-    preloadPageAssets(nextPage);
-  }
-
-  async function resolveImagePath(page, role) {
-    const key = `${page.slug}:${role}`;
-    if (pathCache.has(key)) {
-      return pathCache.get(key);
-    }
-
-    for (const extension of RECOMMENDATION_IMAGE_EXTENSION_PRIORITY) {
-      const candidatePath = buildImagePath(page, role, extension);
-      // eslint-disable-next-line no-await-in-loop
-      const isValid = await canLoadImage(candidatePath);
-      if (isValid) {
-        pathCache.set(key, candidatePath);
-        return candidatePath;
-      }
-    }
-
-    const fallbackPath = buildImagePath(page, role, "svg");
-    pathCache.set(key, fallbackPath);
-    return fallbackPath;
-  }
-
-  function validatePage(page) {
-    const issues = [];
-    if (!/^fr-[a-z0-9-]+$/.test(page.folder)) {
-      issues.push(`Invalid folder name: ${page.folder}`);
-    }
-
-    if (!page.folder.endsWith(page.slug)) {
-      issues.push(`Folder and slug mismatch: ${page.folder} vs ${page.slug}`);
-    }
-
-    return issues;
-  }
-
-  function clearWarning() {
-    frSection.classList.remove("has-warning");
-    frWarning.hidden = true;
-    frWarningList.innerHTML = "";
-  }
-
-  function applyWarning(issues, page) {
-    if (!issues.length) {
-      clearWarning();
+    if (!featuredPages.length) {
       return;
     }
-
-    frSection.classList.add("has-warning");
-    frWarning.hidden = false;
-    frWarningList.innerHTML = issues.map((issue) => `<li>${issue}</li>`).join("");
-    console.warn(`${RECOMMENDATION_SECTION_NAME} naming issues`, {
-      pageSlug: page.slug,
-      issues
-    });
+    const prevPage = featuredPages[(currentPageIndex - 1 + featuredPages.length) % featuredPages.length];
+    const nextPage = featuredPages[(currentPageIndex + 1) % featuredPages.length];
+    preloadPageAssets(prevPage);
+    preloadPageAssets(nextPage);
   }
 
   function setActiveThumb(activeButton) {
@@ -468,16 +426,13 @@ if (frSection) {
     });
   }
 
-  async function renderPage() {
+  function renderPage() {
     renderToken += 1;
     const currentToken = renderToken;
+    if (!featuredPages.length) {
+      return;
+    }
     const page = featuredPages[currentPageIndex];
-
-    const thumbRoles = ["thumb_01", "thumb_02", "thumb_03", "thumb_04"];
-    const [mainImage, thumbPaths] = await Promise.all([
-      resolveImagePath(page, "main"),
-      Promise.all(thumbRoles.map((role) => resolveImagePath(page, role)))
-    ]);
 
     if (currentToken !== renderToken) {
       return;
@@ -486,13 +441,14 @@ if (frSection) {
     frCardLink.href = page.targetUrl;
     frTitle.textContent = page.title;
     frDescription.textContent = page.description;
-    frMainImage.src = mainImage;
+    frMainImage.src = page.cover;
     frMainImage.alt = page.altMain;
-    preloadImage(mainImage);
+    preloadImage(page.cover);
 
     frThumbs.innerHTML = "";
-    thumbPaths.forEach((thumbPath, thumbIndex) => {
+    page.thumbs.forEach((thumbPath, thumbIndex) => {
       const i = thumbIndex + 1;
+      const highRes = page.fulls[thumbIndex] || thumbPath;
 
       const thumbButton = document.createElement("button");
       thumbButton.className = "fr-thumb";
@@ -501,11 +457,12 @@ if (frSection) {
 
       const thumbImage = document.createElement("img");
       thumbImage.src = thumbPath;
-      thumbImage.alt = page.altThumbs[i - 1] || `${page.title} thumbnail ${i}`;
+      thumbImage.alt = `${page.title} thumbnail ${i}`;
       thumbButton.appendChild(thumbImage);
 
+      // Hover/focus swaps the main image to the HighRes variant.
       const activateThumb = () => {
-        frMainImage.src = thumbPath;
+        frMainImage.src = highRes;
         frMainImage.alt = thumbImage.alt;
         setActiveThumb(thumbButton);
       };
@@ -523,13 +480,14 @@ if (frSection) {
         }
       });
 
+      // Leave/blur reverts the main image to the project cover.
       thumbButton.addEventListener("mouseleave", () => {
-        frMainImage.src = mainImage;
+        frMainImage.src = page.cover;
         frMainImage.alt = page.altMain;
         setActiveThumb(null);
       });
       thumbButton.addEventListener("blur", () => {
-        frMainImage.src = mainImage;
+        frMainImage.src = page.cover;
         frMainImage.alt = page.altMain;
         setActiveThumb(null);
       });
@@ -538,27 +496,44 @@ if (frSection) {
       preloadImage(thumbPath);
     });
 
-    applyWarning(validatePage(page), page);
     renderIndicator();
     warmNeighborPages();
   }
 
   function movePage(direction) {
+    if (!featuredPages.length) {
+      return;
+    }
     currentPageIndex = (currentPageIndex + direction + featuredPages.length) % featuredPages.length;
     renderPage();
   }
 
   [prevBtn, nextBtn].forEach((button) => {
+    if (!button) {
+      return;
+    }
     button.addEventListener("click", (event) => {
       event.preventDefault();
       event.stopPropagation();
     });
   });
 
-  prevBtn.addEventListener("click", () => movePage(-1));
-  nextBtn.addEventListener("click", () => movePage(1));
+  if (prevBtn) {
+    prevBtn.addEventListener("click", () => movePage(-1));
+  }
+  if (nextBtn) {
+    nextBtn.addEventListener("click", () => movePage(1));
+  }
 
-  renderPage();
+  // Wire the navigation buttons even before entries resolve, then hydrate the
+  // carousel once project configs are fetched. loadTaxonomyManifest populates
+  // globals but returns undefined, so fetch the manifest here for its slug/url
+  // fields (small JSON, cache-friendly).
+  loadTaxonomyManifest().then(async () => {
+    const taxonomy = await loadFeaturedTaxonomy();
+    featuredPages = await buildFeaturedPages(taxonomy);
+    renderPage();
+  });
 }
 
 const projectTemplateMain = document.querySelector("[data-project-template-folder][data-project-template-slug]");
