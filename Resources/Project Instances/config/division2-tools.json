@@ -14,41 +14,150 @@
       },
       {
         "type": "p",
-        "text": "This project highlights the tools and techniques I used as a technical artist during the development of Tom Clancy's The Division 2, showcasing how I leveraged Snowdrop Engine capabilities to improve environment and gameplay production." 
+        "text": "This project highlights the tools and techniques I used as a technical artist during the development of Tom Clancy's The Division 2, showcasing how I leveraged Snowdrop Engine capabilities to improve environment and gameplay production."
       },
       {
         "type": "h3",
-        "text": "Research Pipeline"
+        "text": "Header"
+      },
+      { "type": "image", "src": "projects/division2-tools/blocks/Header_TheDivision2.jpg", "alt": "The Division 2 header image" },
+      {
+        "type": "h3",
+        "text": "Procedural Level Generation"
       },
       {
         "type": "p",
-        "text": "I used Snowdrop's node-based visual scripting for rapid gameplay prototyping and wrote Python automation scripts to streamline asset management and reduce repetitive team tasks."
+        "text": "Procedural level tooling generated and validated mission layouts. The before/after shows the layout pass refinement."
       },
+      { "type": "image", "src": "projects/division2-tools/blocks/ProceduralLevel4.png", "alt": "Division 2 procedural level generation" },
       {
-        "type": "image",
-        "src": "https://placehold.co/1280x720?text=Division+2+Tools+Project+Details+Image",
-        "alt": "Division 2 tools project details placeholder image"
+        "type": "image-compare",
+        "before": "projects/division2-tools/blocks/ProceduralLevelBefore.png",
+        "after": "projects/division2-tools/blocks/ProceduralLevelAfter.png",
+        "beforeAlt": "Procedural level before refinement",
+        "afterAlt": "Procedural level after refinement",
+        "beforeLabel": "Before",
+        "afterLabel": "After"
       },
       {
         "type": "h3",
-        "text": "Feedback"
+        "text": "Level Streaming & Optimization"
       },
       {
         "type": "p",
-        "text": "Team feedback emphasized faster handoff quality and easier debugging during feature iteration, which helped increase consistency across content drops."
+        "text": "Level-streaming tooling kept the open world seamless on target hardware. The before/after shows the streaming optimization pass."
+      },
+      { "type": "image", "src": "projects/division2-tools/blocks/LevelStreaming3.png", "alt": "Division 2 level streaming" },
+      { "type": "image", "src": "projects/division2-tools/blocks/LevelStreaming4.png", "alt": "Division 2 level streaming detail" },
+      { "type": "image", "src": "projects/division2-tools/blocks/LevelMap.png", "alt": "Division 2 level map overview" },
+      { "type": "image", "src": "projects/division2-tools/blocks/LevelStreamingOptimization.png", "alt": "Division 2 level streaming optimization" },
+      {
+        "type": "image-compare",
+        "before": "projects/division2-tools/blocks/LevelStreamingBefore.png",
+        "after": "projects/division2-tools/blocks/LevelStreamingAfter.png",
+        "beforeAlt": "Level streaming before optimization",
+        "afterAlt": "Level streaming after optimization",
+        "beforeLabel": "Before",
+        "afterLabel": "After"
       },
       {
-        "type": "video",
-        "url": "https://www.youtube.com/watch?v=VIDEO_ID_PLACEHOLDER",
-        "title": "Division 2 tools workflow placeholder video"
-      }
+        "type": "h3",
+        "text": "Boss Mechanics"
+      },
+      {
+        "type": "p",
+        "text": "Tooling supported boss-encounter setup including fire-area telegraphing."
+      },
+      { "type": "image", "src": "projects/division2-tools/blocks/BossMachanic1.png", "alt": "Division 2 boss mechanic setup" },
+      { "type": "image", "src": "projects/division2-tools/blocks/BossMachanic2.png", "alt": "Division 2 boss mechanic detail" },
+      { "type": "image", "src": "projects/division2-tools/blocks/BossMachanic_Firearea1.png", "alt": "Division 2 boss fire area telegraph" },
+      { "type": "image", "src": "projects/division2-tools/blocks/BossMachanic_Firearea2.png", "alt": "Division 2 boss fire area detail" },
+      {
+        "type": "h3",
+        "text": "Oil Truck Encounter"
+      },
+      {
+        "type": "p",
+        "text": "The Oil Truck encounter used a dedicated setup tool; the before/after shows the material pass."
+      },
+      { "type": "image", "src": "projects/division2-tools/blocks/OilTruck1.png", "alt": "Division 2 oil truck encounter" },
+      {
+        "type": "image-compare",
+        "before": "projects/division2-tools/blocks/OilTruckBefore.png",
+        "after": "projects/division2-tools/blocks/OilTruckAfter.png",
+        "beforeAlt": "Oil truck before material pass",
+        "afterAlt": "Oil truck after material pass",
+        "beforeLabel": "Before",
+        "afterLabel": "After"
+      },
+      {
+        "type": "h3",
+        "text": "In-Game Shaders"
+      },
+      {
+        "type": "p",
+        "text": "Custom shaders covered energy weapons, water guns, and ammo indicators."
+      },
+      { "type": "image", "src": "projects/division2-tools/blocks/InGameShader1.png", "alt": "Division 2 in-game shader" },
+      { "type": "image", "src": "projects/division2-tools/blocks/Shader_EnergyWeapon01.png", "alt": "Division 2 energy weapon shader" },
+      { "type": "image", "src": "projects/division2-tools/blocks/Shader_EnergyWeapon02.png", "alt": "Division 2 energy weapon shader detail" },
+      { "type": "image", "src": "projects/division2-tools/blocks/Shader_Watergun1.png", "alt": "Division 2 water gun shader" },
+      { "type": "image", "src": "projects/division2-tools/blocks/Shader_Watergun2.png", "alt": "Division 2 water gun shader detail" },
+      {
+        "type": "image-compare",
+        "before": "projects/division2-tools/blocks/Shader_WeaponAmmoBefore.png",
+        "after": "projects/division2-tools/blocks/Shader_WeaponAmmoAfter.png",
+        "beforeAlt": "Weapon ammo shader before",
+        "afterAlt": "Weapon ammo shader after",
+        "beforeLabel": "Before",
+        "afterLabel": "After"
+      },
+      {
+        "type": "h3",
+        "text": "LED Screen Setup"
+      },
+      {
+        "type": "p",
+        "text": "LED-screen content tooling handled dynamic signage; the before/after shows the render pass."
+      },
+      {
+        "type": "image-compare",
+        "before": "projects/division2-tools/blocks/LEDScreenBefore.png",
+        "after": "projects/division2-tools/blocks/LEDScreenAfter.png",
+        "beforeAlt": "LED screen before render pass",
+        "afterAlt": "LED screen after render pass",
+        "beforeLabel": "Before",
+        "afterLabel": "After"
+      },
+      {
+        "type": "h3",
+        "text": "UI Programming & VFX"
+      },
+      {
+        "type": "p",
+        "text": "UI programming and VFX-optimization tooling rounded out the technical-art workflow."
+      },
+      { "type": "image", "src": "projects/division2-tools/blocks/UIProgramming1.png", "alt": "Division 2 UI programming" },
+      { "type": "image", "src": "projects/division2-tools/blocks/VFXOptimization1.png", "alt": "Division 2 VFX optimization" }
     ]
   },
   "images": {
-    "cover": "Resources/Featured Recommendations/pages/fr-division2-tools/fr_division2-tools__main.png",
-    "thumb_01": "Resources/Featured Recommendations/pages/fr-division2-tools/fr_division2-tools__thumb_01.svg",
-    "thumb_02": "Resources/Featured Recommendations/pages/fr-division2-tools/fr_division2-tools__thumb_02.svg",
-    "thumb_03": "Resources/Featured Recommendations/pages/fr-division2-tools/fr_division2-tools__thumb_03.svg",
-    "thumb_04": "Resources/Featured Recommendations/pages/fr-division2-tools/fr_division2-tools__thumb_04.svg"
+    "cover": "https://pub-dc4e1f00955f4568a77da06925201843.r2.dev/projects/division2-tools/featured/HighResGameImage01.png",
+    "thumb_01": "https://pub-dc4e1f00955f4568a77da06925201843.r2.dev/projects/division2-tools/featured/LowResGameImage01.jpg",
+    "thumb_02": "https://pub-dc4e1f00955f4568a77da06925201843.r2.dev/projects/division2-tools/featured/LowResGameImage02.jpg",
+    "thumb_03": "https://pub-dc4e1f00955f4568a77da06925201843.r2.dev/projects/division2-tools/featured/LowResGameImage03.jpg",
+    "thumb_04": "https://pub-dc4e1f00955f4568a77da06925201843.r2.dev/projects/division2-tools/featured/LowResGameImage04.jpg",
+    "thumb_05": "https://pub-dc4e1f00955f4568a77da06925201843.r2.dev/projects/division2-tools/featured/LowResGameImage05.jpg",
+    "thumb_06": "https://pub-dc4e1f00955f4568a77da06925201843.r2.dev/projects/division2-tools/featured/LowResGameImage06.jpg",
+    "thumb_07": "https://pub-dc4e1f00955f4568a77da06925201843.r2.dev/projects/division2-tools/featured/LowResGameImage07.jpg",
+    "thumb_08": "https://pub-dc4e1f00955f4568a77da06925201843.r2.dev/projects/division2-tools/featured/LowResGameImage08.jpg",
+    "full_01": "https://pub-dc4e1f00955f4568a77da06925201843.r2.dev/projects/division2-tools/featured/HighResGameImage01.png",
+    "full_02": "https://pub-dc4e1f00955f4568a77da06925201843.r2.dev/projects/division2-tools/featured/HighResGameImage02.jpg",
+    "full_03": "https://pub-dc4e1f00955f4568a77da06925201843.r2.dev/projects/division2-tools/featured/HighResGameImage03.png",
+    "full_04": "https://pub-dc4e1f00955f4568a77da06925201843.r2.dev/projects/division2-tools/featured/HighResGameImage04.webp",
+    "full_05": "https://pub-dc4e1f00955f4568a77da06925201843.r2.dev/projects/division2-tools/featured/HighResGameImage05.webp",
+    "full_06": "https://pub-dc4e1f00955f4568a77da06925201843.r2.dev/projects/division2-tools/featured/HighResGameImage06.png",
+    "full_07": "https://pub-dc4e1f00955f4568a77da06925201843.r2.dev/projects/division2-tools/featured/HighResGameImage07.png",
+    "full_08": "https://pub-dc4e1f00955f4568a77da06925201843.r2.dev/projects/division2-tools/featured/HighResGameImage08.png"
   }
 }
