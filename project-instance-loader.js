@@ -574,8 +574,23 @@ async function loadProjectInstanceTemplate() {
     mainImage.alt = `${config.title} gallery image 1`;
   }
 
-  // Populate thumbnail strip based on thumb_01..thumb_04 keys.
-  const thumbButtons = main.querySelectorAll(".project-thumb");
+  // Populate thumbnail strip based on thumb_01..thumb_NN keys in config.
+  // The template ships 4 thumb buttons; clone the last one for any extras so
+  // projects can define more than 4 thumbnails (backwards compatible: projects
+  // with <=4 behave exactly as before).
+  const thumbTrack = main.querySelector(".project-gallery-track");
+  const thumbButtons = Array.from(main.querySelectorAll(".project-thumb"));
+  if (thumbTrack && thumbButtons.length > 0) {
+    const templateThumb = thumbButtons[thumbButtons.length - 1];
+    let thumbCount = thumbButtons.length;
+    while (config.images[`thumb_0${thumbCount + 1}`]) {
+      const clone = templateThumb.cloneNode(true);
+      clone.classList.remove("is-active");
+      thumbTrack.appendChild(clone);
+      thumbButtons.push(clone);
+      thumbCount++;
+    }
+  }
   thumbButtons.forEach((button, index) => {
     const role = `thumb_0${index + 1}`;
     const imageNode = button.querySelector("img");

@@ -25,10 +25,10 @@
         "type": "p",
         "text": "Placeholder copy — replace with final. Top-down overview of the generated world. Houdini graphs distributed biomes, landmarks, and points of interest across the map while respecting terrain constraints and gameplay zones."
       },
-      { "type": "image", "src": "projects/farcry6-procedural-generation/featured/HighResGameImage01.jpg", "alt": "Far Cry 6 generated world map overview" },
-      { "type": "image", "src": "projects/farcry6-procedural-generation/featured/HighResGameImage02jpg", "alt": "Far Cry 6 procedural map detail" },
-      { "type": "image", "src": "projects/farcry6-procedural-generation/featured/HighResGameImage03.jpg", "alt": "Far Cry 6 biome distribution overview" },
-      { "type": "image", "src": "projects/farcry6-procedural-generation/featured/HighResGameImage04.jpg", "alt": "Far Cry 6 full world map generation" },
+      { "type": "image", "src": "projects/farcry6-procedural-generation/block/HighResGameImage01.jpg", "alt": "Far Cry 6 generated world map overview" },
+      { "type": "image", "src": "projects/farcry6-procedural-generation/block/HighResGameImage02jpg", "alt": "Far Cry 6 procedural map detail" },
+      { "type": "image", "src": "projects/farcry6-procedural-generation/block/HighResGameImage03.jpg", "alt": "Far Cry 6 biome distribution overview" },
+      { "type": "image", "src": "projects/farcry6-procedural-generation/block/HighResGameImage04.jpg", "alt": "Far Cry 6 full world map generation" },
 
       {
         "type": "h3",
@@ -38,9 +38,9 @@
         "type": "p",
         "text": "Placeholder copy — replace with final. Procedural beach generation: sand distribution, shoreline foam lines, and asset scattering (rocks, driftwood, vegetation) driven by slope and elevation masks exported from Houdini."
       },
-      { "type": "image", "src": "projects/farcry6-procedural-generation/featured/HighResGameImage03.jpg", "alt": "Procedurally generated Far Cry 6 beach" },
-      { "type": "image", "src": "projects/farcry6-procedural-generation/featured/HighResGameImage04.jpg", "alt": "Far Cry 6 coastline scattering detail" },
-      { "type": "image", "src": "projects/farcry6-procedural-generation/featured/HighResGameImage01.jpg", "alt": "Far Cry 6 beach shoreline generation" },
+      { "type": "image", "src": "projects/farcry6-procedural-generation/block/HighResGameImage03.jpg", "alt": "Procedurally generated Far Cry 6 beach" },
+      { "type": "image", "src": "projects/farcry6-procedural-generation/block/HighResGameImage04.jpg", "alt": "Far Cry 6 coastline scattering detail" },
+      { "type": "image", "src": "projects/farcry6-procedural-generation/block/HighResGameImage01.jpg", "alt": "Far Cry 6 beach shoreline generation" },
 
       {
         "type": "h3",
@@ -50,9 +50,9 @@
         "type": "p",
         "text": "Placeholder copy — replace with final. Cliff and rock generation from heightfield-based erosion. Houdini emitted cliff geometry and decimated rock assets onto steep slopes, with material blending driven by angle and altitude."
       },
-      { "type": "image", "src": "projects/farcry6-procedural-generation/featured/HighResGameImage04.jpg", "alt": "Procedural cliff generation in Far Cry 6" },
-      { "type": "image", "src": "projects/farcry6-procedural-generation/featured/HighResGameImage05.jpg", "alt": "Far Cry 6 rock formation scattering" },
-      { "type": "image", "src": "projects/farcry6-procedural-generation/featured/HighResGameImage06.jpg", "alt": "Far Cry 6 cliff material blending" },
+      { "type": "image", "src": "projects/farcry6-procedural-generation/block/HighResGameImage04.jpg", "alt": "Procedural cliff generation in Far Cry 6" },
+      { "type": "image", "src": "projects/farcry6-procedural-generation/block/HighResGameImage05.jpg", "alt": "Far Cry 6 rock formation scattering" },
+      { "type": "image", "src": "projects/farcry6-procedural-generation/block/HighResGameImage06.jpg", "alt": "Far Cry 6 cliff material blending" },
 
       {
         "type": "h3",
@@ -62,10 +62,10 @@
         "type": "p",
         "text": "Placeholder copy — replace with final. Volcanic terrain surrounding the lava lake. Procedural systems layered cracked-rock, ash, and ember materials and scattered heat-resistant assets to sell a believable volcanic biome."
       },
-      { "type": "image", "src": "projects/farcry6-procedural-generation/featured/HighResGameImage05.jpg", "alt": "Volcanic lava lake terrain in Far Cry 6" },
-      { "type": "image", "src": "projects/farcry6-procedural-generation/featured/HighResGameImage06.jpg", "alt": "Far Cry 6 lava lake material layering" },
-      { "type": "image", "src": "projects/farcry6-procedural-generation/featured/HighResGameImage02jpg", "alt": "Far Cry 6 volcanic rock scattering" },
-      { "type": "image", "src": "projects/farcry6-procedural-generation/featured/HighResGameImage01.jpg", "alt": "Far Cry 6 lava lake overview" },
+      { "type": "image", "src": "projects/farcry6-procedural-generation/block/HighResGameImage05.jpg", "alt": "Volcanic lava lake terrain in Far Cry 6" },
+      { "type": "image", "src": "projects/farcry6-procedural-generation/block/HighResGameImage06.jpg", "alt": "Far Cry 6 lava lake material layering" },
+      { "type": "image", "src": "projects/farcry6-procedural-generation/block/HighResGameImage02jpg", "alt": "Far Cry 6 volcanic rock scattering" },
+      { "type": "image", "src": "projects/farcry6-procedural-generation/block/HighResGameImage01.jpg", "alt": "Far Cry 6 lava lake overview" },
 
       {
         "type": "h3",
@@ -77,8 +77,8 @@
       },
       {
         "type": "image-compare",
-        "before": "projects/farcry6-procedural-generation/featured/HighResGameImage06.jpg",
-        "after": "projects/farcry6-procedural-generation/featured/HighResGameImage01.jpg",
+        "before": "projects/farcry6-procedural-generation/block/HighResGameImage06.jpg",
+        "after": "projects/farcry6-procedural-generation/block/HighResGameImage01.jpg",
         "beforeAlt": "Lava terrain before material refinement",
         "afterAlt": "Lava terrain after material refinement",
         "beforeLabel": "Before",
@@ -93,7 +93,7 @@
         "type": "p",
         "text": "Placeholder copy — replace with final. Procedural road generation that follows the terrain contour, cuts/fills embankments, and lays down road material with blended shoulders connecting gameplay points of interest."
       },
-      { "type": "image", "src": "projects/farcry6-procedural-generation/featured/HighResGameImage02jpg", "alt": "Procedural road generation in Far Cry 6" },
+      { "type": "image", "src": "projects/farcry6-procedural-generation/block/HighResGameImage02jpg", "alt": "Procedural road generation in Far Cry 6" },
 
       {
         "type": "h3",
@@ -103,7 +103,7 @@
         "type": "p",
         "text": "Placeholder copy — replace with final. River and waterfall placement driven by flow simulations in Houdini, with FX, foam, and mist integrated into the engine to sit naturally within the generated terrain."
       },
-      { "type": "image", "src": "projects/farcry6-procedural-generation/featured/HighResGameImage03.jpg", "alt": "Procedural waterfall integration in Far Cry 6" },
+      { "type": "image", "src": "projects/farcry6-procedural-generation/block/HighResGameImage03.jpg", "alt": "Procedural waterfall integration in Far Cry 6" },
 
       {
         "type": "h3",
@@ -113,7 +113,7 @@
         "type": "p",
         "text": "Placeholder copy — replace with final. Profiling and optimization of the procedural pipeline to keep generation, streaming, and draw-call budgets within target frame time across the open world."
       },
-      { "type": "image", "src": "projects/farcry6-procedural-generation/featured/HighResGameImage06.jpg", "alt": "Far Cry 6 procedural pipeline performance profiling" }
+      { "type": "image", "src": "projects/farcry6-procedural-generation/block/HighResGameImage06.jpg", "alt": "Far Cry 6 procedural pipeline performance profiling" }
     ]
   },
   "images": {
@@ -124,7 +124,11 @@
     "thumb_04": "https://pub-dc4e1f00955f4568a77da06925201843.r2.dev/projects/farcry6-procedural-generation/featured/LowResGameImage04.jpg",
     "full_01": "https://pub-dc4e1f00955f4568a77da06925201843.r2.dev/projects/farcry6-procedural-generation/featured/HighResGameImage01.jpg",
     "full_02": "https://pub-dc4e1f00955f4568a77da06925201843.r2.dev/projects/farcry6-procedural-generation/featured/HighResGameImage02jpg",
-    "full_03": "https://pub-dc4e1f00955f4568a77da06925201843.r2.dev/projects/farcry6-procedural-generation/featured/HighResGameImage03.jpg",
-    "full_04": "https://pub-dc4e1f00955f4568a77da06925201843.r2.dev/projects/farcry6-procedural-generation/featured/HighResGameImage04.jpg"
+    "full_03": "https://pub-dc4e1f00955f4568a77da06925201843.r2.dev/projects/farcry6-procedural-generation/featured/HighResGameImage06.jpg",
+    "full_04": "https://pub-dc4e1f00955f4568a77da06925201843.r2.dev/projects/farcry6-procedural-generation/featured/HighResGameImage04.jpg",
+    "thumb_05": "https://pub-dc4e1f00955f4568a77da06925201843.r2.dev/projects/farcry6-procedural-generation/featured/LowResGameImage05.jpg",
+    "thumb_06": "https://pub-dc4e1f00955f4568a77da06925201843.r2.dev/projects/farcry6-procedural-generation/featured/LowResGameImage06.jpg",
+    "full_05": "https://pub-dc4e1f00955f4568a77da06925201843.r2.dev/projects/farcry6-procedural-generation/featured/HighResGameImage05.jpg",
+    "full_06": "https://pub-dc4e1f00955f4568a77da06925201843.r2.dev/projects/farcry6-procedural-generation/featured/HighResGameImage06.jpg"
   }
 }
