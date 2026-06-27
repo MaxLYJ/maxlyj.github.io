@@ -173,7 +173,7 @@ function renderRelatedWorks(relatedWorksGallery, relatedWorksEmpty, relatedProje
     link.className = "work-link";
 
     const image = document.createElement("img");
-    image.src = project.image || "";
+    image.src = toCdnUrl(project.image);
     image.alt = project.alt || `${project.title || "Related project"} key art`;
 
     const title = document.createElement("h3");
