@@ -37,7 +37,7 @@
       "slug": "d-walker-vs-sahelanthropus",
       "url": "d-walker-vs-sahelanthropus.html",
       "title": "D-Walker VS Sahelanthropus",
-      "image": "projects/d-walker-vs-sahelanthropus/cover.jpg",
+      "image": "projects/d-walker-vs-sahelanthropus/cover.webp",
       "alt": "D-Walker VS Sahelanthropus scene",
       "tagIds": ["short-film", "shaders"]
     },
@@ -48,14 +48,6 @@
       "image": "projects/raiden-vs-gekko/cover.png",
       "alt": "Tooling and shader experiments",
       "tagIds": ["short-film", "shaders"]
-    },
-    {
-      "slug": "project-instance-test",
-      "url": "project-instance-test.html",
-      "title": "Project Instance Test",
-      "image": "projects/project-instance-test/cover.svg",
-      "alt": "Project template placeholder cover",
-      "tagIds": ["template"]
     }
   ]
 }
