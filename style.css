@@ -31,6 +31,10 @@ html,
 body {
   margin: 0;
   padding: 0;
+  /* 
+  200 for now, because it contain the top bar and the tag system.
+  */
+  scroll-padding-top: 200px;
 }
 
 .visually-hidden {
@@ -699,10 +703,10 @@ main,
   opacity: 1;
 }
 
-/* Offset scroll target so the Selected Works heading clears the
-   sticky tag bar when arriving from a tag click. */
+/* Global header offset lives on html (scroll-padding-top).
+   This is the EXTRA clearance so #works also clears the sticky tag bar. */
 #works {
-  scroll-margin-top: 150px;
+  scroll-margin-top: 80px;
 }
 
 

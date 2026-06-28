@@ -244,7 +244,23 @@ if (menuToggle && sidebar && overlay) {
   overlay.addEventListener("click", closeSidebar);
 
   sidebar.querySelectorAll("a").forEach((link) => {
-    link.addEventListener("click", () => {
+    link.addEventListener("click", (event) => {
+      const href = link.getAttribute("href") || "";
+      const isHashLink = href.startsWith("#") && href.length > 1;
+
+      if (isHashLink) {
+        const target = document.querySelector(href);
+        if (target) {
+          event.preventDefault();
+          const toPx = (v) => parseFloat(v) || 0;
+          const targetMargin = getComputedStyle(target).scrollMarginTop;
+          const rootPadding = getComputedStyle(document.documentElement).scrollPaddingTop;
+          console.log(`[sidebar] click ${href} | target scroll-margin-top: ${targetMargin} | root scroll-padding-top: ${rootPadding} | total offset: ${toPx(targetMargin) + toPx(rootPadding)}px`);
+          target.scrollIntoView({ behavior: "smooth", block: "start" });
+          history.replaceState(null, "", href);
+        }
+      }
+
       if (mobileBreakpoint.matches) {
         closeSidebar();
       }
