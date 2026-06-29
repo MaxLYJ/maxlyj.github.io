@@ -133,6 +133,20 @@ These remain the suggested next extraction iteration (see plan below).
 
 ---
 
+## ✅ Fixed in iteration 8 (correctness bug: broken featured-recommendation image)
+
+### Correctness
+- **Fixed a malformed R2 object URL that 404'd a live featured image (new finding).** In `Resources/Project Instances/config/farcry6-procedural-generation.json`, the `full_02` entry was missing the dot before its extension — `…/featured/HighResGameImage02jpg` — while all five siblings (`full_01`, `full_03`–`full_06`) and all six `thumb_0N` entries were well-formed `*.jpg`. The loader uses `full_NN` as the high-resolution preview shown when a visitor clicks a thumbnail (`button.dataset.gallerySrc = config.images[fullRole] || imagePath`, `project-instance-loader.js:640–646`), so on the **Far Cry 6** page clicking thumbnail #2 requested a non-existent R2 object and rendered a broken image in the main preview pane. Corrected the extension: `HighResGameImage02.jpg`. This was an isolated typo, not a systemic naming problem — a recursive scan of every string value across all four project configs + `data/taxonomy.json` for missing-dot image extensions returns **0** other suspects (it only ever matched this one).
+- **Decision not to "fix" `CenimaticShader1.png` (content note, not a code change).** While auditing the Far Cry 6 config I noticed the block image path `projects/farcry6-procedural-generation/blocks/CenimaticShader1.png` is a misspelling of "Cinematic." Deliberately **left it untouched**: it is the literal filename of an object uploaded to the R2 bucket, and the visible `alt` text (`"Far Cry 6 cinematic shader pass"`) is correctly spelled, so only an invisible URL carries the typo. Renaming the URL would point at an object that doesn't exist and reintroduce the exact 404 class of bug just fixed. The right remediation is to re-upload the asset with the corrected filename in R2 — not verifiable from the repo, so deferred.
+
+### Validation
+- All four project configs + `data/taxonomy.json` parse as valid JSON (`python3 -c json.load`).
+- Recursive missing-dot-extension scan over every config string value: **0** suspects.
+- Served locally (`python3 -m http.server 8841`): `/Resources/Project Instances/config/farcry6-procedural-generation.json` → **200**; the served `full_02` line reads `HighResGameImage02.jpg`; **0** occurrences of `HighResGameImage02jpg` in the served bytes. Server confirmed stopped (`ss -ltn`).
+- Caveat: the rendered high-res preview swap is a runtime DOM/JS behavior; verified by `node`-free JSON validity + serve+grep + code reading of the loader's `dataset.gallerySrc` assignment. A manual click-through (open `/farcry-6.html`, click thumbnail 2) is the remaining confidence step, but the data-level fix is unambiguous.
+
+---
+
 ## 🔴 Remaining issues — prioritized for future iterations
 
 ### P1 — Correctness / robustness
@@ -177,8 +191,9 @@ These remain the suggested next extraction iteration (see plan below).
 - ~~**Iteration 5:** Accessibility — P2 #7 (image-compare slider keyboard/AT support) + P2 #8 (redundant `aria-label` on role-less div).~~ — done.
 - **Iteration 6:** ~~P5 #19 (extract `shared.js`)~~ — **part 1 done**: the four byte-identical helpers (`CDN_BASE`, `toCdnUrl`, `loadVersionTag`, `TAXONOMY_MANIFEST_PATH`) extracted to `shared.js`, loaded before the entry script on every page; also fixed the project-page version-pill bug the extraction surfaced.
 - **Iteration 7:** ~~P3 #11 (non-render-blocking Inter font)~~ — **done** on all 5 pages + template (async `media="print"` swap + `<noscript>` fallback; `style.css` kept blocking as critical CSS). Also ran a full WCAG contrast audit (P2 #9 → resolved, all pairings pass AA) and re-scoped P1 #4 (image probing is dead in production — only runs if `template-content.html` is opened directly, which is not a shipped path).
-- **Iteration 8 (next):** P5 #19 *part 2* — extract the sidebar-toggle and gallery-init logic into `shared.js` (parameterize the homepage-only hash-smooth-scroll and the differing gallery entry points). **Caveat:** needs browser smoke-testing of homepage + one project page; the two sidebar copies genuinely diverge (homepage does in-page hash smooth-scroll + `history.replaceState`; the loader copy only open/close + mobile auto-close), so a naive merge would regress the homepage. Defer until a browser/jsdom check is available, or do it as a careful, parameterized extraction with a manual click-through.
-- **Iteration 9:** P1 #1 (static pre-render of project pages) — largest remaining SEO lift; a tiny build script run pre-deploy that inlines each project's JSON content into the page `<body>` so crawlers see real text instead of an empty mount point.
+- **Iteration 8:** ~~Next-planned was P5 #19 *part 2* (sidebar/gallery dedup), but a higher-priority correctness bug surfaced during review~~ — fixed a malformed R2 object URL (`full_02` missing the `.jpg` dot in `farcry6-procedural-generation.json`) that 404'd a live featured-recommendation image on the Far Cry 6 page. Prioritized under "critical bugs first" over the planned architecture work; also documented the `CenimaticShader1.png` misspelling as an R2-side fix (left the URL intact to avoid re-introducing the same 404 class).
+- **Iteration 9 (next):** P5 #19 *part 2* — extract the sidebar-toggle and gallery-init logic into `shared.js` (parameterize the homepage-only hash-smooth-scroll and the differing gallery entry points). **Caveat:** needs browser smoke-testing of homepage + one project page; the two sidebar copies genuinely diverge (homepage does in-page hash smooth-scroll + `history.replaceState`; the loader copy only open/close + mobile auto-close), so a naive merge would regress the homepage. Defer until a browser/jsdom check is available, or do it as a careful, parameterized extraction with a manual click-through.
+- **Iteration 10:** P1 #1 (static pre-render of project pages) — largest remaining SEO lift; a tiny build script run pre-deploy that inlines each project's JSON content into the page `<body>` so crawlers see real text instead of an empty mount point.
 - **Also viable without a browser** (small, verifiable): P5 #20 (strip or document the dead `<head>` in `template-content.html`, which the loader never applies), P5 #18 (retire the `initiative`/`pipeline`/`result` fallback in `renderProjectDetails` once confirmed no config uses it), or P4 #17 (add a contact/email CTA — the footer currently has no contact path).
 
 ## How to validate changes locally
