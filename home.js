@@ -538,16 +538,12 @@ if (frSection) {
     renderPage();
   }
 
-  [prevBtn, nextBtn].forEach((button) => {
-    if (!button) {
-      return;
-    }
-    button.addEventListener("click", (event) => {
-      event.preventDefault();
-      event.stopPropagation();
-    });
-  });
-
+  // Prev/next advance the carousel. These are <button type="button"> (no
+  // default action to cancel) that sit as SIBLINGS of the card <a>, so a plain
+  // click listener is all that's needed. A prior block registered a separate
+  // click listener that called preventDefault() + stopPropagation() here — both
+  // no-ops (a type=button carries no default action, and no ancestor has a click
+  // handler for stopPropagation to block) — removed for clarity.
   if (prevBtn) {
     prevBtn.addEventListener("click", () => movePage(-1));
   }

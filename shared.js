@@ -48,15 +48,48 @@ function prefersReducedMotion() {
 // on main. No-ops when the element is absent, so callers may invoke it before
 // the top bar exists; on pages where the bar is injected asynchronously (project
 // instance pages) the caller should invoke it again once it is in the DOM.
+//
+// The resolved SHA is cached in sessionStorage and reused across pages within
+// the same browsing session. loadVersionTag runs once per page (homepage at
+// module load + each project page after the template injects), so without
+// caching a visitor browsing N pages makes N unauthenticated GitHub API calls
+// against the shared 60-req/hour-per-IP limit; caching collapses that to one
+// fetch per session and makes subsequent pages show the version instantly
+// instead of re-hitting the API (or leaving the pill empty on a rate-limited
+// repeat). sessionStorage (not localStorage) is deliberate: it is scoped to the
+// tab and clears when the tab closes, so visitors reach a new deploy's SHA on
+// their next session rather than reading a stale one. Storage access is wrapped
+// so an unavailable sessionStorage (private mode, disabled storage) silently
+// falls back to fetching — same conservative-fallback pattern as
+// prefersReducedMotion.
+const VERSION_TAG_CACHE_KEY = "maxlyj:version-tag";
 async function loadVersionTag() {
   const el = document.querySelector(".top-bar-version");
   if (!el) return;
+
+  let cached;
+  try {
+    cached = sessionStorage.getItem(VERSION_TAG_CACHE_KEY);
+  } catch {
+    cached = null;
+  }
+  if (cached) {
+    el.textContent = cached;
+    return;
+  }
+
   try {
     const res = await fetch("https://api.github.com/repos/MaxLYJ/maxlyj.github.io/commits?per_page=1&sha=main");
     if (!res.ok) return;
     const commits = await res.json();
     if (commits.length > 0) {
-      el.textContent = "Ver " + commits[0].sha.substring(0, 7);
+      const label = "Ver " + commits[0].sha.substring(0, 7);
+      el.textContent = label;
+      try {
+        sessionStorage.setItem(VERSION_TAG_CACHE_KEY, label);
+      } catch {
+        // Storage unavailable — leave uncached; the next page will refetch.
+      }
     }
   } catch {}
 }
