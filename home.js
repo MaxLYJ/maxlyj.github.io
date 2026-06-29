@@ -509,17 +509,26 @@ if (frSection) {
       // native activation restores keyboard parity with the mouse and matches the
       // click-only .project-thumb pattern in project-instance-loader.js.
 
-      // Leave/blur reverts the main image to the project cover.
-      thumbButton.addEventListener("mouseleave", () => {
+      // Leave/blur reverts the main image to the project cover — UNLESS the
+      // slide has since advanced. renderPage() rebuilds the thumbnail row with
+      // frThumbs.innerHTML = "", which destroys a focused/hovered thumb and
+      // fires its blur/mouseleave during teardown. Without this guard that
+      // teardown handler runs AFTER renderPage() already set the new slide's
+      // cover, clobbering it with THIS (prior) slide's cover and leaving the new
+      // slide's title/description over the old slide's hero image. renderToken is
+      // incremented at the very top of renderPage(), so by the time a teardown
+      // revert fires it is always stale and we bail; same-slide leave/blur
+      // (currentToken === renderToken) still reverts normally.
+      const revertToCover = () => {
+        if (currentToken !== renderToken) {
+          return;
+        }
         frMainImage.src = page.cover;
         frMainImage.alt = page.altMain;
         setActiveThumb(null);
-      });
-      thumbButton.addEventListener("blur", () => {
-        frMainImage.src = page.cover;
-        frMainImage.alt = page.altMain;
-        setActiveThumb(null);
-      });
+      };
+      thumbButton.addEventListener("mouseleave", revertToCover);
+      thumbButton.addEventListener("blur", revertToCover);
 
       // No preloadImage(thumbPath): the thumb is already a DOM <img> (its .src
       // above starts the fetch), so an explicit preload would duplicate it.
