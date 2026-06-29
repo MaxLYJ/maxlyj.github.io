@@ -280,8 +280,10 @@ function createDetailBlockElement(block, fallbackTitle) {
 
     const handle = document.createElement("div");
     handle.className = "image-compare-handle";
+    // The chevrons are decorative — the handle's accessible name comes from the
+    // aria-label set in initImageCompareSliders, so hide the SVG from AT.
     handle.innerHTML =
-      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 4l-4 8 4 8"/><path d="M16 4l4 8-4 8"/></svg>';
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M8 4l-4 8 4 8"/><path d="M16 4l4 8-4 8"/></svg>';
 
     divider.appendChild(handle);
 
@@ -715,18 +717,86 @@ function initImageCompareSliders(root) {
   containers.forEach((container) => {
     const beforeImg = container.querySelector(".image-compare-before");
     const divider = container.querySelector("[data-image-compare-divider]");
+    const handle = container.querySelector(".image-compare-handle");
     if (!beforeImg || !divider) return;
 
     const INITIAL_POSITION = 50;
+    const KEYBOARD_STEP = 2;
+    const KEYBOARD_LARGE_STEP = 10;
+    // Single source of truth shared by mouse, touch, and keyboard so the three
+    // input methods can never desync (previously the mouse/touch handlers moved
+    // the divider without tracking position, so a later keypress would jump).
+    let currentPosition = INITIAL_POSITION;
 
     function setPosition(percent) {
-      const clamped = Math.max(0, Math.min(100, percent));
-      const clipRight = 100 - clamped;
+      currentPosition = Math.max(0, Math.min(100, percent));
+      const clipRight = 100 - currentPosition;
       beforeImg.style.clipPath = "inset(0 " + clipRight + "% 0 0)";
-      divider.style.left = clamped + "%";
+      divider.style.left = currentPosition + "%";
+      if (handle) {
+        handle.setAttribute("aria-valuenow", String(currentPosition));
+        handle.setAttribute(
+          "aria-valuetext",
+          `${currentPosition}% before, ${100 - currentPosition}% after`
+        );
+      }
     }
 
     setPosition(INITIAL_POSITION);
+
+    // Expose the handle as a range control so the slider is operable and
+    // announced without a mouse. role="slider" + arrow/Page/Home/End handling
+    // follows the WAI-ARIA slider pattern; the before/after labels give it a
+    // meaningful accessible name. (The slider only lives on project instance
+    // pages, where nothing else binds arrow keys, so there is no conflict.)
+    if (handle) {
+      const beforeLabel =
+        container.querySelector(".image-compare-label-before")?.textContent.trim() ||
+        "before";
+      const afterLabel =
+        container.querySelector(".image-compare-label-after")?.textContent.trim() ||
+        "after";
+
+      handle.setAttribute("role", "slider");
+      handle.setAttribute("tabindex", "0");
+      handle.setAttribute("aria-orientation", "horizontal");
+      handle.setAttribute("aria-valuemin", "0");
+      handle.setAttribute("aria-valuemax", "100");
+      handle.setAttribute(
+        "aria-label",
+        `Image comparison slider for ${beforeLabel} and ${afterLabel}`
+      );
+
+      handle.addEventListener("keydown", (event) => {
+        let next;
+        switch (event.key) {
+          case "ArrowLeft":
+          case "ArrowDown":
+            next = currentPosition - KEYBOARD_STEP;
+            break;
+          case "ArrowRight":
+          case "ArrowUp":
+            next = currentPosition + KEYBOARD_STEP;
+            break;
+          case "PageDown":
+            next = currentPosition - KEYBOARD_LARGE_STEP;
+            break;
+          case "PageUp":
+            next = currentPosition + KEYBOARD_LARGE_STEP;
+            break;
+          case "Home":
+            next = 0;
+            break;
+          case "End":
+            next = 100;
+            break;
+          default:
+            return;
+        }
+        event.preventDefault();
+        setPosition(next);
+      });
+    }
 
     function getPositionFromEvent(event) {
       const rect = container.getBoundingClientRect();

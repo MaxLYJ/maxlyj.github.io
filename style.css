@@ -1544,6 +1544,13 @@ main,
   height: 20px;
 }
 
+/* Keyboard focus on the slider handle: offset the ring past the white halo so
+   it stays visible. (role="slider" + tabindex="0" make the handle focusable.) */
+.image-compare-handle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
 .image-compare-labels {
   position: absolute;
   top: 0;

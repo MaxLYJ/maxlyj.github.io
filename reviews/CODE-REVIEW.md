@@ -80,6 +80,22 @@ Priority order used throughout: **critical bugs → accessibility → performanc
 
 ---
 
+## ✅ Fixed in iteration 5 (accessibility: image-compare slider is keyboard-operable)
+
+### Accessibility (a11y)
+- **The image-compare slider is now operable and announced without a mouse (P2 #7).** `initImageCompareSliders` was pointer-only (mousedown/touchmove). The slider is live content — it ships on `division-2.html` (5 instances) and `farcry-6.html` (1 instance) via the `image-compare` block. The handle is now exposed as a **`role="slider"`** with `tabindex="0"`, `aria-orientation="horizontal"`, `aria-valuemin="0"` / `aria-valuemax="100"`, a dynamic `aria-valuenow`, a descriptive `aria-valuetext` (`"N% before, M% after"`), and an `aria-label` built from the block's Before/After labels (e.g. *"Image comparison slider for Before and After"*). Keyboard support follows the WAI-ARIA slider pattern: **ArrowLeft/ArrowDown** and **ArrowRight/ArrowUp** nudge by 2%, **PageDown/PageUp** jump by 10%, **Home/End** snap to 0/100; all handled keys `preventDefault` so the page doesn't scroll while operating it, while Tab/Enter/Space pass through untouched.
+- **Unified slider state across input methods.** Previously `setPosition()` moved the divider but didn't track position, so a mouse drag to 80% followed by an arrow key would jump back toward 50%. Introduced a single `currentPosition` variable that mouse, touch, and keyboard all read/write through `setPosition()`, so the three inputs can never desync. `aria-valuenow`/`aria-valuetext` are updated on every position change from any source.
+- **Hid the decorative handle chevrons from AT (P2 #7, cont.).** The two-arrow SVG inside the handle is now `aria-hidden="true" focusable="false"` — its chevrons are decorative, and the handle's accessible name comes from the `aria-label`. (Without this, some screen-reader/browser combinations would have announced the inline SVG.)
+- **Removed a redundant `aria-label` on a role-less element (P2 #8).** `<div class="tag-system-meta" aria-label="Tag system update reminder">` in `index.html` had no role, so the `aria-label` was ignored by AT — and the name ("Tag system update reminder") didn't even describe the visible content. The element's text nodes (the visible sentence + `<time>`) are already accessible, so the attribute was simply removed.
+- **Visible focus ring on the slider handle.** Added `.image-compare-handle:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }` so the keyboard-focus ring clears the handle's white box-shadow halo and stays legible. (The global `:focus-visible` ring already applies once the handle is focusable, but its 2px offset collided with the 3px halo.)
+
+### Validation
+- `node --check home.js`, `node --check project-instance-loader.js` — pass.
+- Served locally (`python3 -m http.server 8771`): `/division-2.html` → **200** and references `project-instance-loader.js`; the served loader contains the new slider code (`role="slider"`, `aria-orientation`, `aria-valuetext`, `handle.addEventListener("keydown")` — 4/4 markers); served `style.css` contains `.image-compare-handle:focus-visible`; served `/` has **0** occurrences of the removed `aria-label`. Server confirmed stopped (`ss -ltn`).
+- Note: the slider DOM is built at runtime by JS, so the `role="slider"` attributes only appear after `initImageCompareSliders` runs in a real browser; the attribute-setting and keydown wiring were verified by reading the code and confirming the served JS carries them (no jsdom/headless browser is available — there is no build/test system per `AGENTS.md`).
+
+---
+
 ## 🔴 Remaining issues — prioritized for future iterations
 
 ### P1 — Correctness / robustness
@@ -91,8 +107,8 @@ Priority order used throughout: **critical bugs → accessibility → performanc
 
 ### P2 — Accessibility (deeper pass)
 6. ~~**Carousel (`featured-recommendations`) is not a carousel widget for AT.** It lacks `role="region"`, an `aria-roledescription="carousel"`, `aria-live` for the changing title/description, and arrow-key support. The prev/next buttons work but the auto-changing main image on thumb hover has no programmatic state announcement. Needs a proper ARIA carousel pattern.~~ **✅ Fixed in iteration 2** (region + carousel role, polite live region, arrow-key nav, aria-controls; card kept as a link — see design note above).
-7. **The image-compare slider has no keyboard / screen-reader support** (`initImageCompareSliders` in `project-instance-loader.js`). It's mouse/touch only. Add a focusable range-style handle with `aria-valuenow/min/max` and arrow-key handling, plus an accessible name.
-8. **`aria-label="Tag system update reminder"` remains on a role-less `<div>`** (after removing `role="note"`). An `aria-label` on a generic `<div>` is ignored by AT — either drop the attribute or give the element an appropriate role. (Minor.)
+7. ~~**The image-compare slider has no keyboard / screen-reader support** (`initImageCompareSliders` in `project-instance-loader.js`). It's mouse/touch only. Add a focusable range-style handle with `aria-valuenow/min/max` and arrow-key handling, plus an accessible name.~~ **✅ Fixed in iteration 5** (handle is now `role="slider"` `tabindex="0"` with `aria-valuemin/max/now/valuetext`, a label built from Before/After, and Arrow/PageUp-Down/Home/End handling; state unified across mouse/touch/keyboard; decorative chevrons `aria-hidden`; focus-visible ring added).
+8. ~~**`aria-label="Tag system update reminder"` remains on a role-less `<div>`** (after removing `role="note"`). An `aria-label` on a generic `<div>` is ignored by AT — either drop the attribute or give the element an appropriate role. (Minor.)~~ **✅ Fixed in iteration 5** (attribute removed — the element's visible text + `<time>` are already accessible).
 9. **Color contrast**: verify `--muted: #b5bedf` on `--bg: #0f111a` and accent-on-dark combinations against WCAG AA for body text and small UI. Run an automated contrast audit (axe/Lighthouse).
 10. **`<time>` elements**: the tag-system `<time datetime="2026-06-26">` and resume `<time>`s are fine, but resume date ranges use an en-dash inside text nodes — acceptable; ensure they're not announced awkwardly.
 
@@ -121,8 +137,9 @@ Priority order used throughout: **critical bugs → accessibility → performanc
 - ~~**Iteration 2:** P1 #2 (visible load-error state) + P1 #5 (memoize taxonomy) + P2 #6 (ARIA carousel) — accessibility & robustness on the homepage hero.~~ — #5 and #6 done; #2 deferred.
 - ~~**Iteration 3:** P1 #2 (visible load-error state on project pages) + P1 #3 (remove `project-instance-test` artifact) — robustness + repo hygiene.~~ — done.
 - ~~**Iteration 4:** P5 #21 (untrack Wix archive, relocate logo) — repo bloat.~~ — done.
-- **Iteration 5 (next):** P5 #19 (extract `shared.js`) — the structural maintainability win; touches both JS entry points, needs careful smoke-testing of homepage + one project page.
-- **Iteration 6:** P1 #1 (static pre-render of project pages) — largest SEO lift; consider a tiny build script run pre-deploy.
+- ~~**Iteration 5:** Accessibility — P2 #7 (image-compare slider keyboard/AT support) + P2 #8 (redundant `aria-label` on role-less div).~~ — done.
+- **Iteration 6 (next):** P5 #19 (extract `shared.js`) — the structural maintainability win; touches both JS entry points (`CDN_BASE`/`toCdnUrl`, `loadVersionTag`, sidebar toggle, gallery init, image-compare init all duplicate), needs careful smoke-testing of homepage + one project page.
+- **Iteration 7:** P1 #1 (static pre-render of project pages) — largest SEO lift; consider a tiny build script run pre-deploy.
 
 ## How to validate changes locally
 No build system. Serve from repo root and click through:
