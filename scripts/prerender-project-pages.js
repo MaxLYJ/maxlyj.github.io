@@ -324,7 +324,7 @@ function stripHandMaintainedMeta(html) {
 // Render one project-details block to semantic HTML (mirrors the runtime
 // createDetailBlockElement in project-instance-loader.js, minus the interactive
 // widgets which have no static equivalent).
-function renderBlock(cdnBase, block) {
+function renderBlock(cdnBase, block, fallbackTitle) {
   const type = String(block.type || "").toLowerCase();
   const text = escapeHtml(block.text || "");
 
@@ -335,18 +335,30 @@ function renderBlock(cdnBase, block) {
   if (type === "image") {
     if (!block.src) return null;
     const src = escapeHtml(toCdnUrl(cdnBase, block.src));
-    const alt = escapeHtml(block.alt || "");
-    return `      <figure class="project-noscript__figure"><img src="${src}" alt="${alt}" loading="lazy" decoding="async" />${alt ? `\n        <figcaption>${alt}</figcaption>\n      ` : ""}</figure>`;
+    // Parity with the runtime: mirror the loader's title-qualified alt fallback
+    // (loader:228) so a JS visitor and a crawler/no-JS visitor read the same alt
+    // when a block omits the explicit one. The visible <figcaption> stays gated
+    // on the EXPLICIT alt (the author's designed caption), NOT the fallback —
+    // the runtime never emits a caption, so the fallback must not become one.
+    // 0 shipped blocks omit alt, so this branch is byte-identical today; it only
+    // closes the iter-33 P5 #32 latent runtime↔prerender divergence.
+    const explicitAlt = block.alt || "";
+    const alt = escapeHtml(explicitAlt || `${fallbackTitle} project detail image`);
+    const figcaption = explicitAlt
+      ? `\n        <figcaption>${escapeHtml(explicitAlt)}</figcaption>\n      `
+      : "";
+    return `      <figure class="project-noscript__figure"><img src="${src}" alt="${alt}" loading="lazy" decoding="async" />${figcaption}</figure>`;
   }
 
   if (type === "image-compare") {
     if (!block.before && !block.after) return null;
+    // Title-qualified after/before alt fallbacks mirror the loader (loader:258/264).
     const lines = ["      <figure class=\"project-noscript__figure project-noscript__compare\">"];
     if (block.after) {
-      lines.push(`        <img src="${escapeHtml(toCdnUrl(cdnBase, block.after))}" alt="${escapeHtml(block.afterAlt || "After")}" loading="lazy" decoding="async" />`);
+      lines.push(`        <img src="${escapeHtml(toCdnUrl(cdnBase, block.after))}" alt="${escapeHtml(block.afterAlt || `${fallbackTitle} after`)}" loading="lazy" decoding="async" />`);
     }
     if (block.before) {
-      lines.push(`        <img src="${escapeHtml(toCdnUrl(cdnBase, block.before))}" alt="${escapeHtml(block.beforeAlt || "Before")}" loading="lazy" decoding="async" />`);
+      lines.push(`        <img src="${escapeHtml(toCdnUrl(cdnBase, block.before))}" alt="${escapeHtml(block.beforeAlt || `${fallbackTitle} before`)}" loading="lazy" decoding="async" />`);
     }
     const caption = [block.beforeLabel || "Before", block.afterLabel || "After"]
       .filter(Boolean)
@@ -359,7 +371,8 @@ function renderBlock(cdnBase, block) {
   if (type === "video") {
     if (!block.url) return null;
     const url = escapeHtml(block.url);
-    const label = escapeHtml(block.title || "Project video");
+    // Title-qualified label fallback mirrors the loader's iframe title (loader:239).
+    const label = escapeHtml(block.title || `${fallbackTitle} project detail video`);
     return `      <p class="project-noscript__video">Video: <a href="${url}">${label}</a></p>`;
   }
 
@@ -380,7 +393,11 @@ function buildTagLabels(taxonomy, slug) {
 }
 
 function buildNoscriptHtml(cdnBase, config, taxonomy, slug) {
-  const title = escapeHtml(config.title || "Project");
+  // Raw title used both as the escaped <h1>/cover-alt text AND as the
+  // title-qualified alt/title fallback threaded into renderBlock (mirroring the
+  // loader, which passes raw config.title into createDetailBlockElement).
+  const fallbackTitle = config.title || "Project";
+  const title = escapeHtml(fallbackTitle);
   const kicker = escapeHtml(config.kicker || "");
   const description = escapeHtml(config.description || "");
   // The loader assigns the cover VERBATIM (coverImage.src = config.images.cover
@@ -440,7 +457,7 @@ function buildNoscriptHtml(cdnBase, config, taxonomy, slug) {
     // render (the iter-28 single-renderer invariant).
     lines.push(`      <h2>Project Details</h2>`);
     const rendered = blocks
-      .map((block) => renderBlock(cdnBase, block))
+      .map((block) => renderBlock(cdnBase, block, fallbackTitle))
       .filter((line) => line !== null);
     lines.push(...rendered);
     lines.push(`      </section>`);
