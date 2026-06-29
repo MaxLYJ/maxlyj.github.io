@@ -4,9 +4,10 @@
 Static HTML/CSS/JS portfolio site. **No build system, tests, or linting.** Edit files directly. Deployed on GitHub Pages.
 
 ## Dual JS Architecture (easy to miss)
-- **Homepage** (`index.html` + `template-content.html`) loads **`home.js`**
-- **Project instance pages** (`<slug>.html`) load **`project-instance-loader.js`** — NOT `home.js`
-- `home.js` has template-gallery hydration code for `template-content.html`, but project instance pages set `data-project-template-autohydrate="false"` to prevent it from overriding JSON-driven image paths
+- **Homepage** (`index.html`) loads **`home.js`** (tag system, featured carousel, sidebar)
+- **Project instance pages** (`<slug>.html`) load **`project-instance-loader.js`** — NOT `home.js`. `shared.js` (CDN base, `toCdnUrl`, `loadVersionTag`, taxonomy path) loads before both entry scripts.
+- `template-content.html` is a shared **fragment source**, not a shipped page: the loader `fetch()`es it + `DOMParser.parseFromString()` and injects only its `<header>/<overlay>/<nav>/<main>` into each project page (see the banner comment at the top of `template-content.html`). Its `<head>` is for local preview only — each project page carries its own `<head>`.
+- (Historical note: `home.js` once hydrated `template-content.html` directly and the loader set `data-project-template-autohydrate="false"` to guard it. That hydration code never ran in production and was removed; the loader still sets the attribute but nothing reads it — safe to ignore.)
 
 ## Entry Points
 - **Homepage**: `index.html` → `home.js` (tag system, featured recommendations, gallery from `data/taxonomy.json`)
@@ -23,21 +24,17 @@ Static HTML/CSS/JS portfolio site. **No build system, tests, or linting.** Edit 
 3. Create `Resources/Project Instances/config/<slug>.json` — filename must match the slug exactly (copy `division2-tools.json` as template)
 
 ## Featured Recommendations
-Hardcoded `featuredPages` array in `home.js` (~line 209). To add:
-1. Create folder: `Resources/Featured Recommendations/pages/fr-<slug>/`
-2. Add images: `fr_<slug>__main.<ext>`, `fr_<slug>__thumb_01..04.<ext>`
-3. Add entry to `featuredPages` array in `home.js`
+The homepage featured carousel is driven by the `FEATURED_PROJECT_SLUGS` constant in `home.js` (currently `farcry6-procedural-generation`, `division2-tools`). For each slug, `buildFeaturedPages()` reads the **same** per-project config the project page uses (`Resources/Project Instances/config/<slug>.json`) and builds entries from `images.cover` (main image), `images.thumb_01..04` (thumbnails), and `images.full_01..04` (high-res shown on hover, falling back to the thumb). To feature a project:
+1. Ensure its `Resources/Project Instances/config/<slug>.json` has `images.cover` + `images.thumb_01` (optionally `thumb_02..04`, `full_01..04`).
+2. Add the slug to `FEATURED_PROJECT_SLUGS` in `home.js`.
 
-**Naming validation** (enforced at runtime):
-- Folder must match `fr-<slug>` exactly
-- Folder name must end with the slug value
-- Image extension priority: png → jpg → svg (probed at runtime via `new Image()`)
+Note: the `Resources/Featured Recommendations/pages/fr-<slug>/` folders are image-asset sources (some project configs point `cover`/`thumb_01..04` at files inside them) — they are NOT a separate data path. The carousel reads the project config, not these folders, and image extensions are declared explicitly in the config (no runtime probing).
 
 ## Project Config JSON Schema
 Required fields: `title`, `kicker`, `description`, `tools`, `languages`, `time`, `role`, `images` (object with `cover`, `thumb_01`..`thumb_04`)
 Optional: `projectDetails.blocks` — array of `{type, text/src/url, alt/title}`. Block types: `h1`, `h2`, `h3`, `p`, `image`, `video`, `image-compare`
   - `image-compare` block requires: `before` (before image URL), `after` (after image URL), optional: `beforeAlt`, `afterAlt`
-Legacy: `projectDetails.initiative/pipeline/result/placeholderImage/placeholderVideo` still supported as fallback
+  - (The legacy `initiative`/`pipeline`/`result`/`placeholderImage`/`placeholderVideo` shape was removed — all shipped configs use `blocks`. The loader renders `blocks` only.)
 
 ## Styling
 Single file: `style.css`. Design tokens as CSS custom properties in `:root` (lines 1-18). Mobile breakpoint: `980px`.

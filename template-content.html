@@ -1,4 +1,30 @@
 <!DOCTYPE html>
+<!--
+  template-content.html — SHARED PROJECT-PAGE FRAGMENT SOURCE (not a shipped page).
+
+  This file is NOT in sitemap.xml and is linked from nowhere. Its sole consumer is
+  project-instance-loader.js, which fetch()es it, parses it with DOMParser, and
+  extracts ONLY these four nodes into each live project page:
+    - <header class="top-bar">
+    - <div class="sidebar-overlay">
+    - <nav class="sidebar">
+    - <main class="project-template-main">
+  Everything else here (including this <head>) is ignored by the loader.
+
+  The <head> below is therefore for LOCAL BROWSER PREVIEW ONLY — it is never
+  applied to a shipped page. Each project page (farcry-6.html, division-2.html, …)
+  carries its OWN <head> (charset, viewport, meta description, canonical, Open
+  Graph, JSON-LD, the async Inter font link, and style.css), so editing this <head>
+  does NOT change any project page. To change project-page <head> content, edit the
+  page itself (or extend scripts/prerender-project-pages.js).
+
+  In production the sidebar/menu toggle is wired by project-instance-loader.js's
+  initSidebarToggle() AFTER the nodes above are injected, which is why this file
+  intentionally ships no script tag. (home.js used to hydrate this template
+  when it was opened directly, but that block never ran in production — the loader
+  consumes this file via fetch()+DOMParser, whose scripts never execute — and was
+  removed; see reviews/CODE-REVIEW.md, iteration 10.)
+-->
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -178,7 +204,5 @@
         </p>
       </section>
     </main>
-
-    <script src="home.js"></script>
   </body>
 </html>
