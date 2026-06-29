@@ -175,6 +175,8 @@ function renderRelatedWorks(relatedWorksGallery, relatedWorksEmpty, relatedProje
     const image = document.createElement("img");
     image.src = toCdnUrl(project.image);
     image.alt = project.alt || `${project.title || "Related project"} key art`;
+    image.loading = "lazy";
+    image.decoding = "async";
 
     const title = document.createElement("h3");
     title.textContent = project.title || "Untitled Project";

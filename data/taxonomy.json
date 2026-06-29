@@ -20,9 +20,9 @@
     {
       "slug": "farcry6-procedural-generation",
       "url": "farcry-6.html",
-      "title": "Farcry 6",
+      "title": "Far Cry 6",
       "image": "projects/farcry6-procedural-generation/cover.jpg",
-      "alt": "Farcry 6 project key art",
+      "alt": "Far Cry 6 project key art",
       "tagIds": ["procedural-generation", "houdini", "environment", "shaders", "optimization"]
     },
     {

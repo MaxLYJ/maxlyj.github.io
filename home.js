@@ -133,6 +133,8 @@ function createWorkCard(project) {
   const image = document.createElement("img");
   image.src = toCdnUrl(project.image);
   image.alt = project.alt;
+  image.loading = "lazy";
+  image.decoding = "async";
 
   const title = document.createElement("h3");
   title.textContent = project.title;
@@ -252,10 +254,9 @@ if (menuToggle && sidebar && overlay) {
         const target = document.querySelector(href);
         if (target) {
           event.preventDefault();
-          const toPx = (v) => parseFloat(v) || 0;
-          const targetMargin = getComputedStyle(target).scrollMarginTop;
-          const rootPadding = getComputedStyle(document.documentElement).scrollPaddingTop;
-          console.log(`[sidebar] click ${href} | target scroll-margin-top: ${targetMargin} | root scroll-padding-top: ${rootPadding} | total offset: ${toPx(targetMargin) + toPx(rootPadding)}px`);
+          // No manual offset needed: each #section sets scroll-margin-top and
+          // <html> sets scroll-padding-top, so the sticky top bar never covers
+          // the heading after the smooth scroll lands.
           target.scrollIntoView({ behavior: "smooth", block: "start" });
           history.replaceState(null, "", href);
         }
