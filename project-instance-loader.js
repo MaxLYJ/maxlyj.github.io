@@ -395,7 +395,11 @@ function initProjectGallery(main) {
       thumb.classList.toggle("is-active", thumbIndex === activeIndex);
     });
 
-    activeThumb.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+    activeThumb.scrollIntoView({
+      behavior: prefersReducedMotion() ? "auto" : "smooth",
+      inline: "center",
+      block: "nearest",
+    });
   }
 
   thumbs.forEach((thumb, index) => {

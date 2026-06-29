@@ -26,6 +26,24 @@ function toCdnUrl(path) {
 // featured carousel and the project-page related-works renderer.
 const TAXONOMY_MANIFEST_PATH = "data/taxonomy.json";
 
+// Honor the user's OS/browser "reduce motion" preference (vestibular-
+// accessibility best practice; aligns with WCAG 2.1 SC 2.3.3 Animation from
+// Interactions). CSS neutralizes every transition/animation site-wide via the
+// @media (prefers-reduced-motion: reduce) block in style.css, but CSS cannot
+// reach programmatic scrolls — so the three JS-driven
+// scrollIntoView({behavior:"smooth"}) calls (tag click + hash link in home.js,
+// active gallery thumb in project-instance-loader.js) gate on this helper
+// instead. Returns false when matchMedia is unavailable (older browsers) so the
+// existing smooth-scroll default is preserved as a safe fallback rather than
+// silently forced to instant.
+function prefersReducedMotion() {
+  return (
+    typeof window !== "undefined" &&
+    typeof window.matchMedia === "function" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  );
+}
+
 // Populate the ".top-bar-version" pill with the short SHA of the latest commit
 // on main. No-ops when the element is absent, so callers may invoke it before
 // the top bar exists; on pages where the bar is injected asynchronously (project

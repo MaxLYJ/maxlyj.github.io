@@ -115,7 +115,10 @@ function createTagChip(tag) {
     //scroll-margin-top on #works handles the sticky offset.
     const scrollTarget = worksSection || worksGallery;
     if (scrollTarget) {
-      scrollTarget.scrollIntoView({ behavior: "smooth", block: "start" });
+      scrollTarget.scrollIntoView({
+        behavior: prefersReducedMotion() ? "auto" : "smooth",
+        block: "start",
+      });
     }
   });
   return chip;
@@ -257,7 +260,10 @@ if (menuToggle && sidebar && overlay) {
           // No manual offset needed: each #section sets scroll-margin-top and
           // <html> sets scroll-padding-top, so the sticky top bar never covers
           // the heading after the smooth scroll lands.
-          target.scrollIntoView({ behavior: "smooth", block: "start" });
+          target.scrollIntoView({
+            behavior: prefersReducedMotion() ? "auto" : "smooth",
+            block: "start",
+          });
           history.replaceState(null, "", href);
         }
       }
