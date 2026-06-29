@@ -66,6 +66,20 @@ Priority order used throughout: **critical bugs → accessibility → performanc
 
 ---
 
+## ✅ Fixed in iteration 4 (repo hygiene: untrack the Wix archive)
+
+### Architecture / maintainability
+- **Untracked the 13 MB `Resources/Wix/` saved-site archive (P5 #21).** The directory shipped 72 tracked files (an entire saved Wix site: minified React/thunderbolt bundles, `*.js.download` / `*.css.download` artifacts, YouTube embeds, a screenshot) — of which exactly **one** file was referenced by the live site: the brand logo `Liu_WP_Logo_4x.png` (3.8 KB, 119×60 RGBA). The rest was brand-confusing bloat that inflated the repo and the deployed Pages checkout for no benefit.
+- **Relocated the logo to a clean path.** Copied `Resources/Wix/HOME _ Yujia Max Liu_files/Liu_WP_Logo_4x.png` → **`images/logo.png`** (the existing `images/` directory already serves the portrait), verified byte-for-byte identical with `cmp`, and repointed both references — `index.html:58` and `template-content.html:23` — to `images/logo.png`. Git recorded the move as a **rename** (`R`), so logo provenance/history is preserved even though the path is clean. Chose a local-repo path rather than the R2 CDN because the logo is served locally (relative `src`) and the R2 bucket's per-object state is documented as unprovisioned (`IMAGE_STORAGE_PLAN.md`) and not verifiable from the repo — relocating locally achieves the goal without depending on unverifiable bucket state.
+- **Prevented re-introduction** by adding a scoped `Resources/Wix/` rule to `.gitignore` (with an explanatory comment). The rule is deliberately scoped to `Wix/` only — the sibling `Resources/` subdirectories (`Project Instances/config`, `Project Template/pages`, `Featured Recommendations/pages`, `SideBar`) ARE live and fetched/referenced by `home.js` / `project-instance-loader.js` / project configs, so ignoring all of `Resources/` would silently break the site.
+
+### Validation
+- `node --check home.js`, `node --check project-instance-loader.js` — pass.
+- `git diff --cached --diff-filter=D` — 71 deletions, **all** under `Resources/Wix/` (nothing unexpected removed); the 72nd Wix file is the renamed logo (`R` → `images/logo.png`).
+- Served locally (`python3 -m http.server 8766`): `/images/logo.png` → **200** (3890 bytes); `/` and `/template-content.html` reference `images/logo.png` with **0** remaining `Resources/Wix` mentions; the old logo URL → **404**; `/farcry-6.html` → **200**.
+
+---
+
 ## 🔴 Remaining issues — prioritized for future iterations
 
 ### P1 — Correctness / robustness
@@ -97,7 +111,7 @@ Priority order used throughout: **critical bugs → accessibility → performanc
 ### P5 — Architecture / maintainability
 19. **Duplicated logic between `home.js` and `project-instance-loader.js`**: `toCdnUrl`, `CDN_BASE`, `loadVersionTag`, gallery init, sidebar toggle, image-compare init all exist in both files. Extract a shared `shared.js` (CDN helper, version tag, sidebar, image-compare) and include it on both page types. This is the single biggest maintainability win.
 20. **`template-content.html` carries a full `<head>` that is never applied** to project pages (only `<body>` fragments are injected). The `<head>` is misleading dead weight — either strip it or actually use it.
-21. **The `Resources/Wix/` directory** (an entire saved Wix site incl. minified bundles, `*.js.download` files) is committed to the repo and only the logo PNG is referenced. Move the logo to a clean `images/` or `assets/` path and untrack the Wix archive — it bloats the repo and is brand-confusing.
+21. ~~**The `Resources/Wix/` directory** (an entire saved Wix site incl. minified bundles, `*.js.download` files) is committed to the repo and only the logo PNG is referenced. Move the logo to a clean `images/` or `assets/` path and untrack the Wix archive — it bloats the repo and is brand-confusing.~~ **✅ Fixed in iteration 4** (13 MB / 72-file archive `git rm`'d; logo relocated to `images/logo.png` as a tracked rename; `Resources/Wix/` added to `.gitignore`).
 22. **No linting/formatting/test harness** (per `AGENTS.md`). For a static site this is optional, but adding `eslint` + `prettier` + `htmlhint` + a link checker in CI would catch regressions like the `console.log` that shipped.
 23. **`CNAME` = `maxlyj.com`, canonical/OG use `https://maxlyj.com/`**, but the GitHub repo is `MaxLYJ/maxlyj.github.io` and `home.js` hits `api.github.com/repos/MaxLYJ/...`. Confirm the custom domain + Pages setup is consistent and the R2 public bucket URL (`pub-dc4e1f00955f4568a77da06925201843.r2.dev`) is intended to be public/exposed (it currently is, in client code).
 
@@ -106,8 +120,8 @@ Priority order used throughout: **critical bugs → accessibility → performanc
 ## Suggested iteration plan
 - ~~**Iteration 2:** P1 #2 (visible load-error state) + P1 #5 (memoize taxonomy) + P2 #6 (ARIA carousel) — accessibility & robustness on the homepage hero.~~ — #5 and #6 done; #2 deferred.
 - ~~**Iteration 3:** P1 #2 (visible load-error state on project pages) + P1 #3 (remove `project-instance-test` artifact) — robustness + repo hygiene.~~ — done.
-- **Iteration 4 (next):** P5 #21 (untrack Wix archive, relocate logo) — repo bloat.
-- **Iteration 5:** P5 #19 (extract `shared.js`) — the structural maintainability win; touches both JS entry points, needs careful smoke-testing of homepage + one project page.
+- ~~**Iteration 4:** P5 #21 (untrack Wix archive, relocate logo) — repo bloat.~~ — done.
+- **Iteration 5 (next):** P5 #19 (extract `shared.js`) — the structural maintainability win; touches both JS entry points, needs careful smoke-testing of homepage + one project page.
 - **Iteration 6:** P1 #1 (static pre-render of project pages) — largest SEO lift; consider a tiny build script run pre-deploy.
 
 ## How to validate changes locally

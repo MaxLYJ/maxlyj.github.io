@@ -1,6 +1,11 @@
 # Visual Studio local files
 .vs/
 
+# Saved Wix site archive — 13MB of minified bundles/JS/CSS that only the brand
+# logo was ever referenced from. The logo now lives at images/logo.png; the rest
+# is brand-confusing bloat, so keep it out of the repo going forward.
+Resources/Wix/
+
 # Cloudflare wrangler local state (not for the repo)
 .wrangler/
 
