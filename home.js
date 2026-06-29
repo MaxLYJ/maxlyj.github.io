@@ -34,45 +34,63 @@ let TAG_DEFINITIONS = [{ id: "all", label: "All" }];
 let PROJECT_INDEX = [];
 let tagLabelById = new Map();
 
+// Memoized so the manifest is fetched exactly once per page load even though
+// it is consumed by both the tag system and the featured carousel. Resolves to
+// the parsed manifest (or null on failure) and populates the module globals.
+let taxonomyManifestPromise;
+
 async function loadTaxonomyManifest() {
-  try {
-    const response = await fetch(TAXONOMY_MANIFEST_PATH);
-    if (!response.ok) {
-      return;
+  if (taxonomyManifestPromise) {
+    return taxonomyManifestPromise;
+  }
+
+  taxonomyManifestPromise = (async () => {
+    let manifest = null;
+    try {
+      const response = await fetch(TAXONOMY_MANIFEST_PATH);
+      if (response.ok) {
+        manifest = await response.json();
+      }
+    } catch {
+      // Keep empty arrays when taxonomy cannot be loaded.
     }
 
-    const manifest = await response.json();
-    const manifestTags = Array.isArray(manifest.tags) ? manifest.tags : [];
-    const manifestProjects = Array.isArray(manifest.projects) ? manifest.projects : [];
+    applyTaxonomyManifest(manifest);
+    return manifest;
+  })();
 
-    // Priority sort: P1 (core demand) first, then P2, then P3.
-    // "All" stays pinned at position 0 with priority 0.
-    const prioritizedTags = manifestTags
-      .filter((tag) => tag && typeof tag.id === "string")
-      .map((tag) => ({
-        id: tag.id,
-        label: tag.label || tag.id,
-        priority: typeof tag.priority === "number" ? tag.priority : 3
-      }))
-      .sort((a, b) => a.priority - b.priority);
+  return taxonomyManifestPromise;
+}
 
-    TAG_DEFINITIONS = [
-      { id: "all", label: "All", priority: 0 },
-      ...prioritizedTags
-    ];
+function applyTaxonomyManifest(manifest) {
+  const manifestTags = manifest && Array.isArray(manifest.tags) ? manifest.tags : [];
+  const manifestProjects = manifest && Array.isArray(manifest.projects) ? manifest.projects : [];
 
-    PROJECT_INDEX = manifestProjects
-      .filter((project) => project && typeof project.url === "string")
-      .map((project) => ({
-        title: project.title || project.slug || "Untitled Project",
-        url: project.url,
-        image: project.image || "",
-        alt: project.alt || `${project.title || project.slug || "Project"} image`,
-        tagIds: Array.isArray(project.tagIds) ? project.tagIds : []
-      }));
-  } catch {
-    // Keep empty arrays when taxonomy cannot be loaded.
-  }
+  // Priority sort: P1 (core demand) first, then P2, then P3.
+  // "All" stays pinned at position 0 with priority 0.
+  const prioritizedTags = manifestTags
+    .filter((tag) => tag && typeof tag.id === "string")
+    .map((tag) => ({
+      id: tag.id,
+      label: tag.label || tag.id,
+      priority: typeof tag.priority === "number" ? tag.priority : 3
+    }))
+    .sort((a, b) => a.priority - b.priority);
+
+  TAG_DEFINITIONS = [
+    { id: "all", label: "All", priority: 0 },
+    ...prioritizedTags
+  ];
+
+  PROJECT_INDEX = manifestProjects
+    .filter((project) => project && typeof project.url === "string")
+    .map((project) => ({
+      title: project.title || project.slug || "Untitled Project",
+      url: project.url,
+      image: project.image || "",
+      alt: project.alt || `${project.title || project.slug || "Project"} image`,
+      tagIds: Array.isArray(project.tagIds) ? project.tagIds : []
+    }));
 
   tagLabelById = new Map(TAG_DEFINITIONS.map((tag) => [tag.id, tag.label]));
 }
@@ -288,13 +306,14 @@ document.querySelectorAll("[data-recommendation-label]").forEach((node) => {
 
 const recommendationSectionElement = document.querySelector("[data-recommendation-section]");
 if (recommendationSectionElement) {
-  recommendationSectionElement.setAttribute("aria-label", RECOMMENDATION_SECTION_NAME);
+  // region + aria-roledescription="carousel" (set in the markup) make this
+  // announced as a carousel; keep its accessible name in sync with the visible
+  // "Recommendation" label.
+  recommendationSectionElement.setAttribute("aria-label", `${RECOMMENDATION_SECTION_NAME} carousel`);
 }
 
-const recommendationIndicatorElement = document.querySelector("[data-recommendation-indicator]");
-if (recommendationIndicatorElement) {
-  recommendationIndicatorElement.setAttribute("aria-label", `${RECOMMENDATION_SECTION_NAME} pages`);
-}
+// The dot indicator is decorative; slide position is announced to assistive
+// tech via the #fr-live live region, so no accessible name is needed here.
 
 // Projects shown in the front-page carousel. These are the project slugs that
 // have R2 featured/ art (LowRes thumbnails + HighRes previews). Add a slug here
@@ -309,6 +328,7 @@ if (frSection) {
   const frThumbs = document.getElementById("fr-thumbs");
   const frTitle = document.getElementById("fr-title");
   const frDescription = document.getElementById("fr-description");
+  const frLive = document.getElementById("fr-live");
   const pageIndicator = document.getElementById("fr-page-indicator");
   const prevBtn = frSection.querySelector(".fr-nav-prev");
   const nextBtn = frSection.querySelector(".fr-nav-next");
@@ -324,24 +344,12 @@ if (frSection) {
     image.src = src;
   }
 
-  // Build carousel entries from taxonomy + each project's config images.
-  // Cover = project default image; thumbs = LowRes (cap at FEATURED_THUMB_MAX);
-  // fulls = HighRes (shown on hover). Mirrors the project-page data model so the
-  // two can never drift.
-  async function loadFeaturedTaxonomy() {
-    try {
-      const response = await fetch(TAXONOMY_MANIFEST_PATH);
-      if (!response.ok) {
-        return { projects: [] };
-      }
-      return await response.json();
-    } catch {
-      return { projects: [] };
-    }
-  }
-
+  // Build carousel entries from the shared (memoized) taxonomy + each project's
+  // config images. Cover = project default image; thumbs = LowRes (cap at
+  // FEATURED_THUMB_MAX); fulls = HighRes (shown on hover). Mirrors the
+  // project-page data model so the two can never drift.
   async function buildFeaturedPages(taxonomy) {
-    const projects = Array.isArray(taxonomy.projects) ? taxonomy.projects : [];
+    const projects = taxonomy && Array.isArray(taxonomy.projects) ? taxonomy.projects : [];
     const bySlug = new Map(projects.map((p) => [p.slug, p]));
 
     const entries = [];
@@ -462,6 +470,13 @@ if (frSection) {
     frMainImage.alt = page.altMain;
     preloadImage(page.cover);
 
+    // Announce the current slide (position + title + description) to assistive
+    // tech via the polite live region each time the carousel advances. The card
+    // itself stays a plain link whose accessible name comes from its content.
+    if (frLive) {
+      frLive.textContent = `Slide ${currentPageIndex + 1} of ${featuredPages.length}: ${page.title}. ${page.description}`;
+    }
+
     frThumbs.innerHTML = "";
     page.thumbs.forEach((thumbPath, thumbIndex) => {
       const i = thumbIndex + 1;
@@ -542,13 +557,25 @@ if (frSection) {
     nextBtn.addEventListener("click", () => movePage(1));
   }
 
+  // Arrow-key navigation: when focus is anywhere inside the carousel (on a
+  // prev/next button, a thumbnail, or the slide link), Left/Right advance the
+  // slide. preventDefault stops the page from scrolling horizontally.
+  frSection.addEventListener("keydown", (event) => {
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      movePage(-1);
+    } else if (event.key === "ArrowRight") {
+      event.preventDefault();
+      movePage(1);
+    }
+  });
+
   // Wire the navigation buttons even before entries resolve, then hydrate the
-  // carousel once project configs are fetched. loadTaxonomyManifest populates
-  // globals but returns undefined, so fetch the manifest here for its slug/url
-  // fields (small JSON, cache-friendly).
-  loadTaxonomyManifest().then(async () => {
-    const taxonomy = await loadFeaturedTaxonomy();
-    featuredPages = await buildFeaturedPages(taxonomy);
+  // carousel once project configs are fetched. loadTaxonomyManifest returns the
+  // memoized manifest (one fetch shared with the tag system) for its slug/url
+  // fields.
+  loadTaxonomyManifest().then(async (manifest) => {
+    featuredPages = await buildFeaturedPages(manifest);
     renderPage();
   });
 }

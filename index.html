@@ -252,9 +252,9 @@
       </section>
 
       <!-- ===== RECOMMENDATION SECTION ===== -->
-      <section class="featured-recommendations" id="featured-recommendations" aria-label="Recommendation" data-recommendation-section>
-        <button class="fr-nav fr-nav-prev" type="button" aria-label="Show previous recommendation">◀</button>
-        <a class="fr-card" id="fr-card-link" href="template-content.html">
+      <section class="featured-recommendations" id="featured-recommendations" role="region" aria-roledescription="carousel" aria-label="Recommendation carousel" data-recommendation-section>
+        <button class="fr-nav fr-nav-prev" type="button" aria-label="Show previous recommendation" aria-controls="fr-card-link">◀</button>
+        <a class="fr-card" id="fr-card-link" href="farcry-6.html">
           <div class="fr-media-main">
             <img id="fr-main-image" src="https://pub-dc4e1f00955f4568a77da06925201843.r2.dev/projects/farcry6-procedural-generation/cover.jpg" alt="Far Cry 6 procedural generation cover" decoding="async" />
           </div>
@@ -266,8 +266,11 @@
             </div>
           </div>
         </a>
-        <button class="fr-nav fr-nav-next" type="button" aria-label="Show next recommendation">▶</button>
-        <div class="fr-page-indicator" id="fr-page-indicator" aria-label="Recommendation pages" data-recommendation-indicator></div>
+        <button class="fr-nav fr-nav-next" type="button" aria-label="Show next recommendation" aria-controls="fr-card-link">▶</button>
+        <div class="fr-page-indicator" id="fr-page-indicator" aria-hidden="true" data-recommendation-indicator></div>
+        <!-- Polite live region: announces the current slide (position + title +
+             description) to screen readers each time the carousel advances. -->
+        <p class="visually-hidden" id="fr-live" aria-live="polite" aria-atomic="true"></p>
       </section>
 
       <!-- ===== SELECTED WORKS ===== -->

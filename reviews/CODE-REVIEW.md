@@ -33,6 +33,27 @@ Priority order used throughout: **critical bugs → accessibility → performanc
 
 ---
 
+## ✅ Fixed in iteration 2 (homepage hero: perf + accessibility)
+
+### Performance
+- **Memoized the taxonomy fetch in `home.js` (P1 #5).** The manifest was fetched redundantly on every homepage load: once at module scope for the tag system and again inside the featured-carousel IIFE via a separate `loadFeaturedTaxonomy()` helper — neither was memoized. Refactored `loadTaxonomyManifest()` to memoize a single in-flight promise (mirrors the pattern already used in `project-instance-loader.js`), return the parsed manifest, and apply it to the module globals via a new `applyTaxonomyManifest()`. Deleted `loadFeaturedTaxonomy()`; the carousel IIFE now consumes the same memoized manifest. Net effect: **one `data/taxonomy.json` fetch per page load instead of 2–3.** Also hardened `buildFeaturedPages()` against a `null` manifest (was previously guaranteed a `{ projects: [] }` object).
+
+### Accessibility (carousel as an ARIA widget — P2 #6)
+- **The featured-recommendations block is now announced as a carousel to AT.** Added `role="region"` + `aria-roledescription="carousel"` and a descriptive `aria-label` ("Recommendation carousel", kept in sync with the visible label) to the `<section>`.
+- **Slide changes are announced.** Added a visually-hidden polite live region (`#fr-live`, `aria-live="polite"` `aria-atomic="true"`) updated on every `renderPage()` with `"Slide N of M: <title>. <description>"`, so advancing the carousel is spoken to screen-reader users.
+- **Arrow-key navigation.** Added a `keydown` handler on the carousel section so Left/Right arrows advance the slide whenever focus is anywhere inside the carousel (prev/next buttons, thumbnails, or the slide link). `preventDefault` stops horizontal page scroll.
+- **Control relationships.** Added `aria-controls="fr-card-link"` to both prev/next buttons so AT associates them with the slide they update.
+- **Decorative indicator hidden from AT.** The dot indicator (`#fr-page-indicator`) is purely visual now that position is announced via the live region; marked it `aria-hidden="true"` and removed the contradictory `aria-label` the JS previously set on it.
+- **Design note — intentionally kept the card as a link.** The APG carousel pattern suggests `role="group" aria-roledescription="slide"` on each slide, but the slide here *is* the primary call-to-action (an `<a>` to the project page). Overriding its implicit `link` role would have hidden the navigate affordance from AT — a worse regression than the "slide" affordance is worth. The card stays a plain link whose accessible name comes from its content; carousel semantics are carried by the region + live region + arrow keys instead.
+- **Bonus correctness:** the static fallback `href` on the card was `template-content.html` (the raw shared template — a dead link for no-JS users / crawlers / the pre-hydration flash). Corrected to `farcry-6.html`, the first carousel entry's real target (matches the static Far Cry 6 fallback content and the taxonomy `url`).
+
+### Validation
+- `node --check home.js`, `node --check project-instance-loader.js` — pass.
+- `data/taxonomy.json` — valid JSON.
+- Served locally (`python3 -m http.server`); `/`, `/home.js`, `/data/taxonomy.json`, `/farcry-6.html` all return 200; the carousel ARIA attributes render in the served HTML.
+
+---
+
 ## 🔴 Remaining issues — prioritized for future iterations
 
 ### P1 — Correctness / robustness
@@ -40,10 +61,10 @@ Priority order used throughout: **critical bugs → accessibility → performanc
 2. **No `<html>` error handling when the template or config fetch fails.** `loadProjectInstanceTemplate()` silently `return`s on any failure, leaving a blank page with no user-facing message beyond `<noscript>`. Add a visible fallback/error state inside the mount point (e.g., “Project could not be loaded — return home”).
 3. **`project-instance-test.html` is a test artifact shipped to production.** It has `data-project-slug="project-instance-test"` and a config, is not in `sitemap.xml`, and is reachable by anyone. Remove from the live site (or move behind a non-published path). Also consider deleting `Resources/Project Instances/config/project-instance-test.json`.
 4. **`canLoadProjectImage` / image-extension probing (`home.js`) issues a network request per extension per role** to discover `png → jpg → svg`. This is clever but slow and produces 404s in server logs. Prefer declaring the extension explicitly in the config, or ship a small manifest.
-5. **`home.js` calls `loadTaxonomyManifest()` twice on the homepage** — once at module scope (for the tag system) and again inside the featured-section IIFE via `loadFeaturedTaxonomy()`. Unlike the loader, `home.js`'s `loadTaxonomyManifest` is not memoized. Memoize / share the promise.
+5. ~~**`home.js` calls `loadTaxonomyManifest()` twice on the homepage** — once at module scope (for the tag system) and again inside the featured-section IIFE via `loadFeaturedTaxonomy()`. Unlike the loader, `home.js`'s `loadTaxonomyManifest` is not memoized. Memoize / share the promise.~~ **✅ Fixed in iteration 2** (memoized single fetch; `loadFeaturedTaxonomy` removed).
 
 ### P2 — Accessibility (deeper pass)
-6. **Carousel (`featured-recommendations`) is not a carousel widget for AT.** It lacks `role="region"`, an `aria-roledescription="carousel"`, `aria-live` for the changing title/description, and arrow-key support. The prev/next buttons work but the auto-changing main image on thumb hover has no programmatic state announcement. Needs a proper ARIA carousel pattern.
+6. ~~**Carousel (`featured-recommendations`) is not a carousel widget for AT.** It lacks `role="region"`, an `aria-roledescription="carousel"`, `aria-live` for the changing title/description, and arrow-key support. The prev/next buttons work but the auto-changing main image on thumb hover has no programmatic state announcement. Needs a proper ARIA carousel pattern.~~ **✅ Fixed in iteration 2** (region + carousel role, polite live region, arrow-key nav, aria-controls; card kept as a link — see design note above).
 7. **The image-compare slider has no keyboard / screen-reader support** (`initImageCompareSliders` in `project-instance-loader.js`). It's mouse/touch only. Add a focusable range-style handle with `aria-valuenow/min/max` and arrow-key handling, plus an accessible name.
 8. **`aria-label="Tag system update reminder"` remains on a role-less `<div>`** (after removing `role="note"`). An `aria-label` on a generic `<div>` is ignored by AT — either drop the attribute or give the element an appropriate role. (Minor.)
 9. **Color contrast**: verify `--muted: #b5bedf` on `--bg: #0f111a` and accent-on-dark combinations against WCAG AA for body text and small UI. Run an automated contrast audit (axe/Lighthouse).
@@ -71,10 +92,11 @@ Priority order used throughout: **critical bugs → accessibility → performanc
 ---
 
 ## Suggested iteration plan
-- **Iteration 2:** P1 #2 (visible load-error state) + P1 #5 (memoize taxonomy) + P2 #6 (ARIA carousel) — accessibility & robustness on the homepage hero.
-- **Iteration 3:** P1 #3 (remove test artifact) + P5 #21 (untrack Wix archive, relocate logo) — repo hygiene.
-- **Iteration 4:** P5 #19 (extract `shared.js`) — the structural maintainability win; touches both JS entry points, needs careful smoke-testing of homepage + one project page.
-- **Iteration 5:** P1 #1 (static pre-render of project pages) — largest SEO lift; consider a tiny build script run pre-deploy.
+- ~~**Iteration 2:** P1 #2 (visible load-error state) + P1 #5 (memoize taxonomy) + P2 #6 (ARIA carousel) — accessibility & robustness on the homepage hero.~~ — #5 and #6 done; #2 deferred.
+- **Iteration 3 (next):** P1 #2 (visible load-error state on project pages) + P1 #3 (remove `project-instance-test` artifact) — robustness + repo hygiene.
+- **Iteration 4:** P5 #21 (untrack Wix archive, relocate logo) — repo bloat.
+- **Iteration 5:** P5 #19 (extract `shared.js`) — the structural maintainability win; touches both JS entry points, needs careful smoke-testing of homepage + one project page.
+- **Iteration 6:** P1 #1 (static pre-render of project pages) — largest SEO lift; consider a tiny build script run pre-deploy.
 
 ## How to validate changes locally
 No build system. Serve from repo root and click through:
