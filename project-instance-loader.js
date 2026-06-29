@@ -590,6 +590,17 @@ async function loadProjectInstanceTemplate() {
       imageNode.alt = `${config.title} gallery thumbnail ${index + 1}`;
     }
     button.dataset.gallerySrc = galleryPath;
+    // Keep the button's accessible name, preview alt, and role hook in sync
+    // with its position. Extra thumbs (5+) are produced by cloneNode(true) off
+    // the last template thumb (thumb_04), so without this every clone inherits
+    // "Show gallery image 4" / "Gallery image 4" verbatim — several buttons then
+    // share one accessible name (WCAG 2.4.4 / 4.1.2) and the clicked-thumb
+    // preview alt (read in initProjectGallery via data-gallery-alt) is wrong.
+    // These values match the static template for thumbs 1-4, so this is a no-op
+    // there and a correction only for the cloned positions.
+    button.dataset.galleryAlt = `Gallery image ${index + 1}`;
+    button.setAttribute("aria-label", `Show gallery image ${index + 1}`);
+    button.dataset.projectRole = role;
   });
 
   // Fill the 4-column metadata grid in template order.
@@ -616,12 +627,6 @@ async function loadProjectInstanceTemplate() {
   const currentProject = findProjectEntry(projects, slug);
   const relatedProjects = resolveRelatedProjects(currentProject, projects);
   renderRelatedWorks(relatedWorksGallery, relatedWorksEmpty, relatedProjects, tagLabelById);
-
-  // Expose template identity for styling/hooks/debugging.
-  main.dataset.projectTemplateSlug = "template-project";
-  main.dataset.projectTemplateFolder = "pt-template-project";
-  // Prevent home.js template image hydration from overriding JSON-driven image paths.
-  main.dataset.projectTemplateAutohydrate = "false";
 
   // Replace mount content with hydrated template nodes.
   root.innerHTML = "";

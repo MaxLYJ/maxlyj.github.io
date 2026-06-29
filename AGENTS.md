@@ -7,7 +7,7 @@ Static HTML/CSS/JS portfolio site. **No build system, tests, or linting.** Edit 
 - **Homepage** (`index.html`) loads **`home.js`** (tag system, featured carousel, sidebar)
 - **Project instance pages** (`<slug>.html`) load **`project-instance-loader.js`** — NOT `home.js`. `shared.js` (CDN base, `toCdnUrl`, `loadVersionTag`, taxonomy path) loads before both entry scripts.
 - `template-content.html` is a shared **fragment source**, not a shipped page: the loader `fetch()`es it + `DOMParser.parseFromString()` and injects only its `<header>/<overlay>/<nav>/<main>` into each project page (see the banner comment at the top of `template-content.html`). Its `<head>` is for local preview only — each project page carries its own `<head>`.
-- (Historical note: `home.js` once hydrated `template-content.html` directly and the loader set `data-project-template-autohydrate="false"` to guard it. That hydration code never ran in production and was removed; the loader still sets the attribute but nothing reads it — safe to ignore.)
+- (Historical note: `home.js` once hydrated `template-content.html` directly and the loader set `data-project-template-autohydrate="false"` (plus `data-project-template-slug`/`-folder`) to guard it. That hydration code never ran in production and was removed in iteration 10; the three vestigial dataset setters — now reader-less — were removed from the loader in iteration 26. The two static attributes still present on `<main>` in `template-content.html` are inert markup that nothing reads.)
 
 ## Entry Points
 - **Homepage**: `index.html` → `home.js` (tag system, featured recommendations, gallery from `data/taxonomy.json`)
