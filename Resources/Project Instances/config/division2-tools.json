@@ -144,6 +144,7 @@
   "seo": {
     "headline": "The Division 2 — Technical Art Tools",
     "description": "A Tom Clancy's The Division 2 technical-art case study — workflow tools, Python scripting support, and production iteration on the Snowdrop engine at Ubisoft Shanghai.",
+    "ogDescription": "A Division 2 technical-art case study — workflow tools, Python scripting, and production iteration on the Snowdrop engine.",
     "image": "https://pub-dc4e1f00955f4568a77da06925201843.r2.dev/projects/division2-tools/cover.jpg",
     "keywords": "The Division 2, Tom Clancy's The Division 2, Technical Art, Snowdrop Engine, Workflow Tools, Blueprints, Python, Ubisoft Shanghai"
   },
