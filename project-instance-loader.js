@@ -300,69 +300,11 @@ function renderProjectDetails(detailsContainer, config) {
         detailsContainer.appendChild(node);
       }
     });
-    return;
   }
 
-  // Backward compatibility for existing projectDetails shape.
-  if (config.projectDetails?.initiative) {
-    const heading = document.createElement("h3");
-    heading.textContent = "Initiative";
-    const paragraph = document.createElement("p");
-    paragraph.textContent = config.projectDetails.initiative;
-    heading.className = "project-details-block";
-    paragraph.className = "project-details-block";
-    detailsContainer.append(heading, paragraph);
-  }
-
-  if (config.projectDetails?.pipeline) {
-    const heading = document.createElement("h3");
-    heading.textContent = "Research Pipeline";
-    const paragraph = document.createElement("p");
-    paragraph.textContent = config.projectDetails.pipeline;
-    heading.className = "project-details-block";
-    paragraph.className = "project-details-block";
-    detailsContainer.append(heading, paragraph);
-  }
-
-  if (config.projectDetails?.result) {
-    const heading = document.createElement("h3");
-    heading.textContent = "Research Result";
-    const paragraph = document.createElement("p");
-    paragraph.textContent = config.projectDetails.result;
-    heading.className = "project-details-block";
-    paragraph.className = "project-details-block";
-    detailsContainer.append(heading, paragraph);
-  }
-
-  if (config.projectDetails?.placeholderImage) {
-    const imageNode = createDetailBlockElement(
-      {
-        type: "image",
-        src: config.projectDetails.placeholderImage,
-        alt: `${config.title} project details image`
-      },
-      config.title
-    );
-    if (imageNode) {
-      imageNode.classList.add("project-details-block");
-      detailsContainer.appendChild(imageNode);
-    }
-  }
-
-  if (config.projectDetails?.placeholderVideo) {
-    const videoNode = createDetailBlockElement(
-      {
-        type: "video",
-        url: config.projectDetails.placeholderVideo,
-        title: `${config.title} project details video`
-      },
-      config.title
-    );
-    if (videoNode) {
-      videoNode.classList.add("project-details-block");
-      detailsContainer.appendChild(videoNode);
-    }
-  }
+  // All shipped project configs use the projectDetails.blocks array (verified
+  // 0/4 carry the legacy initiative/pipeline/result/placeholder* shape), so the
+  // backward-compat fallback that previously rendered those keys has been removed.
 }
 
 function initMobileOverviewStack(main) {
@@ -873,10 +815,4 @@ function initSidebarToggle() {
     }
   });
 }
-/*
-after root.append(header, overlay, sidebar, main). At that point the elements are guaranteed to be in the live DOM,
-so querySelector finds them and all five event listeners(click, overlay click, nav link click, Escape key,
-breakpoint change) are correctly attached.
-*/
-
 loadProjectInstanceTemplate();
