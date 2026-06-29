@@ -397,9 +397,15 @@ if (frSection) {
       return;
     }
     preloadCache.add(page.slug);
+    // Warm only the cover for neighbor pages. The cover is the carousel slide's
+    // LCP image and the only asset shown immediately on navigation, so warming
+    // it makes prev/next feel instant. The thumbnails are small (LowRes) and the
+    // HighRes "fulls" only swap in on hover, so speculatively preloading them —
+    // formerly up to 1 cover + 4 thumbs + 4 fulls per neighbor (~18 large
+    // fetches for two neighbors) — competed with the homepage LCP on slow
+    // connections. When a neighbor becomes the current slide its thumbs and the
+    // hovered full fetch on demand during renderPage().
     preloadImage(page.cover);
-    page.thumbs.forEach(preloadImage);
-    page.fulls.forEach(preloadImage);
   }
 
   function warmNeighborPages() {
@@ -448,9 +454,10 @@ if (frSection) {
     frCardLink.href = page.targetUrl;
     frTitle.textContent = page.title;
     frDescription.textContent = page.description;
+    // Setting the visible <img> src below already fetches the cover; no separate
+    // preloadImage() call is needed (it would just request the same URL twice).
     frMainImage.src = page.cover;
     frMainImage.alt = page.altMain;
-    preloadImage(page.cover);
 
     // Announce the current slide (position + title + description) to assistive
     // tech via the polite live region each time the carousel advances. The card
@@ -506,8 +513,9 @@ if (frSection) {
         setActiveThumb(null);
       });
 
+      // No preloadImage(thumbPath): the thumb is already a DOM <img> (its .src
+      // above starts the fetch), so an explicit preload would duplicate it.
       frThumbs.appendChild(thumbButton);
-      preloadImage(thumbPath);
     });
 
     renderIndicator();
