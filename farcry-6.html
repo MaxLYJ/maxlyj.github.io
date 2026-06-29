@@ -18,10 +18,21 @@
     <meta name="twitter:image" content="https://pub-dc4e1f00955f4568a77da06925201843.r2.dev/projects/farcry6-procedural-generation/cover.jpg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Inter: loaded async (media="print" + onload swap) so it never blocks
+         first paint; display=swap falls back to the system font meanwhile.
+         <noscript> mirror covers no-JS visitors (onload can't fire without JS). -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      media="print"
+      onload="this.media='all'"
     />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      />
+    </noscript>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body data-project-slug="farcry6-procedural-generation">
