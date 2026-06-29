@@ -35,6 +35,27 @@ Two content defects that ship on live pages, both unambiguous, both verified in 
 
 ---
 
+## ✅ Fixed in iteration 27 (typography consistency: date-range separators)
+
+A fresh end-to-end read of `index.html`'s visible content surfaced a real, user-visible inconsistency: **date ranges used two different separators**. The en-dash (`–`, U+2013) is the typographic standard for a numeric/date range (Chicago Manual of Style §6.78) and was already the site's convention — **5 of 6** resume `<time>` ranges and the Far Cry 6 config `time` all used it — but **3 sites** shipped a bare ASCII hyphen (`-`, U+002D), making them inconsistent with both the convention and their immediate siblings:
+
+| Site | Before | After | Why it's the outlier |
+|---|---|---|---|
+| `index.html` resume (Gearbox) | `Mar 2019 - Sep 2019` | `Mar 2019 – Sep 2019` | The other **5** resume ranges (`Nov 2024 – Present`, `Dec 2021 – Nov 2024`, `Sep 2020 – Dec 2021`, `Aug 2018 – May 2020`, `Sep 2014 – Jun 2018`) all use en-dash. The `<time datetime="2019-03">` attribute is unchanged — visible text only. |
+| `division2-tools.json` `time` | `2022-2024` | `2022–2024` | The sibling AAA config (`farcry6`, `Sep 2020 – Dec 2021`) uses en-dash. Pure separator change — the author's chosen *precision* (year-only vs month-level) is preserved. |
+| `division-2.html` `<noscript>` Period `<dd>` | `2022-2024` | `2022–2024` | Regenerated from the config by re-running `scripts/prerender-project-pages.js` (the iteration-12 single-sourcing rule: editing a config field that the pre-render inlines requires re-running it, or the static crawler/no-JS copy drifts from the runtime copy). |
+
+This is **typography/consistency polish**, not authorial voice: the author didn't make a meaningful choice between hyphen and en-dash (one entry simply used the keyboard hyphen); normalizing to the en-dash matches the site's own established convention and the typographic standard. Distinct from the owner-gated content items (case-study depth, raiden's scaffold headings, P4 #15 naming policy) which this iteration does **not** touch.
+
+**Net:** every shipped date range across the homepage resume and all four project pages now uses the en-dash. A repo-wide scan confirms **0** ASCII-hyphen date ranges remain (`20[0-9]{2}-20[0-9]{2}` and `Mon YYYY - Mon YYYY` patterns).
+
+### Validation
+- `division2-tools.json` parses as valid JSON (`time` now `'2022–2024'`); `index.html`/`division-2.html` are static HTML (no JS changed — `config.time` is rendered verbatim at `project-instance-loader.js:610` and `prerender-project-pages.js:396`, nothing parses the separator).
+- Prerender re-run: only `division-2.html` changed among the 4 project pages (farcry/d-walker/raiden md5 unchanged); **idempotent** (byte-identical md5 on a second run).
+- `git diff --stat` = exactly 3 files, 3 insertions / 3 deletions — one line each, each a single-character separator swap (verified `2d` → `e2 80 93`); all `datetime` attributes and surrounding markup untouched.
+
+---
+
 ## Per-project content assessment
 
 ### Far Cry 6 — Procedural Generation  *(gold standard)*
@@ -112,3 +133,6 @@ Carried/tracked in `CODE-REVIEW.md` unless noted:
 - d-walker `ago(2015)` typo → fixed.
 - division-2 `"Header"` placeholder heading → removed.
 - P4 #16 (skills vs taxonomy) → documented as non-defect (two dimensions, no contradiction).
+
+### Closed in iteration 27
+- Date-range separator inconsistency (3 sites: `index.html` resume, `division2-tools.json` `time`, `division-2.html` `<noscript>`) → normalized to en-dash, matching the site convention and the typographic standard. See the iteration-27 section above.
