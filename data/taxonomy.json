@@ -13,8 +13,7 @@
     { "id": "optimization", "label": "Optimization", "priority": 2 },
     { "id": "character", "label": "Character Pipeline", "priority": 3 },
     { "id": "environment", "label": "Environment", "priority": 3 },
-    { "id": "short-film", "label": "Short Film", "priority": 3 },
-    { "id": "template", "label": "Template", "priority": 3 }
+    { "id": "short-film", "label": "Short Film", "priority": 3 }
   ],
   "projects": [
     {
