@@ -1,34 +1,17 @@
-// ===== SHARED CONSTANTS =====
+// home.js — homepage entry point.
+// CDN_BASE, toCdnUrl, loadVersionTag, and TAXONOMY_MANIFEST_PATH are shared with
+// project-instance-loader.js via shared.js, which is loaded before this script.
+
+// ===== SHARED CONSTANTS (homepage-only) =====
 const RECOMMENDATION_SECTION_NAME = "Recommendation";
 const RECOMMENDATION_IMAGE_EXTENSION_PRIORITY = ["png", "jpg", "svg"];
 
-// CDN base for project images served from Cloudflare R2.
-// Logical paths in data/taxonomy.json (e.g. "projects/<slug>/cover.png") are
-// prefixed with this at runtime; absolute URLs (http...) pass through unchanged.
-const CDN_BASE = "https://pub-dc4e1f00955f4568a77da06925201843.r2.dev";
-
-function toCdnUrl(path) {
-  if (!path) return path;
-  if (/^https?:\/\//i.test(path)) return path;
-  return CDN_BASE + "/" + path.replace(/^\/+/, "");
-}
-
-async function loadVersionTag() {
-  const el = document.querySelector(".top-bar-version");
-  if (!el) return;
-  try {
-    const res = await fetch("https://api.github.com/repos/MaxLYJ/maxlyj.github.io/commits?per_page=1&sha=main");
-    if (!res.ok) return;
-    const commits = await res.json();
-    if (commits.length > 0) {
-      el.textContent = "Ver " + commits[0].sha.substring(0, 7);
-    }
-  } catch {}
-}
+// Populate the top-bar version pill. On the homepage ".top-bar-version" is in
+// the static HTML, so this runs immediately. (On project instance pages the
+// loader calls loadVersionTag() after injecting the template.)
 loadVersionTag();
 
 // ===== TAG SYSTEM DATA =====
-const TAXONOMY_MANIFEST_PATH = "data/taxonomy.json";
 
 let TAG_DEFINITIONS = [{ id: "all", label: "All" }];
 let PROJECT_INDEX = [];

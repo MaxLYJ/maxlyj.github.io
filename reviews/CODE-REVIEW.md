@@ -96,6 +96,27 @@ Priority order used throughout: **critical bugs → accessibility → performanc
 
 ---
 
+## ✅ Fixed in iteration 6 (architecture: extract `shared.js` — P5 #19, part 1)
+
+### Architecture / maintainability
+- **Extracted the byte-identical helpers duplicated across `home.js` and `project-instance-loader.js` into a new `shared.js`** (P5 #19). `CDN_BASE`, `toCdnUrl()`, `loadVersionTag()`, and `TAXONOMY_MANIFEST_PATH` were defined verbatim in both files. They now live once in `shared.js`, which is loaded as a classic `<script>` **before** the page-specific entry script on every page (`index.html` → before `home.js`; the four project pages → before `project-instance-loader.js`). Classic scripts share the global lexical scope, so top-level `const`/`function` in `shared.js` are visible to the subsequently-loaded entry script without `import`/`export` or a module-system migration; the duplicate declarations were removed from both consumers, so there is no "Identifier has already been declared" collision. The CDN base URL and the version-tag/GitHub-commit contract are now single-sourced — editing them in one place updates both page types.
+- **Fixed a latent version-tag bug exposed by the extraction (bonus correctness).** `project-instance-loader.js` called `loadVersionTag()` at the very top of the file, but `.top-bar-version` lives inside the shared template that is fetched and injected *asynchronously* by `loadProjectInstanceTemplate()` — so on project pages the element did not exist when the call ran, the helper no-op'd, and **the version pill was never populated on any project page** (the homepage was unaffected because its pill is in the static HTML). Moved the call to *after* `root.append(header, overlay, sidebar, main)`, where the injected top bar is guaranteed to be in the DOM, so project pages now show their commit version too.
+
+### Scope note — what was *not* extracted this iteration
+P5 #19 also flags the sidebar-toggle and gallery-init logic as duplicated. Those were deliberately **deferred** because the two copies have meaningful behavioral divergence that a naive merge would regress, and there is no browser/jsdom harness to smoke-test the result:
+- **Sidebar toggle.** `home.js`'s inline version additionally implements smooth-scrolling + `history.replaceState` for in-page hash links (`#works`, `#about`, …) and closes the drawer on nav; `project-instance-loader.js`'s `initSidebarToggle()` only handles open/close + mobile auto-close (project-page nav has no in-page anchors to scroll to). Merging requires parameterizing the hash-scroll behavior.
+- **Gallery init.** `home.js`'s `initializeProjectGallery()` operates on a module-scoped `projectGallery` hydrated from `Resources/Project Template/pages`, while the loader's `initProjectGallery(main)` operates on gallery nodes injected from the template. The render/swipe bodies are near-identical but the entry points differ.
+- **Image-compare init** lives **only** in the loader (not in `home.js`), so it was never actually duplicated — the original backlog line overstated it.
+
+These remain the suggested next extraction iteration (see plan below).
+
+### Validation
+- `node --check shared.js`, `node --check home.js`, `node --check project-instance-loader.js` — pass; all project configs + `data/taxonomy.json` — valid JSON.
+- Served locally (`python3 -m http.server 8787`): `/shared.js`, `/home.js`, `/project-instance-loader.js`, `/`, and all four project pages → **200**; `index.html` and every project page load `shared.js` on the line **before** their entry script; served `shared.js` contains all **4** helper definitions; served `home.js` and `project-instance-loader.js` contain **0** (no redeclaration); served loader still carries the post-injection `loadVersionTag();` call. Server confirmed stopped (`ss -ltn`).
+- Caveat (same as prior iterations): runtime behavior of the shared-global handoff and the project-page version pill can only be confirmed in a real browser — there is no build/test system per `AGENTS.md` and no jsdom/headless browser available. Verified by `node --check`, serve+grep, and code reading; a manual click-through (`python3 -m http.server` → open `/` and a project page, confirm no console errors and the version pill renders on both) is the remaining confidence step.
+
+---
+
 ## 🔴 Remaining issues — prioritized for future iterations
 
 ### P1 — Correctness / robustness
@@ -125,7 +146,7 @@ Priority order used throughout: **critical bugs → accessibility → performanc
 18. **`project-instance-loader.js` uses an apostrophe in a comment** and otherwise the code is clean, but the large block of legacy `initiative/pipeline/result` fallback (lines ~325–383) can be retired once all configs migrate to `projectDetails.blocks`. Track migration and delete dead code.
 
 ### P5 — Architecture / maintainability
-19. **Duplicated logic between `home.js` and `project-instance-loader.js`**: `toCdnUrl`, `CDN_BASE`, `loadVersionTag`, gallery init, sidebar toggle, image-compare init all exist in both files. Extract a shared `shared.js` (CDN helper, version tag, sidebar, image-compare) and include it on both page types. This is the single biggest maintainability win.
+19. **Duplicated logic between `home.js` and `project-instance-loader.js`**: `toCdnUrl`, `CDN_BASE`, `loadVersionTag`, gallery init, sidebar toggle were duplicated across the two files (image-compare init, it turned out, lives only in the loader). **Part 1 done in iteration 6:** the four byte-identical helpers (`CDN_BASE`, `toCdnUrl`, `loadVersionTag`, `TAXONOMY_MANIFEST_PATH`) are extracted into `shared.js` and single-sourced. **Part 2 (remaining):** the sidebar-toggle and gallery-init copies still duplicate but have real behavioral divergence (sidebar hash-smooth-scroll on the homepage only; gallery entry points differ) — merging them needs parameterization and a browser smoke-test.
 20. **`template-content.html` carries a full `<head>` that is never applied** to project pages (only `<body>` fragments are injected). The `<head>` is misleading dead weight — either strip it or actually use it.
 21. ~~**The `Resources/Wix/` directory** (an entire saved Wix site incl. minified bundles, `*.js.download` files) is committed to the repo and only the logo PNG is referenced. Move the logo to a clean `images/` or `assets/` path and untrack the Wix archive — it bloats the repo and is brand-confusing.~~ **✅ Fixed in iteration 4** (13 MB / 72-file archive `git rm`'d; logo relocated to `images/logo.png` as a tracked rename; `Resources/Wix/` added to `.gitignore`).
 22. **No linting/formatting/test harness** (per `AGENTS.md`). For a static site this is optional, but adding `eslint` + `prettier` + `htmlhint` + a link checker in CI would catch regressions like the `console.log` that shipped.
@@ -138,8 +159,9 @@ Priority order used throughout: **critical bugs → accessibility → performanc
 - ~~**Iteration 3:** P1 #2 (visible load-error state on project pages) + P1 #3 (remove `project-instance-test` artifact) — robustness + repo hygiene.~~ — done.
 - ~~**Iteration 4:** P5 #21 (untrack Wix archive, relocate logo) — repo bloat.~~ — done.
 - ~~**Iteration 5:** Accessibility — P2 #7 (image-compare slider keyboard/AT support) + P2 #8 (redundant `aria-label` on role-less div).~~ — done.
-- **Iteration 6 (next):** P5 #19 (extract `shared.js`) — the structural maintainability win; touches both JS entry points (`CDN_BASE`/`toCdnUrl`, `loadVersionTag`, sidebar toggle, gallery init, image-compare init all duplicate), needs careful smoke-testing of homepage + one project page.
-- **Iteration 7:** P1 #1 (static pre-render of project pages) — largest SEO lift; consider a tiny build script run pre-deploy.
+- **Iteration 6:** ~~P5 #19 (extract `shared.js`)~~ — **part 1 done**: the four byte-identical helpers (`CDN_BASE`, `toCdnUrl`, `loadVersionTag`, `TAXONOMY_MANIFEST_PATH`) extracted to `shared.js`, loaded before the entry script on every page; also fixed the project-page version-pill bug the extraction surfaced.
+- **Iteration 7 (next):** P5 #19 *part 2* — extract the sidebar-toggle and gallery-init logic into `shared.js` (parameterize the homepage-only hash-smooth-scroll and the differing gallery entry points); needs browser smoke-testing of homepage + one project page.
+- **Iteration 8:** P1 #1 (static pre-render of project pages) — largest SEO lift; consider a tiny build script run pre-deploy.
 
 ## How to validate changes locally
 No build system. Serve from repo root and click through:

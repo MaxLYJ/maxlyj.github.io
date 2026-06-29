@@ -1,30 +1,8 @@
+// project-instance-loader.js — project-detail page entry point.
+// CDN_BASE, toCdnUrl, loadVersionTag, and TAXONOMY_MANIFEST_PATH are shared with
+// home.js via shared.js, which is loaded before this script.
+
 const PROJECT_INSTANCE_CONFIG_BASE = "Resources/Project Instances/config";
-const TAXONOMY_MANIFEST_PATH = "data/taxonomy.json";
-
-// CDN base for images served from Cloudflare R2. Logical paths in project
-// config (e.g. "projects/<slug>/blocks/x.png") are prefixed at runtime;
-// absolute URLs (http...) pass through unchanged.
-const CDN_BASE = "https://pub-dc4e1f00955f4568a77da06925201843.r2.dev";
-
-function toCdnUrl(path) {
-  if (!path) return path;
-  if (/^https?:\/\//i.test(path)) return path;
-  return CDN_BASE + "/" + path.replace(/^\/+/, "");
-}
-
-async function loadVersionTag() {
-  const el = document.querySelector(".top-bar-version");
-  if (!el) return;
-  try {
-    const res = await fetch("https://api.github.com/repos/MaxLYJ/maxlyj.github.io/commits?per_page=1&sha=main");
-    if (!res.ok) return;
-    const commits = await res.json();
-    if (commits.length > 0) {
-      el.textContent = "Ver " + commits[0].sha.substring(0, 7);
-    }
-  } catch {}
-}
-loadVersionTag();
 
 let taxonomyManifestPromise;
 
@@ -702,6 +680,10 @@ async function loadProjectInstanceTemplate() {
   // Replace mount content with hydrated template nodes.
   root.innerHTML = "";
   root.append(header, overlay, sidebar, main);
+  // The template's top bar is now in the DOM, so populate the version pill.
+  // (The pre-extraction top-level loadVersionTag() call ran before this element
+  // existed, so project pages never showed a version — fixed here.)
+  loadVersionTag();
   initMobileOverviewStack(main);
   initProjectGallery(main);
   initImageCompareSliders(main);
