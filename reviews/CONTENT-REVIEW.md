@@ -70,6 +70,20 @@ This is a content-rendering defect (mangled visible text on the strongest projec
 
 ---
 
+## ✅ Fixed in iteration 29 (content/a11y: leftover placeholder `alt` on the raiden card + carousel hero)
+
+Iteration 28's note prescribed continuing the visible-text read. A systematic **mechanical sweep** of every authored string across the four configs + `taxonomy.json` + `index.html` (double-spaces, space-before-punctuation, missing-space-after-sentence-end, smart-vs-straight-quote mixing) returned **clean** — the author writes carefully; there were no polish-level mechanical copy defects (this retires that angle as a negative finding). Pivoting to the one surface the mechanical sweep reads *structurally* — the `alt` values in `data/taxonomy.json` — surfaced a real shipped defect.
+
+**The defect** — raiden's works-gallery card `alt` was `"Tooling and shader experiments"`, a generic leftover. It was (1) **inconsistent** (the other three cards name their project — `"Far Cry 6 project key art"`, `"Division 2 project artwork"`, `"D-Walker VS Sahelanthropus scene"`), and (2) **factually wrong** — the phrase describes Division 2's tools+shaders theme, not raiden's rigging-and-animation short. Same leftover-placeholder class as the iter-11 media / iter-18 `"Header"` heading.
+
+**Blast radius** — the taxonomy `alt` is consumed in two runtime sites in `home.js`: the works-gallery card image alt (`createWorkCard`) *and* the featured-carousel main-image alt (`page.altMain`), so navigating the carousel to the raiden slide also spoke the stale alt. WCAG 1.1.1 (Non-text Content) applies — the alt must describe the image.
+
+**Fix** — aligned raiden's `alt` to its d-walker sibling (`"Raiden VS Gekko scene"`, mirroring `"D-Walker VS Sahelanthropus scene"` — the two short-film projects share a type). A one-value JSON edit to a runtime-only field (the prerender doesn't consume taxonomy `projects[].alt`, so no re-run needed). Full detail + validation in [`CODE-REVIEW.md`](./CODE-REVIEW.md#-fixed-in-iteration-29-contenta11y-leftover-placeholder-alt-on-the-raiden-works-gallery-card--carousel-hero).
+
+Like iter 27's separators and iter 28's metadata rendering, an `alt` that is both inconsistent *and* factually wrong is a mechanics/correctness defect — not authorial voice. It is distinct from raiden's genuinely owner-gated `Initiative`/`Research Pipeline`/`Research Result` *headings* (voice) and the case-study depth gap, which stay documented-not-edited.
+
+---
+
 ## Per-project content assessment
 
 ### Far Cry 6 — Procedural Generation  *(gold standard)*
@@ -86,6 +100,7 @@ Eight descriptive `h3` work areas, each with a paragraph — good structure and 
 Three sections (`Initiative` / `Research Pipeline` / `Research Result`) each with one short, real sentence describing actual work (Blender rig → UE5, Sequencer + Control Rig iteration, impact-timing/silhouette result). The content is genuine and accurate, but:
 - **The section headings are generic academic-scaffold labels**, not project-specific. Compare Far Cry 6's `Volcanic Lava Lake` / `Road & River Networks`. `Initiative`/`Research Pipeline`/`Research Result` read as a template the author didn't rename. **Recommendation:** rename to what each section actually does (e.g. `Rig Build`, `Engine Integration & Animation`, `Result`) — a copywriting polish, not a correctness fix; left to the owner.
 - Same depth issue as d-walker: one sentence per stage is below the Far Cry 6 / Division 2 bar.
+- Works-gallery card `alt` was a generic leftover (`"Tooling and shader experiments"`) — **fixed in iteration 29** → `"Raiden VS Gekko scene"`.
 - Placeholder thumbnails (P1 #24) tracked in CODE-REVIEW.
 
 ---
@@ -153,3 +168,7 @@ Carried/tracked in `CODE-REVIEW.md` unless noted:
 
 ### Closed in iteration 28
 - Far Cry 6 Tools/Languages metadata rendered with no space after commas (`Houdini,Substance Designer,…`, `Python,VEX,HLSL`) — farcry6's `tools`/`languages` were arrays while the other 3 configs use strings, and the runtime loader coerced the array via `Array.toString()`. Normalized farcry6 to strings (schema consistency) + added a `formatMetaValue()` helper to the loader mirroring the prerender's `metaText()` (runtime↔prerender parity). See the iteration-28 section above.
+
+### Closed in iteration 29
+- raiden works-gallery card + featured-carousel hero `alt` was a generic leftover (`"Tooling and shader experiments"`) that didn't describe the project — aligned to the d-walker sibling (`"Raiden VS Gekko scene"`). A runtime-only `taxonomy.json` field (no prerender re-run needed); also a WCAG 1.1.1 fix. See the iteration-29 section above.
+- Mechanical sweep of all authored config/taxonomy/homepage text for double-spaces, space-before-punctuation, missing-space-after-sentence-end, and smart-vs-straight-quote mixing → **clean** (negative finding; retires that polish angle).
