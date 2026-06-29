@@ -1745,3 +1745,128 @@ main,
     scroll-behavior: auto !important;
   }
 }
+
+/* ============================================================
+   PRINT STYLES
+   The site is an unconditionally dark theme. Without these rules a
+   browser print or "Save to PDF" (a core action for a portfolio that
+   doubles as a resume) dumps the dark gradient background, the fixed
+   left sidebar, the sticky top bar, the version pill, the carousel
+   prev/next + dots, and the interactive tag-filter bar onto paper —
+   ink-wasting, slow, and partly unreadable. @media print never matches
+   in an on-screen browser window, so these rules are provably inert on
+   the live render (the same "can't bite the screen" safety as the
+   dead-CSS removal in iteration 25) and need no browser smoke-test.
+   Strategy: force a light canvas via the :root tokens (cascades to
+   every var()-based background/color at once), drop the sidebar offset
+   so content uses the full page width, hide interactive chrome, and
+   keep each resume entry / card / detail block on one page.
+   ============================================================ */
+@page {
+  margin: 1.5cm;
+}
+
+@media print {
+  /* Light canvas: override the design tokens so every rule that reads
+     var(--bg)/--panel/--text/etc. renders dark-on-white in one move. */
+  :root {
+    /* Symmetric counterpart of the iter-22 screen `color-scheme: dark`:
+       forces a light default canvas + light UA chrome (scrollbars, form
+       controls) when printing, so the browser can't tint the page dark. */
+    color-scheme: light;
+    --bg: #ffffff;
+    --panel: #ffffff;
+    --panel-2: #ffffff;
+    --text: #14161f;
+    --muted: #444b63;
+    --accent: #1f4cb8;
+    --accent-2: #5a3fb8;
+    --line: #c5cad8;
+  }
+
+  html,
+  body {
+    background: #ffffff !important;
+    color: #14161f !important;
+  }
+
+  /* Universal: drop shadows (they print as muddy gray) for a clean page. */
+  *,
+  *::before,
+  *::after {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  /* Full-width content: remove the fixed-sidebar left offset so the
+     resume / project detail text spans the whole printed page. */
+  main,
+  .project-template-main {
+    margin-left: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Hide navigation/interactive chrome that carries no print value.
+     The sidebar is reproduced by the page's own headings; the tag bar,
+     carousel controls, version pill, and social icon row are on-screen
+     affordances only. */
+  .skip-link,
+  .sidebar,
+  .sidebar-overlay,
+  .top-bar-version,
+  .social-links,
+  .tags-system,
+  .works-empty,
+  .fr-nav,
+  .fr-indicator-dot,
+  .fr-thumb,
+  .image-compare-handle,
+  .image-compare-divider {
+    display: none !important;
+  }
+
+  /* The sticky top bar repeats on every printed page and its translucent
+     dark fill prints poorly; make it static + solid so the brand still
+     heads the document without the sticky-print garbage. */
+  .top-bar {
+    position: static !important;
+    backdrop-filter: none !important;
+    background: #ffffff !important;
+    border-bottom: 2px solid #14161f !important;
+    padding: 0 0 0.4rem !important;
+  }
+  .brand {
+    color: #14161f !important;
+  }
+
+  /* The image-compare slider is clipped to a static 50/50 before/after
+     split by its clip-path; hiding only the handle + divider (above)
+     leaves a meaningful printed comparison rather than a broken stack. */
+  .project-details-video-frame {
+    background: #ffffff !important;
+  }
+
+  /* Keep each self-contained unit on one page where possible. */
+  .resume-item,
+  .resume-sub-item,
+  .card,
+  .project-details-block,
+  .project-details-image-compare,
+  figure {
+    break-inside: avoid;
+  }
+
+  /* Avoid an orphaned heading at the bottom of a page. */
+  h1,
+  h2,
+  h3,
+  h4 {
+    break-after: avoid;
+    color: #14161f !important;
+  }
+
+  /* Images should never overflow the page. */
+  img {
+    max-width: 100% !important;
+  }
+}
