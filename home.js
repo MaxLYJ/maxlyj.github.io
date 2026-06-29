@@ -500,12 +500,14 @@ if (frSection) {
         activateThumb();
         window.location.href = page.targetUrl;
       });
-      thumbButton.addEventListener("keydown", (event) => {
-        if (event.key === "Enter" || event.key === " ") {
-          event.preventDefault();
-          activateThumb();
-        }
-      });
+      // Intentionally NO Enter/Space keydown handler: a native <button> fires
+      // "click" on both keys (Enter on keydown, Space on keyup), which runs the
+      // handler above (preview swap + navigate). A prior handler called
+      // preventDefault() on those keydowns, which cancels that native click — so
+      // keyboard users got the preview swap but NEVER navigated to the project
+      // (the carousel's primary action was unreachable by keyboard). Relying on
+      // native activation restores keyboard parity with the mouse and matches the
+      // click-only .project-thumb pattern in project-instance-loader.js.
 
       // Leave/blur reverts the main image to the project cover.
       thumbButton.addEventListener("mouseleave", () => {
