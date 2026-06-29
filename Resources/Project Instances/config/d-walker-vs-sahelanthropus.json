@@ -23,6 +23,12 @@
       }
     ]
   },
+  "seo": {
+    "headline": "D-Walker VS Sahelanthropus",
+    "description": "D-Walker VS Sahelanthropus — an Unreal Engine rigging and animation short inspired by the Metal Gear Solid V: The Phantom Pain fight scenes. A Yujia Max Liu project.",
+    "image": "https://pub-dc4e1f00955f4568a77da06925201843.r2.dev/projects/d-walker-vs-sahelanthropus/cover.webp",
+    "keywords": "D-Walker VS Sahelanthropus, Metal Gear Solid V, Unreal Engine 5, Blender, Rigging, Animation, Compositing, Blueprints, Python"
+  },
   "images": {
     "cover": "https://pub-dc4e1f00955f4568a77da06925201843.r2.dev/projects/d-walker-vs-sahelanthropus/cover.webp",
     "thumb_01": "Resources/Featured Recommendations/pages/fr-d-walker-vs-sahelanthropus/fr_d-walker-vs-sahelanthropus__thumb_01.svg",

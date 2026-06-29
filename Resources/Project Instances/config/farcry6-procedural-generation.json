@@ -112,6 +112,12 @@
       { "type": "image", "src": "projects/farcry6-procedural-generation/blocks/Performance.png", "alt": "Far Cry 6 procedural pipeline performance profiling" }
     ]
   },
+  "seo": {
+    "headline": "Far Cry 6 — Procedural Generation",
+    "description": "Procedural generation pipeline for Far Cry 6's open world — biome scattering, road & river networks, and material blending across Yara's terrain. A Ubisoft Shanghai technical-art case study.",
+    "image": "https://pub-dc4e1f00955f4568a77da06925201843.r2.dev/projects/farcry6-procedural-generation/cover.jpg",
+    "keywords": "Far Cry 6, Procedural Generation, Houdini, Substance Designer, Maya, Python, VEX, HLSL, Technical Art, Ubisoft Shanghai"
+  },
   "images": {
     "cover": "https://pub-dc4e1f00955f4568a77da06925201843.r2.dev/projects/farcry6-procedural-generation/featured/Header_Farcry6.jpg",
     "thumb_01": "https://pub-dc4e1f00955f4568a77da06925201843.r2.dev/projects/farcry6-procedural-generation/featured/LowResGameImage01.jpg",
