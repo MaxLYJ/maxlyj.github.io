@@ -16,10 +16,6 @@
         "type": "p",
         "text": "This project highlights the tools and techniques I used as a technical artist during the development of Tom Clancy's The Division 2, showcasing how I leveraged Snowdrop Engine capabilities to improve environment and gameplay production."
       },
-      {
-        "type": "h3",
-        "text": "Header"
-      },
       { "type": "image", "src": "projects/division2-tools/blocks/Header_TheDivision2.jpg", "alt": "The Division 2 header image" },
       {
         "type": "h3",
