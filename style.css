@@ -820,6 +820,49 @@ main,
 
 
 /* ============================================================
+   PROJECT LOAD ERROR
+   Visible fallback rendered inside the project-instance mount
+   point when the per-project config or shared template fails to
+   load (otherwise the page stays blank past the <noscript> hint).
+   ============================================================ */
+.project-load-error {
+  max-width: 34rem;
+  margin: 12vh auto 0;
+  padding: 2.25rem 2rem;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  text-align: center;
+}
+
+.project-load-error__title {
+  margin: 0 0 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.project-load-error__detail {
+  margin: 0 0 1.25rem;
+  color: var(--muted);
+}
+
+.project-load-error__link {
+  display: inline-block;
+  padding: 0.6rem 1.2rem;
+  background: var(--accent);
+  color: var(--bg);
+  font-weight: 700;
+  text-decoration: none;
+  border-radius: 10px;
+}
+
+.project-load-error__link:hover {
+  background: var(--accent-2);
+}
+
+
+/* ============================================================
    SITE FOOTER
    Centered footer with social icon links and copyright
    ============================================================ */

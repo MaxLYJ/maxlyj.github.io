@@ -514,25 +514,79 @@ function initProjectGallery(main) {
   renderProjectGallery(activeIndex);
 }
 
+// Visible fallback shown inside the project-instance mount point when the
+// per-project config or shared template cannot be loaded. Without this, any
+// fetch failure left visitors on a blank page with only the <noscript> hint.
+function renderProjectLoadError(root, detail) {
+  if (!root) {
+    return;
+  }
+  root.innerHTML = "";
+
+  const box = document.createElement("div");
+  box.className = "project-load-error";
+  // role="alert" so the message is spoken when it is inserted post-failure.
+  box.setAttribute("role", "alert");
+
+  const title = document.createElement("p");
+  title.className = "project-load-error__title";
+  title.textContent = "This project couldn't be loaded";
+
+  const detailEl = document.createElement("p");
+  detailEl.className = "project-load-error__detail";
+  detailEl.textContent =
+    detail ||
+    "Something went wrong while loading this project. Please try again in a moment.";
+
+  const link = document.createElement("a");
+  link.className = "project-load-error__link";
+  link.href = "/";
+  link.textContent = "Return to homepage";
+
+  box.append(title, detailEl, link);
+  root.appendChild(box);
+}
+
 async function loadProjectInstanceTemplate() {
   // The host page provides where to mount and which manifest entry to use.
   const root = document.querySelector("[data-project-instance-root]");
   const slug = document.body.dataset.projectSlug;
 
-  // Abort when required runtime context is missing.
-  if (!root || !slug) {
+  // Nowhere to mount => nothing we can render (misconfigured host page).
+  if (!root) {
+    return;
+  }
+  // Mount point exists but no project identifier => surface a real error.
+  if (!slug) {
+    renderProjectLoadError(root, "This page is missing its project identifier.");
     return;
   }
 
   const config = await loadProjectConfig(slug);
   if (!config) {
+    renderProjectLoadError(
+      root,
+      "The data for this project could not be reached. Please try again in a moment."
+    );
     return;
   }
 
   // Load the shared template markup, then parse it into a detached DOM tree.
-  const response = await fetch("template-content.html");
-  const html = await response.text();
-  const parsed = new DOMParser().parseFromString(html, "text/html");
+  let parsed;
+  try {
+    const response = await fetch("template-content.html");
+    if (!response.ok) {
+      throw new Error(`template fetch failed: ${response.status}`);
+    }
+    const html = await response.text();
+    parsed = new DOMParser().parseFromString(html, "text/html");
+  } catch {
+    renderProjectLoadError(
+      root,
+      "The shared page template could not be reached. Please try again in a moment."
+    );
+    return;
+  }
 
   // Grab the template sections that are injected into the live page.
   const header = parsed.querySelector("header.top-bar");
@@ -542,6 +596,10 @@ async function loadProjectInstanceTemplate() {
 
   // Guard against malformed template files.
   if (!header || !overlay || !sidebar || !main) {
+    renderProjectLoadError(
+      root,
+      "The shared page template appears to be malformed. Please try again later."
+    );
     return;
   }
 

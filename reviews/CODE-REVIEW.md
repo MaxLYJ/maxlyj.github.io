@@ -54,12 +54,24 @@ Priority order used throughout: **critical bugs → accessibility → performanc
 
 ---
 
+## ✅ Fixed in iteration 3 (project pages: robustness + repo hygiene)
+
+### Correctness / robustness
+- **Visible load-error state on project pages (P1 #2).** `loadProjectInstanceTemplate()` previously `return`ed silently on every failure path, leaving a blank page with only the `<noscript>` hint (which is invisible to JS-enabled visitors). Added a `renderProjectLoadError(root, detail)` helper that injects a styled, `role="alert"` block into the mount point — announced to screen readers on insertion — with a short explanation and a "Return to homepage" CTA. It now fires on **four** distinct failures, each with a tailored message: (a) missing `data-project-slug` on the host page, (b) the per-project config fetch returning null (404 / network / invalid JSON), (c) the shared `template-content.html` fetch throwing or returning non-OK, and (d) the template parsing to a DOM missing one of `header`/`overlay`/`sidebar`/`main` (malformed template). The `!root` case still returns (nothing to render into — a misconfigured host page). The previous unguarded `fetch("template-content.html")` could also throw on a network failure with no try/catch; that call is now wrapped so it degrades to the error state instead of an unhandled rejection.
+- **Removed the `project-instance-test` artifact from the live site (P1 #3).** `git rm`'d `project-instance-test.html` and `Resources/Project Instances/config/project-instance-test.json`. The page had `data-project-slug="project-instance-test"`, was absent from `sitemap.xml`, and was reachable by anyone; it now 404s. The four remaining project pages were verified to still map `data-project-slug` → an existing config. (Caveat: the matching `projects/project-instance-test/` folder may still physically exist in the R2 `portfolio-images` bucket — it's now an unreachable orphan and harmless; `IMAGE_STORAGE_PLAN.md` documents R2 provisioning state and was intentionally left unchanged since the bucket wasn't touched.)
+
+### Validation
+- `node --check project-instance-loader.js`, `node --check home.js` — pass; all five remaining config JSONs + `data/taxonomy.json` — valid.
+- Served locally (`python3 -m http.server 8765`): `/project-instance-test.html` → **404**, `/Resources/Project Instances/config/project-instance-test.json` → **404**, `/farcry-6.html` → **200**, `/project-instance-loader.js` → **200**; the served `style.css` includes the `.project-load-error` rules and the loader includes `renderProjectLoadError`.
+
+---
+
 ## 🔴 Remaining issues — prioritized for future iterations
 
 ### P1 — Correctness / robustness
 1. **JS-rendered project pages are SEO-blind beyond meta tags.** `project-instance-loader.js` fetches `template-content.html` + a per-project JSON config and builds the entire DOM at runtime. Search engines see an empty `<body>` (only `<noscript>` + a mount div). The new meta tags help, but the actual project content (description, details, tools) is not in the source HTML. **Options:** (a) server-side pre-render each project page to static HTML at build/deploy time; (b) accept the trade-off and ensure the JSON-LD + meta description carry the key facts. Recommend (a) long-term.
-2. **No `<html>` error handling when the template or config fetch fails.** `loadProjectInstanceTemplate()` silently `return`s on any failure, leaving a blank page with no user-facing message beyond `<noscript>`. Add a visible fallback/error state inside the mount point (e.g., “Project could not be loaded — return home”).
-3. **`project-instance-test.html` is a test artifact shipped to production.** It has `data-project-slug="project-instance-test"` and a config, is not in `sitemap.xml`, and is reachable by anyone. Remove from the live site (or move behind a non-published path). Also consider deleting `Resources/Project Instances/config/project-instance-test.json`.
+2. ~~**No `<html>` error handling when the template or config fetch fails.** `loadProjectInstanceTemplate()` silently `return`s on any failure, leaving a blank page with no user-facing message beyond `<noscript>`. Add a visible fallback/error state inside the mount point (e.g., “Project could not be loaded — return home”).~~ **✅ Fixed in iteration 3** (visible `role="alert"` error block with a "Return to homepage" CTA rendered into the mount point on every failure path — see below).
+3. ~~**`project-instance-test.html` is a test artifact shipped to production.** It has `data-project-slug="project-instance-test"` and a config, is not in `sitemap.xml`, and is reachable by anyone. Remove from the live site (or move behind a non-published path). Also consider deleting `Resources/Project Instances/config/project-instance-test.json`.~~ **✅ Fixed in iteration 3** (both `project-instance-test.html` and its config `git rm`'d; the page now 404s).
 4. **`canLoadProjectImage` / image-extension probing (`home.js`) issues a network request per extension per role** to discover `png → jpg → svg`. This is clever but slow and produces 404s in server logs. Prefer declaring the extension explicitly in the config, or ship a small manifest.
 5. ~~**`home.js` calls `loadTaxonomyManifest()` twice on the homepage** — once at module scope (for the tag system) and again inside the featured-section IIFE via `loadFeaturedTaxonomy()`. Unlike the loader, `home.js`'s `loadTaxonomyManifest` is not memoized. Memoize / share the promise.~~ **✅ Fixed in iteration 2** (memoized single fetch; `loadFeaturedTaxonomy` removed).
 
@@ -93,8 +105,8 @@ Priority order used throughout: **critical bugs → accessibility → performanc
 
 ## Suggested iteration plan
 - ~~**Iteration 2:** P1 #2 (visible load-error state) + P1 #5 (memoize taxonomy) + P2 #6 (ARIA carousel) — accessibility & robustness on the homepage hero.~~ — #5 and #6 done; #2 deferred.
-- **Iteration 3 (next):** P1 #2 (visible load-error state on project pages) + P1 #3 (remove `project-instance-test` artifact) — robustness + repo hygiene.
-- **Iteration 4:** P5 #21 (untrack Wix archive, relocate logo) — repo bloat.
+- ~~**Iteration 3:** P1 #2 (visible load-error state on project pages) + P1 #3 (remove `project-instance-test` artifact) — robustness + repo hygiene.~~ — done.
+- **Iteration 4 (next):** P5 #21 (untrack Wix archive, relocate logo) — repo bloat.
 - **Iteration 5:** P5 #19 (extract `shared.js`) — the structural maintainability win; touches both JS entry points, needs careful smoke-testing of homepage + one project page.
 - **Iteration 6:** P1 #1 (static pre-render of project pages) — largest SEO lift; consider a tiny build script run pre-deploy.
 
