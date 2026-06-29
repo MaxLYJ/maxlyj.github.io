@@ -1,5 +1,4 @@
 {
-  "slug": "farcry6-procedural-generation",
   "title": "Far Cry 6 — Procedural Generation",
   "kicker": "Ubisoft Shanghai · Technical Art",
   "description": "Procedural generation pipeline for Far Cry 6's open world — biome scattering, road & river networks, and material blending across Yara's diverse terrain.",

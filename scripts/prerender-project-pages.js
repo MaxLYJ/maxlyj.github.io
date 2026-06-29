@@ -432,6 +432,13 @@ function buildNoscriptHtml(cdnBase, config, taxonomy, slug) {
   }
   if (blocks.length > 0) {
     lines.push(`      <section class="project-noscript__details">`);
+    // Mirror the runtime template (template-content.html:190), which wraps the
+    // detail blocks in <section id="project-details"><h2>Project Details</h2>.
+    // Without this wrapper the noscript jumps h1 -> h3 on projects whose blocks
+    // start at h3 (d-walker, raiden), a skipped-heading-level a11y/SEO defect —
+    // and it keeps the static <noscript> in structural parity with the runtime
+    // render (the iter-28 single-renderer invariant).
+    lines.push(`      <h2>Project Details</h2>`);
     const rendered = blocks
       .map((block) => renderBlock(cdnBase, block))
       .filter((line) => line !== null);
