@@ -116,6 +116,9 @@
     "description": "Procedural generation pipeline for Far Cry 6's open world — biome scattering, road & river networks, and material blending across Yara's terrain. A Ubisoft Shanghai technical-art case study.",
     "ogDescription": "Procedural generation pipeline for Far Cry 6's open world — biome scattering, road & river networks, and material blending across Yara's terrain.",
     "image": "https://pub-dc4e1f00955f4568a77da06925201843.r2.dev/projects/farcry6-procedural-generation/cover.jpg",
+    "imageType": "image/jpeg",
+    "imageWidth": 460,
+    "imageHeight": 215,
     "keywords": "Far Cry 6, Procedural Generation, Houdini, Substance Designer, Maya, Python, VEX, HLSL, Technical Art, Ubisoft Shanghai"
   },
   "images": {

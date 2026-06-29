@@ -261,7 +261,11 @@ function stripHandMaintainedJsonLd(html) {
 // og:image + twitter:image + the JSON-LD image; canonical derives from the site
 // base + filename (== <link rel="canonical">). Everything is HTML-escaped, so
 // values like "road & river" serialize as the correct "road &amp; river"
-// (the prior hand-maintained tags carried a bare "&").
+// (the prior hand-maintained tags carried a bare "&"). seo.imageType /
+// imageWidth / imageHeight emit og:image:type/width/height (lets platforms
+// lay out the card before the image bytes arrive); imageAlt (og:image:alt +
+// twitter:image:alt) is derived as `${config.title} cover image` to match the
+// runtime cover alt (loader:567) and the homepage's iter-35 og:image tags.
 function buildMetaHtml(config, pageFilename, siteBase) {
   const seo = (config && config.seo) || {};
   const canonical = siteBase + "/" + pageFilename;
@@ -270,6 +274,17 @@ function buildMetaHtml(config, pageFilename, siteBase) {
   const description = seo.description || config.description || "";
   const ogDescription = seo.ogDescription || description;
   const image = seo.image || (config.images && config.images.cover) || "";
+  // Social-preview image metadata, mirroring the homepage's iter-35 og:image
+  // tags so the project pages are not the one surface without them. imageType
+  // /width/height let platforms lay out the card before the image bytes arrive
+  // (and signal farcry6's non-16:9 cover so platforms crop deterministically
+  // instead of guessing); imageAlt gives the preview image accessible text,
+  // reusing the runtime cover alt `${config.title} cover image` (loader:567) so
+  // the social card and the in-page cover image share one accessible name.
+  const imageType = seo.imageType || "";
+  const imageWidth = Number(seo.imageWidth) || 0;
+  const imageHeight = Number(seo.imageHeight) || 0;
+  const imageAlt = image ? `${config.title || headline} cover image` : "";
 
   const lines = [];
   lines.push(META_BEGIN);
@@ -281,8 +296,13 @@ function buildMetaHtml(config, pageFilename, siteBase) {
   lines.push(`    <meta property="og:url" content="${escapeHtml(canonical)}" />`);
   lines.push(`    <meta property="og:type" content="${OG_TYPE}" />`);
   lines.push(`    <meta property="og:image" content="${escapeHtml(image)}" />`);
+  if (imageType) lines.push(`    <meta property="og:image:type" content="${escapeHtml(imageType)}" />`);
+  if (imageWidth) lines.push(`    <meta property="og:image:width" content="${imageWidth}" />`);
+  if (imageHeight) lines.push(`    <meta property="og:image:height" content="${imageHeight}" />`);
+  if (imageAlt) lines.push(`    <meta property="og:image:alt" content="${escapeHtml(imageAlt)}" />`);
   lines.push(`    <meta name="twitter:card" content="${TWITTER_CARD}" />`);
   lines.push(`    <meta name="twitter:image" content="${escapeHtml(image)}" />`);
+  if (imageAlt) lines.push(`    <meta name="twitter:image:alt" content="${escapeHtml(imageAlt)}" />`);
   lines.push(META_END);
   return lines.join("\n");
 }
