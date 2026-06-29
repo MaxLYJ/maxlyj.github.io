@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<!--
+  Custom GitHub Pages 404. Served automatically for any unmatched path.
+  DELIBERATELY SELF-CONTAINED: it inlines the handful of design-token colors
+  instead of linking /style.css, so it renders correctly from any unmatched
+  URL depth (relative paths break under /some/nested/path/), stays lightweight
+  for an error page, and does not couple to style.css variable names. The
+  favicon links are absolute for the same reason. Keep it standalone.
+-->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <title>404 — Page not found | Yujia Max Liu</title>
+    <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48" />
+    <link rel="apple-touch-icon" href="/images/apple-touch-icon.png" />
+    <style>
+      :root {
+        --bg: #0f111a;
+        --panel: #171a26;
+        --text: #eff2ff;
+        --muted: #b5bedf;
+        --accent: #78a8ff;
+        --accent-2: #a28bff;
+        --line: rgba(255, 255, 255, 0.12);
+      }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; padding: 0; }
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+      .error-page {
+        min-height: 100vh;
+        min-height: 100dvh;
+        display: grid;
+        place-items: center;
+        padding: 2rem;
+      }
+      .error-card {
+        max-width: 32rem;
+        width: 100%;
+        text-align: center;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: clamp(2rem, 6vw, 3rem) clamp(1.25rem, 4vw, 2rem);
+      }
+      .error-code {
+        font-size: clamp(4rem, 18vw, 7rem);
+        font-weight: 800;
+        line-height: 1;
+        letter-spacing: -0.04em;
+        margin: 0;
+        background: linear-gradient(135deg, var(--accent), var(--accent-2));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      .error-card h1 {
+        font-size: 1.3rem;
+        margin: 1rem 0 0.5rem;
+        color: var(--text);
+      }
+      .error-card p {
+        color: var(--muted);
+        margin: 0 0 1.75rem;
+        line-height: 1.6;
+      }
+      .error-card a {
+        display: inline-block;
+        padding: 0.7rem 1.5rem;
+        border-radius: 10px;
+        background: var(--accent);
+        color: var(--bg);
+        font-weight: 600;
+        text-decoration: none;
+        transition: background 0.15s ease;
+      }
+      .error-card a:hover { background: var(--accent-2); }
+      .error-card a:focus-visible {
+        outline: 2px solid var(--accent-2);
+        outline-offset: 3px;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * { transition: none !important; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="error-page">
+      <section class="error-card">
+        <p class="error-code">404</p>
+        <h1>Page not found</h1>
+        <p>The page you’re looking for doesn’t exist or may have moved. This portfolio’s work lives on the homepage.</p>
+        <a href="/">Return to homepage</a>
+      </section>
+    </main>
+  </body>
+</html>
