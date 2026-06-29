@@ -3,8 +3,8 @@
   "title": "Far Cry 6 — Procedural Generation",
   "kicker": "Ubisoft Shanghai · Technical Art",
   "description": "Procedural generation pipeline for Far Cry 6's open world — biome scattering, road & river networks, and material blending across Yara's diverse terrain.",
-  "tools": ["Houdini", "Substance Designer", "Maya", "Python", "Custom Engine Tools"],
-  "languages": ["Python", "VEX", "HLSL"],
+  "tools": "Houdini, Substance Designer, Maya, Python, Custom Engine Tools",
+  "languages": "Python, VEX, HLSL",
   "time": "Sep 2020 – Dec 2021",
   "role": "Technical Artist — Procedural Generation",
   "projectDetails": {

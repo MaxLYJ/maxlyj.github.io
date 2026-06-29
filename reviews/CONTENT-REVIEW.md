@@ -56,6 +56,20 @@ This is **typography/consistency polish**, not authorial voice: the author didn'
 
 ---
 
+## ✅ Fixed in iteration 28 (content-rendering bug: Tools/Languages metadata mangled on the Far Cry 6 page)
+
+Iteration 27's note prescribed continuing the visible-text read onto the project configs. Reading how each config **field renders** (not just the authored copy) surfaced a real, shipped, user-visible **content-rendering bug**: the Far Cry 6 page's Tools and Languages metadata rendered with **no space after any comma**.
+
+**Root cause** — the four configs used two different shapes for `tools`/`languages`. farcry6 used **arrays** (`["Houdini","Substance Designer","Maya","Python","Custom Engine Tools"]`); the other three used comma-separated **strings**. The runtime loader (`project-instance-loader.js`) assigned the field straight to the cell (`metaValues[0].textContent = config.tools`), and assigning an **Array** to `textContent` coerces via `Array.toString()` = `join(",")` — so farcry6 rendered `Houdini,Substance Designer,Maya,Python,Custom Engine Tools` and `Python,VEX,HLSL` (jammed commas). The prerendered `<noscript>` (which has a `metaText()` helper) rendered correctly, so the static crawler view was right but the runtime view (every JS-enabled visitor) was mangled — and only on the Far Cry 6 page.
+
+**Fix** (two parts — full detail in [`CODE-REVIEW.md`](./CODE-REVIEW.md#-fixed-in-iteration-28-content-rendering-bug-mangled-toolslanguages-metadata-on-the-far-cry-6-page)):
+1. Normalized farcry6's `tools`/`languages` from arrays to the comma-separated **strings** the other three configs already use — fixing the live rendering **and** eliminating the schema outlier (4/4 configs now `str`/`str`).
+2. Added a `formatMetaValue()` helper to the loader mirroring the prerender's `metaText()`, so the two renderers of the same config can no longer diverge on field shape.
+
+This is a content-rendering defect (mangled visible text on the strongest project page), not authorial voice — distinct from the owner-gated content items (case-study depth, raiden's scaffold headings, P4 #15 naming) which stay documented, not edited.
+
+---
+
 ## Per-project content assessment
 
 ### Far Cry 6 — Procedural Generation  *(gold standard)*
@@ -136,3 +150,6 @@ Carried/tracked in `CODE-REVIEW.md` unless noted:
 
 ### Closed in iteration 27
 - Date-range separator inconsistency (3 sites: `index.html` resume, `division2-tools.json` `time`, `division-2.html` `<noscript>`) → normalized to en-dash, matching the site convention and the typographic standard. See the iteration-27 section above.
+
+### Closed in iteration 28
+- Far Cry 6 Tools/Languages metadata rendered with no space after commas (`Houdini,Substance Designer,…`, `Python,VEX,HLSL`) — farcry6's `tools`/`languages` were arrays while the other 3 configs use strings, and the runtime loader coerced the array via `Array.toString()`. Normalized farcry6 to strings (schema consistency) + added a `formatMetaValue()` helper to the loader mirroring the prerender's `metaText()` (runtime↔prerender parity). See the iteration-28 section above.

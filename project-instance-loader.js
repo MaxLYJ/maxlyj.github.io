@@ -4,6 +4,18 @@
 
 const PROJECT_INSTANCE_CONFIG_BASE = "Resources/Project Instances/config";
 
+// Normalize a metadata field that may be a string or an array of strings into the
+// single display string the meta grid shows. Mirrors metaText() in
+// scripts/prerender-project-pages.js so the runtime render and the prerendered
+// <noscript> always agree: assigning an Array directly to textContent would coerce
+// via Array.toString() (join(",")) and drop the space after each comma.
+function formatMetaValue(value) {
+  if (Array.isArray(value)) {
+    return value.map((part) => String(part).trim()).filter(Boolean).join(", ");
+  }
+  return String(value == null ? "" : value).trim();
+}
+
 let taxonomyManifestPromise;
 
 async function loadProjectConfig(slug) {
@@ -605,8 +617,8 @@ async function loadProjectInstanceTemplate() {
 
   // Fill the 4-column metadata grid in template order.
   if (metaValues.length >= 4) {
-    metaValues[0].textContent = config.tools;
-    metaValues[1].textContent = config.languages;
+    metaValues[0].textContent = formatMetaValue(config.tools);
+    metaValues[1].textContent = formatMetaValue(config.languages);
     metaValues[2].textContent = config.time;
     metaValues[3].textContent = config.role;
   }
