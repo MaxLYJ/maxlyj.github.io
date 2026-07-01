@@ -25,12 +25,29 @@
         "text": "I developed the rig in Blender, imported assets into Unreal Engine 5, and iterated animation timing, pose readability, and camera rhythm using Sequencer and Control Rig."
       },
       {
+        "type": "image",
+        "src": "https://pub-dc4e1f00955f4568a77da06925201843.r2.dev/projects/raiden-vs-gekko/blocks/RaidenSPP.png",
+        "alt": "Raiden character rig and skinning setup"
+      },
+      {
+        "type": "image",
+        "src": "https://pub-dc4e1f00955f4568a77da06925201843.r2.dev/projects/raiden-vs-gekko/blocks/GekkoAnimation.png",
+        "alt": "Gekko combat animation pose test"
+      },
+      {
         "type": "h3",
         "text": "Research Result"
       },
       {
         "type": "p",
         "text": "The final sequence improved impact timing and character silhouette clarity while reducing iteration friction through a cleaner rig-to-engine workflow."
+      },
+      {
+        "type": "image-compare",
+        "before": "https://pub-dc4e1f00955f4568a77da06925201843.r2.dev/projects/raiden-vs-gekko/blocks/DirectionalBlurBefore.png",
+        "after": "https://pub-dc4e1f00955f4568a77da06925201843.r2.dev/projects/raiden-vs-gekko/blocks/DirectionalBlurAfter.png",
+        "beforeAlt": "Combat sequence frame before the directional blur post-processing pass",
+        "afterAlt": "Combat sequence frame after the directional blur post-processing pass"
       }
     ]
   },
@@ -45,10 +62,14 @@
     "keywords": "Raiden VS Gekko, Metal Gear Solid 4, Unreal Engine 5, Blender, Rigging, Animation, Compositing, Blueprints, Python"
   },
   "images": {
-    "cover": "Resources/Featured Recommendations/pages/fr-raiden-vs-gekko/fr_raiden-vs-gekko__main.png",
-    "thumb_01": "Resources/Featured Recommendations/pages/fr-raiden-vs-gekko/fr_raiden-vs-gekko__thumb_01.svg",
-    "thumb_02": "Resources/Featured Recommendations/pages/fr-raiden-vs-gekko/fr_raiden-vs-gekko__thumb_02.svg",
-    "thumb_03": "Resources/Featured Recommendations/pages/fr-raiden-vs-gekko/fr_raiden-vs-gekko__thumb_03.svg",
-    "thumb_04": "Resources/Featured Recommendations/pages/fr-raiden-vs-gekko/fr_raiden-vs-gekko__thumb_04.svg"
+    "cover": "https://pub-dc4e1f00955f4568a77da06925201843.r2.dev/projects/raiden-vs-gekko/cover.png",
+    "thumb_01": "https://pub-dc4e1f00955f4568a77da06925201843.r2.dev/projects/raiden-vs-gekko/featured/LowRes_Featured%20(1).png",
+    "thumb_02": "https://pub-dc4e1f00955f4568a77da06925201843.r2.dev/projects/raiden-vs-gekko/featured/LowRes_Featured%20(2).png",
+    "thumb_03": "https://pub-dc4e1f00955f4568a77da06925201843.r2.dev/projects/raiden-vs-gekko/featured/LowRes_Featured%20(3).png",
+    "thumb_04": "https://pub-dc4e1f00955f4568a77da06925201843.r2.dev/projects/raiden-vs-gekko/featured/LowRes_Featured%20(4).png",
+    "full_01": "https://pub-dc4e1f00955f4568a77da06925201843.r2.dev/projects/raiden-vs-gekko/featured/HighRes_Featured%20(1).png",
+    "full_02": "https://pub-dc4e1f00955f4568a77da06925201843.r2.dev/projects/raiden-vs-gekko/featured/HighRes_Featured%20(2).png",
+    "full_03": "https://pub-dc4e1f00955f4568a77da06925201843.r2.dev/projects/raiden-vs-gekko/featured/HighRes_Featured%20(3).png",
+    "full_04": "https://pub-dc4e1f00955f4568a77da06925201843.r2.dev/projects/raiden-vs-gekko/featured/HighRes_Featured%20(4).png"
   }
 }
